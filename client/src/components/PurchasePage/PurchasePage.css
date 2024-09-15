@@ -1,0 +1,41 @@
+.purchase-container {
+  text-align: center;
+  padding: 20px;
+}
+
+.purchase-container h1 {
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+.purchase-container form {
+  display: inline-block;
+  text-align: left;
+}
+
+.purchase-container label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.purchase-container input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.purchase-container button {
+  padding: 10px 20px;
+  font-size: 1em;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.purchase-container button:hover {
+  background-color: #c0392b;
+}
