@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "./HelloWorld.css";
 
 const HelloWorld = () => {
@@ -19,7 +19,7 @@ const HelloWorld = () => {
   }, []);
 
   return (
-    <div className="hello-world-container">
+    <div className="flex h-screen">
       <div className="hello-world">
         <h1 className="hello-world-heading">Hello, World!</h1>
         <p className="hello-world-text">{message}</p>

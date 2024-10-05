@@ -1,5 +1,7 @@
 import HelloWorld from "../components/helloWorld/helloWorld";
 
-export default HelloWorld = () => {
+const HelloWorldPage = () => {
   return <HelloWorld />;
 };
+
+export default HelloWorldPage;

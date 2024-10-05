@@ -1,34 +1,34 @@
-import React, { useState } from 'react';
-import './AdminDashboard.css';
+import { useState } from "react";
+import "./AdminDashboard.css";
 
 const AdminDashboard = () => {
-  const [query, setQuery] = useState('');
-  const [response, setResponse] = useState('');
+  const [query, setQuery] = useState("");
+  const [response, setResponse] = useState("");
 
   const handleRunQuery = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/run-sql', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query })
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/test/run-sql`, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain" },
+        body: query,
       });
-      const data = await res.json();
-      setResponse(JSON.stringify(data, null, 2));
+      const data = JSON.stringify(await res.json(), null, 2);
+      setResponse(data);
     } catch (error) {
-      setResponse(`Error: ${error.message}`);
+      setResponse(`Error: ${error}`);
     }
   };
 
   return (
     <div className="admin-container">
-      <h1>Admin Dashboard - SQL Terminal</h1>
+      <h1 className="mt-16" >Admin Dashboard - SQL Terminal</h1>
       <form onSubmit={handleRunQuery}>
-        <textarea 
-          value={query} 
-          onChange={(e) => setQuery(e.target.value)} 
+        <textarea
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
           placeholder="Enter SQL command here"
-          required 
+          required
         />
         <button type="submit">Run Query</button>
       </form>

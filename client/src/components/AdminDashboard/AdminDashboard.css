@@ -18,7 +18,7 @@
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
 }
 
 .admin-container button {
@@ -45,5 +45,6 @@
 .admin-container .response-container code {
   white-space: pre-wrap;
   display: block;
+  overflow-wrap:break-word;
   color: #2c3e50;
 }

@@ -1,16 +1,7 @@
-import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./HomePage.css";
 
 const HomePage = () => {
-  const [showHelloWorld, setShowHelloWorld] = useState(false);
-
-  const handleEasterEggClick = () => {
-    setShowHelloWorld(true);
-    setTimeout(() => {
-      setShowHelloWorld(false);
-    }, 3000); // Hide after 3 seconds
-  };
 
   return (
     <div className="homepage-container">
@@ -33,7 +24,7 @@ const HomePage = () => {
 
       <div >
         <Link to="/helloworld">
-          <button onClick={handleEasterEggClick}>Hello World?</button>
+          <button>Hello World</button>
         </Link>
       </div>
     </div>
