@@ -1,1 +1,25 @@
-GET http://localhost:5000/test
+POST http://localhost:5000/register
+Content-Type: application/json
+
+{
+    "name": "khalid",
+    "email": "abc@123.com",
+    "password": "123"
+}
+
+###
+
+POST http://localhost:5000/login
+Content-Type: application/json
+
+{
+    "email": "H",
+    "password": "123"
+}
+
+###
+
+GET http://localhost:5000/test/run-sql
+Content-Type:  text/plain
+
+SELECT * FROM users;

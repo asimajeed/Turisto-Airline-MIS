@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es6",                               // Specify ECMAScript target version
+    "module": "commonjs",                          // Use commonjs for module resolution
+    "strict": true,                                // Enable strict type-checking options
+    "esModuleInterop": true,                       // Allows default imports from non-ES modules
+    "outDir": "./dist",                            // Directory for compiled files
+    "rootDir": "./src",                            // Directory of input files
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*.ts"],                      // Include all .ts files in src
+  "exclude": ["node_modules"]                      // Exclude node_modules
+}
