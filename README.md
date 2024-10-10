@@ -38,6 +38,7 @@ A Management Information System for managing airline ticket bookings.
 - **react-icons**: Icon library for React
 - **tailwindcss**: Utility-first CSS framework for faster styling
 - **prettier-plugin-tailwindcss**: Formats Tailwind classes with Prettier
+- **shadcn components**: Provides pre-built components with extensive customisability if needed
 
 ### Backend
 
