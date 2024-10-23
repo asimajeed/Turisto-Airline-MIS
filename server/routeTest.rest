@@ -19,7 +19,7 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:5000/test/run-sql
+post http://localhost:5000/test/run-sql
 Content-Type:  text/plain
 
 SELECT * FROM users;

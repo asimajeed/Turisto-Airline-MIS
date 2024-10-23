@@ -6,7 +6,7 @@ const SearchPage = () => {
   const [destination, setDestination] = useState('');
   const [date, setDate] = useState('');
 
-  const handleSearch = (e) => {
+  const handleSearch = (e:any) => {
     e.preventDefault();
     console.log(`Searching for flights from ${origin} to ${destination} on ${date}`);
   };
@@ -19,21 +19,21 @@ const SearchPage = () => {
         <input 
           type="text" 
           value={origin} 
-          onChange={(e) => setOrigin(e.target.value)} 
+          onChange={(e:any) => setOrigin(e.target.value)} 
           required 
         />
         <label>Destination: </label>
         <input 
           type="text" 
           value={destination} 
-          onChange={(e) => setDestination(e.target.value)} 
+          onChange={(e:any) => setDestination(e.target.value)} 
           required 
         />
         <label>Date: </label>
         <input 
           type="date" 
           value={date} 
-          onChange={(e) => setDate(e.target.value)} 
+          onChange={(e:any) => setDate(e.target.value)} 
           required 
         />
         <button type="submit">Search Flights</button>

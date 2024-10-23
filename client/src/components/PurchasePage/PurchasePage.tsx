@@ -6,7 +6,7 @@ const PurchasePage = () => {
   const [seatSelection, setSeatSelection] = useState('');
   const [paymentDetails, setPaymentDetails] = useState('');
 
-  const handlePurchase = (e) => {
+  const handlePurchase = (e:any) => {
     e.preventDefault();
     console.log(`Processing payment for ${passengerName} with seat ${seatSelection}`);
   };
@@ -19,21 +19,21 @@ const PurchasePage = () => {
         <input 
           type="text" 
           value={passengerName} 
-          onChange={(e) => setPassengerName(e.target.value)} 
+          onChange={(e:any) => setPassengerName(e.target.value)} 
           required 
         />
         <label>Seat Selection: </label>
         <input 
           type="text" 
           value={seatSelection} 
-          onChange={(e) => setSeatSelection(e.target.value)} 
+          onChange={(e:any) => setSeatSelection(e.target.value)} 
           required 
         />
         <label>Payment Details: </label>
         <input 
           type="text" 
           value={paymentDetails} 
-          onChange={(e) => setPaymentDetails(e.target.value)} 
+          onChange={(e:any) => setPaymentDetails(e.target.value)} 
           placeholder="Card Number"
           required 
         />
