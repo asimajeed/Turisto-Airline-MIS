@@ -1,6 +1,7 @@
 import FullscreenSection from "@/components/FullscreenSection";
 import { Card } from "@/components/ui/card";
 import { useState } from "react";
+import SDLayout from "@/components/SDLayout";
 
 const AdminDashboard = () => {
   const [query, setQuery] = useState("");
@@ -23,6 +24,7 @@ const AdminDashboard = () => {
   };
 
   return (
+    <SDLayout>
     <FullscreenSection className="flex justify-center items-center bg-gray-300">
       <Card className="w-full max-w-4xl p-6 bg-white rounded-lg shadow-lg">
         <h1 className="text-2xl font-bold text-gray-700 mb-4">Admin Dashboard - SQL Terminal</h1>
@@ -52,7 +54,8 @@ const AdminDashboard = () => {
           />
         </div>
       </Card>
-    </FullscreenSection>
+      </FullscreenSection>
+    </SDLayout>
   );
 };
 export default AdminDashboard;
