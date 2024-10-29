@@ -286,6 +286,9 @@ const FlightsTable = () => {
                 </TableBody>
               </Table>
               <Button variant="link" className="mt-4">Show all flights</Button>
+              <Link to="/purchase">
+                <Button className="bg-zinc-600 hover:bg-zinc-700">Add Info</Button>
+              </Link> 
             </div>
           </div>
 
