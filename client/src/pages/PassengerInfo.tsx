@@ -12,7 +12,7 @@ import {
 import Image from "@/assets/worldmap.png"; // Replace with correct path
 import FullscreenSection from "@/components/FullscreenSection";
 
-const Purchase = () => {
+const PassengerInfo = () => {
   return (
     <FullscreenSection>
       <div
@@ -124,6 +124,9 @@ const Purchase = () => {
               <Button className="w-full mt-4">
                 <Link to="/select-seats">Select seats</Link>
               </Button>
+              <Button className="w-full mt-4">
+                <Link to="/boardingpass">Boarding Pass</Link>
+              </Button>    
             </div>
           </SheetContent>
         </Sheet>
@@ -134,4 +137,4 @@ const Purchase = () => {
   );
 };
 
-export default Purchase;
+export default PassengerInfo;

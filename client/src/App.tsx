@@ -1,12 +1,14 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
-import Purchase from "./pages/Purchase";
 import Search from "./pages/Search";
 import Admin from "./pages/Admin";
 import HomePage from "./components/HomePage/HomePage";
 import Layout from "./components/Layout";
 import FullscreenSection from "./components/FullscreenSection";
 import FlightsTable from "./pages/FlightsTable";
+import PassengerInfo from "./pages/PassengerInfo";
+import BoardingPass from "./pages/BoardingPass";
+import PassengerTicket from "./pages/Passengerticket";
 
 const App = () => {
   return (
@@ -16,10 +18,12 @@ const App = () => {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/oldhome" element={<HomePage />} />
-            <Route path="/purchase" element={<Purchase />} />
+            <Route path="/passenger" element={<PassengerInfo />} />
             <Route path="/search" element={<Search />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/flights" element={<FlightsTable />} />
+            <Route path="/boardingpass" element={<BoardingPass />} />
+            <Route path= "/passengerticket" element= {<PassengerTicket/>} />
             <Route
               path="*"
               element={
