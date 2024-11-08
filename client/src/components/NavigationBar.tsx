@@ -44,11 +44,11 @@ const MyNavbar = () => {
   }, []);
   return (
     <>
-      <nav className="bg-slate-900 fixed w-full h-[var(--navbar-height)] z-10 shadow-md text-white">
+      <nav className="bg-slate-300 bg-opacity-10 fixed w-full h-[var(--navbar-height)] z-10 shadow-md text-white">
         <div className="flex items-center justify-between h-full">
           <Link to="/">
-          <div className="text-3xl mx-8 font-bold bg-gradient-to-r from-gray-300 to-zinc-500 text-transparent bg-clip-text">
-            Turistoe
+            <div className="text-3xl mx-8 font-bold bg-gradient-to-r from-gray-300 to-zinc-500 text-transparent bg-clip-text">
+              Turistoe
             </div>
           </Link>
           <ul className="flex flex-row items-center h-full">
@@ -58,7 +58,7 @@ const MyNavbar = () => {
                   <MenubarTrigger className="hover:bg-zinc-600"> Admin </MenubarTrigger>
                 </Link>
               </MenubarMenu>
-              <MenubarMenu>  
+              <MenubarMenu>
                 <MenubarTrigger className="hover:bg-zinc-600">Flights</MenubarTrigger>
                 <MenubarContent>
                   <MenubarItem>
@@ -110,15 +110,15 @@ const MyNavbar = () => {
                 onClick={() => setPopupFlag(true)}
                 className="bg-zinc-600 hover:bg-zinc-700 text-white"
               >
-                Sign Up
+                Sign In
               </Button>
             )}
           </ul>
         </div>
       </nav>
       <LoginFormPopup
-        flagSetter={setPopupFlag}
-        flag={popupFlag}
+        isOpen={popupFlag}
+        setIsOpen={setPopupFlag}
         setIsLoggedIn={setIsLoggedIn}
         isLoggedIn={isLoggedIn}
       />

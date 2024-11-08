@@ -8,7 +8,7 @@ import FullscreenSection from "./components/FullscreenSection";
 import FlightsTable from "./pages/FlightsTable";
 import PassengerInfo from "./pages/PassengerInfo";
 import BoardingPass from "./pages/BoardingPass";
-import PassengerTicket from "./pages/Passengerticket";
+import PassengerTicket from "./pages/PassengerTicket";
 
 const App = () => {
   return (
