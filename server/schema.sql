@@ -1,9 +1,7 @@
-CREATE DATABASE airline_ticketing_system
-
 CREATE TABLE users (
-  user_id SERIAL PRIMARY KEY,
-  name VARCHAR(50),
-  email VARCHAR(100) UNIQUE,
-  password VARCHAR(255)
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100),
+  email VARCHAR(100) UNIQUE NOT NULL,
+  password VARCHAR(100) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-

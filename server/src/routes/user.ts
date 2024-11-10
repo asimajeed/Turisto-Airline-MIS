@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import { query } from "../db";
+import { query } from "../db-config";
 
 interface User {
   user_id: string;
@@ -77,7 +77,7 @@ const login = async (req: Request, res: Response) => {
     res.cookie("token", token, {
       httpOnly: true, // Prevents JavaScript access to the cookie
       secure: process.env.NODE_ENV === "production", // Use secure cookies in production
-      maxAge: 3600000
+      maxAge: 3600000,
     });
     res.json({ message: "Login successful." });
   } catch (err) {
