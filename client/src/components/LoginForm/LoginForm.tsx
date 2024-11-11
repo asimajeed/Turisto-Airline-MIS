@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { FaRegCheckCircle } from "react-icons/fa";
+import LoginFormBody from "./LoginFormBody";
+import RegisterFormBody from "./RegisterFormBody";
 
 interface LoginFormProps {
   setIsLoggedIn: (isLoggedIn: boolean) => void;
@@ -23,53 +25,57 @@ const LoginForm = ({ setIsLoggedIn, isLoggedIn, isOpen, setIsOpen }: LoginFormPr
   const handleSignUp = async () => {
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/register`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ name, email, password }),
       });
-
-      if (response.ok) {
-        const data = await response.json();
-        setFeedback(data.message);
+  
+      if (response.status === 201) {
+        setFeedback('User registered successfully!');
+      } else if (response.status === 400) {
+        setFeedback('User already exists.');
       } else {
-        setFeedback("Error registering user.");
+        setFeedback('Error registering user.');
       }
-    } catch (err){
-      setFeedback("Network error.");
+    } catch (err) {
+      setFeedback('Network error.');
       console.log(err);
     }
   };
-
+  
   const handleSignIn = async () => {
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify({ email, password }),
-        credentials: "include",
+        credentials: 'include',
       });
-
+  
       if (response.ok) {
-        const data = await response.json();
-        setFeedback(data.message);
+        setFeedback('Login successful!');
         setIsLoggedIn(true);
         setIsOpen(false); // Close the dialog after successful login
+      } else if (response.status === 401) {
+        setFeedback('Invalid email or password.');
       } else {
-        setFeedback("Login failed.");
+        setFeedback('Login failed.');
       }
     } catch {
-      setFeedback("Network error.");
+      setFeedback('Network error.');
     }
   };
-
+  
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent className="bg-white/30 backdrop-blur-lg border border-white/30 px-6 rounded-lg shadow-lg">
         <DialogHeader>
-          <DialogTitle>{activeTab === "login" ? "Login" : "Register"}</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className=" text-white">{activeTab === "login" ? "Login" : "Register"}</DialogTitle>
+          <DialogDescription className=" text-white">
             Select the tab to switch between login and register
           </DialogDescription>
         </DialogHeader>
@@ -121,82 +127,5 @@ const LoginForm = ({ setIsLoggedIn, isLoggedIn, isOpen, setIsOpen }: LoginFormPr
     </Dialog>
   );
 };
-
-const LoginFormBody = ({
-  email,
-  password,
-  setEmail,
-  setPassword,
-  handleSignIn,
-  toggleTab,
-}: {
-  email: string;
-  password: string;
-  setEmail: (email: string) => void;
-  setPassword: (password: string) => void;
-  handleSignIn: () => void;
-  toggleTab: (tab: string) => void;
-}) => (
-  <>
-    <FormInput label="Email address" type="email" value={email} onChange={(e: any) => setEmail(e.target.value)} />
-    <FormInput label="Password" type="password" value={password} onChange={(e: any) => setPassword(e.target.value)} />
-    <div className="flex justify-between mb-4">
-      <label className="flex items-center text-white">
-        <input type="checkbox" className="mr-2" />
-        Remember me
-      </label>
-      <a href="#!" onClick={() => alert("Good luck bozo")} className="text-white">
-        Forgot password?
-      </a>
-    </div>
-    <button className="w-full py-2 text-white bg-slate-900 rounded font-semibold" onClick={handleSignIn}>
-      Sign in
-    </button>
-    <p className="text-center mt-4 text-slate-100">
-      Not a member?{" "}
-      <button className="text-white font-semibold" onClick={() => toggleTab("register")}>
-        Register
-      </button>
-    </p>
-  </>
-);
-
-const RegisterFormBody = ({
-  name,
-  email,
-  password,
-  setName,
-  setEmail,
-  setPassword,
-  handleSignUp,
-}: {
-  name: string;
-  email: string;
-  password: string;
-  setName: (name: string) => void;
-  setEmail: (email: string) => void;
-  setPassword: (password: string) => void;
-  handleSignUp: () => void;
-}) => (
-  <>
-    <FormInput label="Name" type="text" value={name} onChange={(e: any) => setName(e.target.value)} />
-    <FormInput label="Email" type="email" value={email} onChange={(e: any) => setEmail(e.target.value)} />
-    <FormInput label="Password" type="password" value={password} onChange={(e: any) => setPassword(e.target.value)} />
-    <label className="flex items-center mb-4 text-white">
-      <input type="checkbox" className="mr-2" />
-      I have read and agree to the terms
-    </label>
-    <button className="w-full py-2 text-white bg-slate-900 rounded font-semibold" onClick={handleSignUp}>
-      Sign up
-    </button>
-  </>
-);
-
-const FormInput = ({ label, type, value, onChange }: any) => (
-  <div className="mb-4">
-    <label className="block text-white mb-2">{label}</label>
-    <input type={type} value={value} onChange={onChange} className="w-full border border-gray-300 rounded p-2" required />
-  </div>
-);
 
 export default LoginForm;

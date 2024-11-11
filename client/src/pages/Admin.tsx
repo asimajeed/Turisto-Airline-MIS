@@ -7,19 +7,20 @@ const AdminDashboard = () => {
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState("");
 
-  const handleRunQuery = async (e: any) => {
+  const handleQueryRun = async (e: any) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/test/run-sql`, {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_API_URL}/admin/sql`, {
         method: "POST",
-        headers: { "Content-Type": "text/plain" },
-        body: query,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query }),
       });
+      console.log(JSON.stringify({ query }));
       const responseJSON = await res.json();
-      const data = JSON.parse(JSON.stringify(responseJSON)).rows;
+      const data = JSON.parse(JSON.stringify(responseJSON));
       setResponse(JSON.stringify(data, null, 2));
     } catch (error) {
-      setResponse(`Error: ${error}`);
+      setResponse(`Client error: ${error}`);
     }
   };
 
@@ -29,7 +30,7 @@ const AdminDashboard = () => {
       <Card className="w-full max-w-4xl p-6 bg-white rounded-lg shadow-lg">
         <h1 className="text-2xl font-bold text-gray-700 mb-4">Admin Dashboard - SQL Terminal</h1>
 
-        <form onSubmit={handleRunQuery} className="space-y-4">
+        <form onSubmit={handleQueryRun} className="space-y-4">
           <textarea
             className="w-full h-40 p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
             value={query}

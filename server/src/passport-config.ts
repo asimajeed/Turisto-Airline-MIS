@@ -1,4 +1,3 @@
-// passport-config.ts
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import bcrypt from 'bcryptjs';
@@ -42,3 +41,4 @@ passport.deserializeUser(async (id, done) => {
     done(err);
   }
 });
+

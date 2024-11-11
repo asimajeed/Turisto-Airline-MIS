@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import LoginFormPopup from "./LoginForm";
+import { useState } from "react";
+import LoginDialog from "@/components/LoginForm/LoginForm"
 
 import {
   Menubar,
@@ -14,22 +14,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
-const getCookie = (name: string) => {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(";").shift() || null;
-  return null;
-};
-
-const isTokenExpired = (token: string) => {
-  if (!token) return true;
-
-  const decodedToken = JSON.parse(atob(token.split(".")[1]));
-  const currentTime = Math.floor(Date.now() / 1000);
-
-  return decodedToken.exp < currentTime;
-};
-
 const handleLogout = (setIsLoggedIn: any) => {
   document.cookie = "token=; Max-Age=0";
   setIsLoggedIn(false);
@@ -38,10 +22,7 @@ const handleLogout = (setIsLoggedIn: any) => {
 const MyNavbar = () => {
   const [popupFlag, setPopupFlag] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  useEffect(() => {
-    const token = getCookie("token");
-    setIsLoggedIn(Boolean(token && !isTokenExpired(token)));
-  }, []);
+
   return (
     <>
       <nav className="bg-slate-300 bg-opacity-10 fixed w-full h-[var(--navbar-height)] z-10 shadow-md text-white">
@@ -116,7 +97,7 @@ const MyNavbar = () => {
           </ul>
         </div>
       </nav>
-      <LoginFormPopup
+      <LoginDialog
         isOpen={popupFlag}
         setIsOpen={setPopupFlag}
         setIsLoggedIn={setIsLoggedIn}
