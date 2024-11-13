@@ -1,4 +1,5 @@
 import planeImage from "@/assets/Plane.png";
+import { LuInfo } from "react-icons/lu";
 
 interface SelectorProps {
   selectedSeat: string | null;
@@ -19,7 +20,8 @@ const Selector = (props: SelectorProps) => {
   const { selectedSeat, setSelectedSeat } = props;
 
   const handleSeatClick = (seat: string, row: number, col: string) => {
-    if (seatsFromDb[(row - 1) * colLength + col.charCodeAt(0) - "A".charCodeAt(0)] === false) setSelectedSeat(seat);
+    if (seatsFromDb[(row - 1) * colLength + col.charCodeAt(0) - "A".charCodeAt(0)] === false)
+      setSelectedSeat(seat);
     console.log((row - 1) * colLength + col.charCodeAt(0) - "A".charCodeAt(0));
     console.log(seatsFromDb);
   };
@@ -28,13 +30,13 @@ const Selector = (props: SelectorProps) => {
       className="bg-no-repeat w-full flex justify-center"
       style={{
         backgroundImage: `url(${planeImage})`,
-        backgroundSize: "3000px 2000px",
+        backgroundSize: "3050px 3300px",
         backgroundPositionX: "center",
         backgroundPositionY: "15%",
       }}
     >
-      <div className="mt-52 flex justify-center items-center w-80">
-        <div className="grid grid-cols-9">
+      <div className="mt-52 flex flex-col justify-center items-center w-80">
+        <div className="grid grid-cols-[repeat(9,26px)]">
           {columns.map((col) => (
             <>
               <div className="flex justify-center items-center">
@@ -43,6 +45,8 @@ const Selector = (props: SelectorProps) => {
               {col == "D" ? <p /> : null}
             </>
           ))}
+        </div>
+        <div className="grid grid-cols-9 bg-white rounded-md px-1">
           {rows.map((row) => (
             <>
               {columns.map((col) => {
@@ -52,10 +56,10 @@ const Selector = (props: SelectorProps) => {
                     <button
                       key={seatId}
                       className={
-                        "text-center flex items-center justify-center text-sm font-semibold rounded hover:bg-white"
+                        "text-center flex items-center justify-center text-sm font-semibold rounded bg-violet-100 hover:bg-violet-200"
                       }
                       style={{
-                        backgroundColor: `${selectedSeat === seatId ? "green" : ""}`,
+                        backgroundColor: `${selectedSeat === seatId ? "violet" : ""}`,
                         height: 32,
                         width: 22,
                         margin: "6px 2px",
@@ -81,6 +85,9 @@ const Selector = (props: SelectorProps) => {
                         {row}
                       </p>
                     ) : null}
+                    {col == "H" && row % 6 == 0 ? (  <div className="col-span-full h-7 flex items-center gap-2 text-slate-400 pl-1">
+    <LuInfo strokeWidth={3}/> Exit row
+  </div>) : null}
                   </>
                 );
               })}

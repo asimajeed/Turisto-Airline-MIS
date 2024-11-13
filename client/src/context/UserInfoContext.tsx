@@ -1,21 +1,11 @@
 import { createContext } from "react";
 
 export interface UserInfo {
-  name: string;
-  phone: string;
-  email: string;
-  preferences: {
-    seatPreference: string;
-    mealPreference: string;
-  };
-  loyaltyPoints: number;
-  pastBookings: Array<{
-    bookingReference: string;
-    flightDetails: string;
-    date: string;
-  }>;
-  discountCodes: string[];
-  adminAccess: boolean;
+  first_name: string,
+  last_name: string,
+  start_date: Date,
+  end_date: Date | null,
+  adminAccess: boolean,
 }
 
 // Creates the context with a default value of `undefined`
