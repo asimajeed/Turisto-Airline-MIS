@@ -85,7 +85,7 @@ const Ticket: React.FC = () => {
                     onClick={handlePrint}
                     className="mt-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 print:hidden"
                 >
-                    Print Ticket
+                    Print Pass
                 </button>
             </div>
         </div>

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 
 const TicketGenerator = () => {
     const ticketRef = useRef();
@@ -60,8 +60,8 @@ const TicketGenerator = () => {
     };
 
     return (
-        <div className="flex justify-center mt-10 print:block">
-            <div className="w-full max-w-2xl border border-gray-300 shadow-lg rounded-lg p-6 bg-white print:w-full print:max-w-none text-sm" ref={ticketRef}>
+        <div className="flex justify-center items-center min-h-screen bg-gray-100 print:block">
+            <div className="w-full max-w-2xl border border-gray-300 shadow-lg rounded-lg p-8 bg-white print:w-full print:max-w-none text-sm mt-10 mb-10">
 
                 {/* Print Button */}
                 <div className="text-right mb-4 print:hidden">
@@ -74,13 +74,13 @@ const TicketGenerator = () => {
                 </div>
 
                 {/* Header */}
-                <div className="text-center border-b pb-4 mb-4">
+                <div className="text-center border-b pb-4 mb-6">
                     <h1 className="text-2xl font-bold text-gray-800">Turistoe</h1>
                     <p className="text-sm">Electronic Ticket Itinerary and Receipt</p>
                 </div>
 
                 {/* Passenger Details */}
-                <div className="mb-4">
+                <div className="mb-6">
                     <p className="font-medium text-lg mb-1">Passenger: {ticketData.passenger}</p>
                     <p>Booking Reference: <span className="font-semibold">{ticketData.bookingReference}</span></p>
                     <p>Ticket Number: <span className="font-semibold">{ticketData.ticketNumber}</span></p>
@@ -88,8 +88,8 @@ const TicketGenerator = () => {
 
                 {/* Flight Details */}
                 {ticketData.flights.map((flight, index) => (
-                    <div key={index} className="border-b py-3">
-                        <p className="font-medium text-blue-600 mb-1">{flight.flight}</p>
+                    <div key={index} className="border-b py-4">
+                        <p className="font-medium text-blue-600 mb-2">{flight.flight}</p>
                         <div className="grid grid-cols-2 gap-4">
                             <p><span className="font-semibold">Route:</span> {flight.route}</p>
                             <p><span className="font-semibold">Date:</span> {flight.date}</p>
@@ -102,7 +102,7 @@ const TicketGenerator = () => {
                 ))}
 
                 {/* Fare Details */}
-                <div className="mt-4 border-t pt-4">
+                <div className="mt-6 border-t pt-4">
                     <h2 className="text-center font-semibold mb-2">Fare Details</h2>
                     <div className="flex justify-between text-gray-800">
                         <span>Base Fare</span>

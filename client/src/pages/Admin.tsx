@@ -25,8 +25,8 @@ const AdminDashboard = () => {
   };
 
   return (
-    <SDLayout>
-    <FullscreenSection className="flex justify-center items-center bg-gray-300">
+    //<SDLayout>
+    <FullscreenSection className="flex justify-center items-center ">
       <Card className="w-full max-w-4xl p-6 bg-white rounded-lg shadow-lg">
         <h1 className="text-2xl font-bold text-gray-700 mb-4">Admin Dashboard - SQL Terminal</h1>
 
@@ -56,7 +56,7 @@ const AdminDashboard = () => {
         </div>
       </Card>
       </FullscreenSection>
-    </SDLayout>
+    //</SDLayout>
   );
 };
 export default AdminDashboard;

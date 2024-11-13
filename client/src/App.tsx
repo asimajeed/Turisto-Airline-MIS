@@ -8,6 +8,7 @@ import FlightsTable from "./pages/FlightsTable";
 import PassengerInfo from "./pages/PassengerInfo";
 import BoardingPass from "./pages/BoardingPass";
 import PassengerTicket from "./pages/PassengerTicket";
+import PaymentPage from "./pages/Payment";
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
             <Route path="/flights" element={<FlightsTable />} />
             <Route path="/boardingpass" element={<BoardingPass />} />
             <Route path="/passengerticket" element={<PassengerTicket />} />
+            <Route path="/payment" element={<PaymentPage/>} />
             <Route
               path="*"
               element={
