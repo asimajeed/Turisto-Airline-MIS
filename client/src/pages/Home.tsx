@@ -41,7 +41,7 @@ function App() {
             </h1>
             <div className="flex items-center justify-center mt-4 gap-2">
               <Select>
-                <SelectTrigger className="w-[180px] bg-white border border-gray-300 text-gray-500">
+                <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Where to?" />
                 </SelectTrigger>
                 <SelectContent>
@@ -53,7 +53,7 @@ function App() {
                 </SelectContent>
               </Select>
               <Select>
-                <SelectTrigger className="w-[180px] bg-white border border-gray-300 text-gray-500">
+                <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="From where?" />
                 </SelectTrigger>
                 <SelectContent>

@@ -9,11 +9,12 @@ import PassengerInfo from "./pages/PassengerInfo";
 import BoardingPass from "./pages/BoardingPass";
 import PassengerTicket from "./pages/PassengerTicket";
 import PaymentPage from "./pages/Payment";
+import { ThemeProvider } from "./context/ThemeContext";
 
 const App = () => {
   return (
-    <>
-      <BrowserRouter>
+    <BrowserRouter>
+      <ThemeProvider>
         <Layout>
           <Routes>
             <Route path="/" element={<Home />} />
@@ -23,7 +24,7 @@ const App = () => {
             <Route path="/flights" element={<FlightsTable />} />
             <Route path="/boardingpass" element={<BoardingPass />} />
             <Route path="/passengerticket" element={<PassengerTicket />} />
-            <Route path="/payment" element={<PaymentPage/>} />
+            <Route path="/payment" element={<PaymentPage />} />
             <Route
               path="*"
               element={
@@ -36,8 +37,8 @@ const App = () => {
             />
           </Routes>
         </Layout>
-      </BrowserRouter>
-    </>
+      </ThemeProvider>
+    </BrowserRouter>
   );
 };
 

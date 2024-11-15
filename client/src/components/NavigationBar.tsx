@@ -1,18 +1,15 @@
 import { useState, useEffect, SetStateAction } from "react";
 import LoginDialog from "@/components/LoginForm/LoginForm";
-import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarSeparator,
-  MenubarShortcut,
-  MenubarTrigger,
-} from "@/components/ui/menubar";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import "@theme-toggles/react/css/Within.css";
+import { Within } from "@theme-toggles/react";
+import { useTheme } from "@/context/ThemeContext";
 
-const handleLogout = (setIsLoggedIn: { (value: SetStateAction<boolean>): void; (arg0: boolean): void; }) => {
+const handleLogout = (setIsLoggedIn: {
+  (value: SetStateAction<boolean>): void;
+  (arg0: boolean): void;
+}) => {
   document.cookie = "token=; Max-Age=0";
   setIsLoggedIn(false);
 };
@@ -31,11 +28,13 @@ const MyNavbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const theme = useTheme();
   return (
     <>
       <nav
-        className={`fixed w-full h-[var(--navbar-height)] z-10 text-white transition-colors duration-300 ${isScrolled ? "bg-slate-50 bg-opacity-100" : "bg-transparent"
-          }`}
+        className={`fixed w-full h-[var(--navbar-height)] z-10 text-white transition-colors duration-300 ${
+          isScrolled ? "bg-slate-50 bg-opacity-100" : "bg-transparent"
+        }`}
       >
         <div className="flex items-center justify-between h-full px-8">
           <Link to="/">
@@ -43,40 +42,18 @@ const MyNavbar = () => {
               Turistoe
             </div>
           </Link>
+
           <ul className="flex flex-row items-center h-full">
-            <Menubar className="bg-transparent text-purple-950 border-none">
-              <MenubarMenu>
-                <Link to="/admin">
-                  <MenubarTrigger className="hover:bg-purple-50"> Admin </MenubarTrigger>
-                </Link>
-              </MenubarMenu>
-              <MenubarMenu>
-                <MenubarTrigger className="hover:bg-purple-50">Flights</MenubarTrigger>
-                <MenubarContent>
-                  <MenubarItem>
-                    New Tab <MenubarShortcut>⌘T</MenubarShortcut>
-                  </MenubarItem>
-                  <MenubarItem>New Window</MenubarItem>
-                  <MenubarSeparator />
-                  <MenubarItem>Share</MenubarItem>
-                  <MenubarSeparator />
-                  <MenubarItem>Print</MenubarItem>
-                </MenubarContent>
-              </MenubarMenu>
-              <MenubarMenu>
-                <MenubarTrigger className="hover:bg-purple-50">Hotels</MenubarTrigger>
-                <MenubarContent>
-                  <MenubarItem>
-                    New Tab <MenubarShortcut>⌘T</MenubarShortcut>
-                  </MenubarItem>
-                  <MenubarItem>New Window</MenubarItem>
-                  <MenubarSeparator />
-                  <MenubarItem>Share</MenubarItem>
-                  <MenubarSeparator />
-                  <MenubarItem>Print</MenubarItem>
-                </MenubarContent>
-              </MenubarMenu>
-            </Menubar>
+            <Within
+              duration={750}
+              onToggle={() => theme.toggleTheme()}
+              className="text-3xl transition-colors duration-700"
+              style={{ color: `${theme.theme !== "dark" ? "black" : "white"}` }}
+              toggled={theme.theme == "dark"}
+              placeholder={undefined}
+              onPointerEnterCapture={undefined}
+              onPointerLeaveCapture={undefined}
+            />
             {isLoggedIn ? (
               <Button
                 className="bg-purple-600 hover:bg-purple-700 text-white ml-4"
@@ -87,7 +64,7 @@ const MyNavbar = () => {
             ) : (
               <Button
                 onClick={() => setPopupFlag(true)}
-                  className="bg-purple-600 hover:bg-purple-700 text-white ml-4"
+                className="bg-purple-600 hover:bg-purple-700 text-white ml-4"
               >
                 Sign In
               </Button>

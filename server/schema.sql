@@ -15,13 +15,22 @@ CREATE TABLE users (
 
 CREATE TABLE flights (
     flight_number VARCHAR(50) PRIMARY KEY,
-    departure_airport VARCHAR(50) NOT NULL,
-    arrival_airport VARCHAR(50) NOT NULL,
+    departure_airport VARCHAR(5) NOT NULL,
+    arrival_airport VARCHAR(5) NOT NULL,
     departure_date DATETIME NOT NULL,
     arrival_date DATETIME NOT NULL,
     total_seats INT NOT NULL,
     status VARCHAR(50) NOT NULL
 );
+
+CREATE TABLE airports (
+    airport_code VARCHAR(10) PRIMARY KEY,
+    airport_name VARCHAR(255) NOT NULL,
+    city VARCHAR(255) NOT NULL,
+    country VARCHAR(255) NOT NULL,
+    timezone VARCHAR(50) NOT NULL
+);
+
 
 CREATE TABLE seats (
     flight_number VARCHAR(50),
