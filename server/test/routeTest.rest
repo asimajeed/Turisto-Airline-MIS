@@ -23,3 +23,8 @@ post http://localhost:5000/admin/sql
 Content-Type:  text/plain
 
 SELECT * FROM users;
+
+###
+
+### Fetch Airports
+GET http://localhost:5000/api/airports?search=nari

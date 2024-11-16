@@ -15,9 +15,15 @@ const config = {
   },
 };
 
-const client = new Client(config);
+let client: Client | null = null;
 
 async function connectDB() {
+  if (client) {
+    return client;
+  }
+
+  client = new Client(config);
+
   try {
     await client.connect();
     console.log("Connected to the database!");
@@ -27,11 +33,17 @@ async function connectDB() {
     console.error("Connection error:", err);
     process.exit(1);
   }
+
+  return client;
 }
 
 async function query(text: string, params?: any[]) {
+  if (!client) {
+    await connectDB();
+  }
+
   try {
-    const result = await client.query(text, params);
+    const result = await client!.query(text, params);
     return result;
   } catch (err) {
     console.error("Query error:", err);

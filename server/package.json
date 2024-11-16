@@ -5,6 +5,7 @@
   "scripts": {
     "build": "npx tsc",
     "start": "ts-node src/server.ts",
+    "sql": "ts-node ./direct-SQL.ts",
     "dev": "nodemon --watch src --exec ts-node src/server.ts"
   },
   "dependencies": {

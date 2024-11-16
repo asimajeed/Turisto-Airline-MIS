@@ -11,20 +11,12 @@ const ThemeProvider = ({ children, ...props }: { children: React.ReactNode }) =>
   const [theme, setTheme] = useState("light");
 
   useEffect(() => {
-    const root = window.document.documentElement;
     const savedTheme = localStorage.getItem("theme");
-
     if (savedTheme) {
       setTheme(savedTheme);
-      root.classList.add(savedTheme);
-    } else {
-      const userPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const initialTheme = userPrefersDark ? "dark" : "light";
-      setTheme(initialTheme);
-      root.classList.add(initialTheme);
     }
   }, []);
-
+  
   const toggleTheme = () => {
     const root = window.document.documentElement;
     const isDark = root.classList.contains("dark");

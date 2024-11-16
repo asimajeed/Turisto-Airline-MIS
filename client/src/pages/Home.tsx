@@ -1,25 +1,17 @@
 import { useState } from "react";
-import { DatePickerWithRange } from "@/components/ui/DatePickerWithRange";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { Button } from "@/components/ui/button";
-import Image from "@/assets/worldmap.png";
 import FullscreenSection from "@/components/FullscreenSection";
 import { Link } from "react-router-dom";
 import { Checkbox } from "@/components/ui/checkbox";
+import Image from "@/assets/worldmap.png";
+import { DatePickerWithRange } from "@/components/ui/DatePickerWithRange";
 import { DatePickerDemo } from "@/components/ui/DatePicker";
+import SelectAirports from "@/components/SelectAirports";
+import MapComponent from "@/components/Map";
 
 function App() {
   const [isOneWay, setIsOneWay] = useState(false);
-
-  // Array of options for Select items
-  const destinationOptions = ["New York", "London", "Tokyo", "Paris"];
-  const originOptions = ["New York", "London", "Tokyo", "Paris"];
 
   const handleOneWayChange = () => {
     setIsOneWay((prev) => !prev);
@@ -40,36 +32,15 @@ function App() {
               It's more than just a trip
             </h1>
             <div className="flex items-center justify-center mt-4 gap-2">
-              <Select>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Where to?" />
-                </SelectTrigger>
-                <SelectContent>
-                  {destinationOptions.map((option) => (
-                    <SelectItem key={option} value={option.toLowerCase()}>
-                      {option}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="From where?" />
-                </SelectTrigger>
-                <SelectContent>
-                  {originOptions.map((option) => (
-                    <SelectItem key={option} value={option.toLowerCase()}>
-                      {option}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <div className="flex items-center border border-gray-300 h-9 w-fit px-3 rounded-md cursor-pointer"
-                onClick={handleOneWayChange}>
+              <SelectAirports />
+              <div
+                className="flex items-center border border-gray-300 h-9 w-fit px-3 rounded-md cursor-pointer"
+                onClick={handleOneWayChange}
+              >
                 <Checkbox
                   checked={isOneWay}
                   onCheckedChange={handleOneWayChange}
-                  className=" mr-2 border size-5"
+                  className="mr-2 border size-5"
                 />
                 <span className="text-gray-500">One-Way</span>
               </div>
@@ -83,6 +54,7 @@ function App() {
           </div>
         </div>
       </FullscreenSection>
+      <MapComponent mapHeight={750} mapWidth={1500} />
     </>
   );
 }

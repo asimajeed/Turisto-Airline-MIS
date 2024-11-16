@@ -10,7 +10,8 @@ CREATE TABLE users (
     loyalty_points_redeemed INT DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    is_admin BOOLEAN DEFAULT FALSE
+    is_admin BOOLEAN DEFAULT FALSE,
+    is_guest BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE flights (
@@ -24,11 +25,14 @@ CREATE TABLE flights (
 );
 
 CREATE TABLE airports (
-    airport_code VARCHAR(10) PRIMARY KEY,
+    airport_id INT PRIMARY KEY,
+    airport_code VARCHAR(3),
     airport_name VARCHAR(255) NOT NULL,
     city VARCHAR(255) NOT NULL,
     country VARCHAR(255) NOT NULL,
-    timezone VARCHAR(50) NOT NULL
+    latitude NUMERIC(6, 3),
+    longitude NUMERIC(6, 3),
+    timezone NUMERIC(4,1)
 );
 
 

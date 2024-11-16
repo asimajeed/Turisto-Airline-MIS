@@ -8,6 +8,7 @@ import passport from "passport";
 import session from "express-session";
 import bcrypt from "bcryptjs";
 import "./passport-config";
+import { fetchAirports } from "./routes/freeQueries";
 
 const app = express();
 
@@ -64,6 +65,21 @@ app.post("/admin/sql", async (req: Request, res: Response) => {
     res.json((await query(req.body.query)));
   } catch (err) {
     res.json("Server error: " + err);
+  }
+});
+
+
+app.get("/api/airports", async (req, res) => {
+  const search = req.query.search as string;
+  const limit = 10;
+  const offset = parseInt(req.query.offset as string, 10) || 0;
+  try {
+    const airports = await fetchAirports(search, limit, offset);
+    const airportsArray:string[] = [];
+    airports.forEach((val) => airportsArray.push(val.airport));
+    res.json(airportsArray);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch airports" });
   }
 });
 
