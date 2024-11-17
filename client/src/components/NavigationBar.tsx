@@ -32,31 +32,28 @@ const MyNavbar = () => {
   return (
     <>
       <nav
-        className={`fixed w-full h-[var(--navbar-height)] z-10 text-white transition-colors duration-300 ${
-          isScrolled ? "bg-slate-50 bg-opacity-100" : "bg-transparent"
+        className={`fixed w-full h-[var(--navbar-height)] z-10 text-foreground transition-colors duration-500 ${
+          isScrolled ? "bg-background bg-opacity-100" : "bg-transparent"
         }`}
       >
         <div className="flex items-center justify-between h-full px-8">
           <Link to="/">
-            <div className="text-3xl font-bold bg-gradient-to-r from-blue-500 to-purple-600  text-transparent bg-clip-text">
-              Turistoe
+            <div className="text-3xl font-bold bg-gradient-to-r from-theme-primary to-theme-secondary text-transparent bg-clip-text">
+              Turisto
             </div>
           </Link>
 
           <ul className="flex flex-row items-center h-full">
             <Within
-              duration={750}
+              duration={500}
               onToggle={() => theme.toggleTheme()}
-              className="text-3xl transition-colors duration-700"
+              className="text-3xl transition-colors duration-500"
               style={{ color: `${theme.theme !== "dark" ? "black" : "white"}` }}
               toggled={theme.theme == "dark"}
-              placeholder={undefined}
-              onPointerEnterCapture={undefined}
-              onPointerLeaveCapture={undefined}
             />
             {isLoggedIn ? (
               <Button
-                className="bg-purple-600 hover:bg-purple-700 text-white ml-4"
+                className="bg-theme-primary hover:bg-theme-primary-highlight text-white ml-4"
                 onClick={() => handleLogout(setIsLoggedIn)}
               >
                 Log out
@@ -64,7 +61,7 @@ const MyNavbar = () => {
             ) : (
               <Button
                 onClick={() => setPopupFlag(true)}
-                className="bg-purple-600 hover:bg-purple-700 text-white ml-4"
+                className="bg-theme-primary hover:bg-theme-primary-highlight text-white ml-4"
               >
                 Sign In
               </Button>

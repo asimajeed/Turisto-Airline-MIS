@@ -1,7 +1,5 @@
-import { useRef } from 'react';
 
 const TicketGenerator = () => {
-    const ticketRef = useRef();
 
     const ticketData = {
         passenger: 'Ms Zarina Rana',

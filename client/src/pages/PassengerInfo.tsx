@@ -81,7 +81,9 @@ const PassengerInfo = () => {
                 <div className="flex space-x-4 mt-6">
                   <Sheet>
                     <SheetTrigger>
-                      <Button className="bg-purple-600 hover:bg-purple-700 text-white">View Summary</Button>
+                      <Button className="bg-theme-primary hover:bg-theme-primary-highlight text-white">
+                        View Summary
+                      </Button>
                     </SheetTrigger>
                     <SheetContent side="right">
                       <SheetHeader>
@@ -114,8 +116,8 @@ const PassengerInfo = () => {
                         </div>
                         <SeatSelection />
                         <Link to="/payment">
-                        <Button className="bg-purple-600 hover:bg-purple-700 text-white m-3">
-                          Pay
+                          <Button className="bg-theme-primary hover:bg-theme-primary-highlight text-white m-3">
+                            Pay
                           </Button>
                         </Link>
                       </div>

@@ -22,9 +22,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import { useState } from "react";
-import { TrendingUp } from "lucide-react"
+import { TrendingUp } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -32,17 +32,18 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart"
+} from "@/components/ui/chart";
 
 import PriceTable from "@/components/PriceTable";
+import SelectAirports from "@/components/AirportSelector/SelectAirports";
 
-export const description = "A stacked area chart"
+export const description = "A stacked area chart";
 
 const chartData = [
   { month: "January", economy: 150, business: 350 },
@@ -54,13 +55,35 @@ const chartData = [
 ];
 
 const flights = [
-  { flightNo: "FL123", departure: "New York (JFK)", destination: "London (LHR)", status: "On Time", price: "$600.00" },
-  { flightNo: "FL456", departure: "Los Angeles (LAX)", destination: "Tokyo (HND)", status: "Delayed", price: "$850.00" },
-  { flightNo: "FL789", departure: "Paris (CDG)", destination: "Dubai (DXB)", status: "On Time", price: "$750.00" },
-  { flightNo: "FL101", departure: "Sydney (SYD)", destination: "Singapore (SIN)", status: "Canceled", price: "$500.00" }
+  {
+    flightNo: "FL123",
+    departure: "New York (JFK)",
+    destination: "London (LHR)",
+    status: "On Time",
+    price: "$600.00",
+  },
+  {
+    flightNo: "FL456",
+    departure: "Los Angeles (LAX)",
+    destination: "Tokyo (HND)",
+    status: "Delayed",
+    price: "$850.00",
+  },
+  {
+    flightNo: "FL789",
+    departure: "Paris (CDG)",
+    destination: "Dubai (DXB)",
+    status: "On Time",
+    price: "$750.00",
+  },
+  {
+    flightNo: "FL101",
+    departure: "Sydney (SYD)",
+    destination: "Singapore (SIN)",
+    status: "Canceled",
+    price: "$500.00",
+  },
 ];
-
-
 
 //---------------API CAll
 // import axios from 'axios';
@@ -84,7 +107,7 @@ const chartConfig = {
     label: "Business",
     color: "hsl(var(--chart-2))",
   },
-} satisfies ChartConfig
+} satisfies ChartConfig;
 
 const FlightsTable = () => {
   const [isOneWay, setIsOneWay] = useState(false);
@@ -105,26 +128,12 @@ const FlightsTable = () => {
           {/* Flight Search Header */}
           <div className="flex items-center  mt-4 gap-4">
             <div className="flex gap-2">
-              <Select>
-                <SelectTrigger className="w-[100px]">
-                  <SelectValue placeholder="SFO" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="SFO">SFO</SelectItem>
-                  <SelectItem value="LAX">LAX</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select>
-                <SelectTrigger className="w-[100px]">
-                  <SelectValue placeholder="NRT" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="NRT">NRT</SelectItem>
-                  <SelectItem value="HND">HND</SelectItem>
-                </SelectContent>
-              </Select>
-              <div className="flex items-center border h-9 w-fit px-3 rounded-md cursor-pointer"
-                onClick={handleOneWayChange}>
+              
+              <SelectAirports />
+              <div
+                className="flex items-center border h-9 w-fit px-3 rounded-md cursor-pointer"
+                onClick={handleOneWayChange}
+              >
                 <Checkbox
                   checked={isOneWay}
                   onCheckedChange={handleOneWayChange}
@@ -144,7 +153,9 @@ const FlightsTable = () => {
               </Select>
             </div>
             <Link to="/flights">
-              <Button className="bg-purple-600 hover:bg-purple-700 text-white">Search</Button>
+              <Button className="bg-theme-primary hover:bg-theme-primary-highlight text-white">
+                Search
+              </Button>
             </Link>
           </div>
 
@@ -158,7 +169,6 @@ const FlightsTable = () => {
             <Button variant="outline">More</Button>
           </div>
 
-         
           <div className="mt-8">
             <h3 className="text-purple-950 text-xl font-bold">Choose a departing flight</h3>
             <div className="bg-gray-100 p-4 rounded-lg mt-4 hover: bg-inherit ">
@@ -186,21 +196,26 @@ const FlightsTable = () => {
               </Table>
               {/* <Button variant="link" className="mt-4">Show all flights</Button> */}
               <Link to="/passenger">
-                <Button className="bg-purple-600 hover:bg-purple-700 text-white p-4">Confirm Flight</Button>
-              </Link> 
+                <Button className="bg-theme-primary hover:bg-theme-primary-highlight text-white p-4">
+                  Confirm Flight
+                </Button>
+              </Link>
             </div>
           </div>
 
           {/* Price Grid and History */}
-          <div className="w-full flex justify-between space-x-4"> {/* Added flex and space between */}
+          <div className="w-full flex justify-between space-x-4">
+            {" "}
+            {/* Added flex and space between */}
             {/* Price Grid */}
             <div className="w-1/2">
-              <h4 className="text-lg  text-purple-950  font-bold">Price grid (flexible dates)</h4>
+              <h4 className="text-lg  text-purple-950  font-bold">
+                Price grid (flexible dates)
+              </h4>
               <div className="mt-4 border rounded-lg border-gray-200">
                 <PriceTable></PriceTable>
               </div>
             </div>
-
             {/* Price History */}
             <div className="w-1/2">
               <h4 className="text-lg text-purple-950  font-bold">Price history</h4>
@@ -266,13 +281,11 @@ const FlightsTable = () => {
                     </div>
                   </CardFooter>
                 </Card>
-
               </div>
             </div>
           </div>
-
         </div>
-        </div>
+      </div>
     </FullscreenSection>
   );
 };

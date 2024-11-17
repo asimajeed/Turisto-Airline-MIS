@@ -1,5 +1,6 @@
-import Image from "@/assets/MapChart_Map.png";
-import React from "react";
+import Image from "@/assets/WorldMapScaled.png";
+import { cn } from "@/lib/utils";
+import React, { useEffect, useRef, useState } from "react";
 
 // const mercatorProjection = (
 //   lat: number,
@@ -20,91 +21,100 @@ import React from "react";
 //   return { x, y };
 // };
 
-function mercatorProjection(
+function MillerProjection(
   latitude: number,
   longitude: number,
   mapWidth: number, // in pixels
   mapHeight: number // in pixels
-) {
-  const mapLngLeft = -180; // in degrees. the longitude of the left side of the map (i.e. the longitude of whatever is depicted on the left-most part of the map image)
-  const mapLngRight = 180; // in degrees. the longitude of the right side of the map
-  const mapLatBottom = -58;
-  // in degrees.  the latitude of the bottom of the map
-  const mapLatBottomRad = (mapLatBottom * Math.PI) / 180;
-  const latitudeRad = (latitude * Math.PI) / 180;
-  const mapLngDelta = mapLngRight - mapLngLeft;
+): { x: number; y: number } {
+  // Function to convert degrees to radians
+  function toRadian(value: number) {
+    return (value * Math.PI) / 180;
+  }
 
-  const worldMapWidth = ((mapWidth / mapLngDelta) * 360) / (2 * Math.PI);
-  const mapOffsetY =
-    (worldMapWidth / 2) *
-    Math.log((1 + Math.sin(mapLatBottomRad)) / (1 - Math.sin(mapLatBottomRad)));
+  const lng = toRadian(longitude);
+  const lat = toRadian(latitude);
 
-  const x = (longitude - mapLngLeft) * (mapWidth / mapLngDelta);
-  const y =
-    mapHeight -
-    ((worldMapWidth / 2) *
-      Math.log((1 + Math.sin(latitudeRad)) / (1 - Math.sin(latitudeRad))) -
-      mapOffsetY);
+  // Miller Projection formula
+  var x = lng;
+  var y = -1.25 * Math.log(Math.tan(Math.PI / 4 + 0.4 * lat));
 
-  return { x, y }; // the pixel x,y value of this point on the map image
+  // Scaling based on the map dimensions
+  var width = mapWidth;
+  var height = mapHeight;
+  var scale = width / (2 * Math.PI);
+  x = x * scale + width / 2;
+  y = y * scale + height / 2;
+
+  // Adjusting based on mapLatBottom
+  var mapLatBottom = -60; // Bottom-most latitude
+  var mapLatBottomRadian = toRadian(mapLatBottom);
+  var bottomOffset = -1.25 * Math.log(Math.tan(Math.PI / 4 + 0.4 * mapLatBottomRadian));
+  var bottomOffsetScaled = bottomOffset * scale;
+
+  y -= bottomOffsetScaled * -0.33;
+
+  return { x, y };
 }
 
 interface MapComponentProps {
-  mapWidth: number;
-  mapHeight: number;
+  className: string;
 }
 
-const MapComponent: React.FC<MapComponentProps> = ({ mapWidth, mapHeight }) => {
-  const maxSouth = -60;
-  const maxEast = 180;
-  const maxWest = -180;
-  const maxNorth = 90;
-  const gridSpacing = 30; // Adjust the spacing between points
+const MapComponent: React.FC<MapComponentProps> = ({ className }) => {
+  const imageRef = useRef<HTMLImageElement | null>(null);
+  const [imageDimensions, setImageDimensions] = useState({ width: 100, height: 100 });
 
-  const points = [];
-
-  for (let lat = maxNorth; lat >= maxSouth; lat -= gridSpacing) {
-    for (let lng = maxWest; lng <= maxEast; lng += gridSpacing) {
-      points.push({ lat, lng });
+  const updateImageDimensions = () => {
+    if (imageRef.current) {
+      const rect = imageRef.current.getBoundingClientRect();
+      setImageDimensions({ width: rect.width, height: rect.height });
     }
-  }
-  points.push(
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      updateImageDimensions();
+    }, 0); // Delay for ref to be available
+    window.addEventListener("resize", updateImageDimensions);
+    return () => {
+      clearTimeout(timer); // Clear timeout on unmount
+      window.removeEventListener("resize", updateImageDimensions);
+    };
+  }, []);
+
+  const points = [
     { lat: 24.8, lng: 67.0 },
     { lat: -33.922, lng: 18.423 },
-    { lat: 64.84, lng: -147.72 }
-  );
+    { lat: 64.84, lng: -147.72 },
+  ];
+
   return (
-    <div
-      className="relative bg-cover bg-left-top bg-no-repeat mb-20"
-      style={{
-        backgroundImage: `url(${Image})`,
-        backgroundBlendMode: "exclusion",
-        backgroundSize: "100% 100%",
-        height: `${mapHeight}px`,
-        width: `${mapWidth}px`,
-      }}
-    >
-      {points.map((point, index) => {
-        const { x, y } = mercatorProjection(point.lat, point.lng, mapWidth, mapHeight);
-        return (
-          <div
-            key={index}
-            className="absolute bg-red-500 rounded-full"
-            style={{
-              width: "5px",
-              height: "5px",
-              left: `${x}px`,
-              top: `${y}px`,
-              transform: "translate(-50%, -50%)",
-            }}
-            children={
-              <p>
-                {point.lat},{point.lng}
-              </p>
-            }
-          />
-        );
-      })}
+    <div className={cn("relative overflow-hidden", className)}>
+      <img ref={imageRef} src={Image} alt="Map" className="w-full h-auto" />
+      {imageDimensions.width > 0 &&
+        imageDimensions.height > 0 &&
+        points.map((point, index) => {
+          const { x, y } = MillerProjection(
+            point.lat,
+            point.lng,
+            imageDimensions.width,
+            imageDimensions.height
+          );
+          return (
+            <div
+              key={index}
+              className="absolute bg-foreground rounded-full"
+              style={{
+                width: "5px",
+                height: "5px",
+                left: `${x}px`,
+                top: `${y}px`,
+                transform: "translate(-50%, -50%)",
+              }}
+            />
+          );
+        })}
     </div>
   );
 };

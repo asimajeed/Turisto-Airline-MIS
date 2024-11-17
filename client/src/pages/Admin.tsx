@@ -1,7 +1,7 @@
 import FullscreenSection from "@/components/FullscreenSection";
 import { Card } from "@/components/ui/card";
 import { useState } from "react";
-import SDLayout from "@/components/SDLayout";
+// import SDLayout from "@/components/SDLayout";
 
 const AdminDashboard = () => {
   const [query, setQuery] = useState("");

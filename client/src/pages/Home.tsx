@@ -7,7 +7,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import Image from "@/assets/worldmap.png";
 import { DatePickerWithRange } from "@/components/ui/DatePickerWithRange";
 import { DatePickerDemo } from "@/components/ui/DatePicker";
-import SelectAirports from "@/components/SelectAirports";
+import SelectAirports from "@/components/AirportSelector/SelectAirports";
 import MapComponent from "@/components/Map";
 
 function App() {
@@ -28,10 +28,11 @@ function App() {
           }}
         >
           <div className="flex flex-col items-center justify-center h-3/4 w-screen">
-            <h1 className="text-8xl font-bold bg-gradient-to-r from-blue-500 to-purple-600 text-transparent bg-clip-text text-center mb-16 pb-5">
+            <h1 className="text-8xl font-bold bg-gradient-to-r from-theme-secondary to-theme-primary text-transparent bg-clip-text text-center mb-16 pb-5">
               It's more than just a trip
             </h1>
             <div className="flex items-center justify-center mt-4 gap-2">
+              {/* Airport selection component */}
               <SelectAirports />
               <div
                 className="flex items-center border border-gray-300 h-9 w-fit px-3 rounded-md cursor-pointer"
@@ -46,7 +47,7 @@ function App() {
               </div>
               {isOneWay ? <DatePickerDemo /> : <DatePickerWithRange />}
               <Link to="/flights">
-                <Button className="bg-purple-600 hover:bg-purple-700 text-white">
+                <Button className="bg-theme-primary hover:bg-theme-primary-highlight text-white">
                   Search
                 </Button>
               </Link>
@@ -54,7 +55,7 @@ function App() {
           </div>
         </div>
       </FullscreenSection>
-      <MapComponent mapHeight={750} mapWidth={1500} />
+      <MapComponent className="w-screen h-screen" />
     </>
   );
 }
