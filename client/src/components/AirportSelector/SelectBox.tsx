@@ -67,7 +67,7 @@ const SelectBox: FC<ComboBoxProps> = ({ label, value, setValue, options, setOpti
             <ScrollArea className="h-48 overflow-auto">
               <CommandGroup>
                 {options.map((option) => {
-                  const optionString = `${option.airport_code}, ${option.airport_name}`;
+                  const optionString = `${option.airport_code}, ${option.airport_name}, ${option.city}, ${option.country}`;
                   return (
                     <CommandItem
                       key={optionString}

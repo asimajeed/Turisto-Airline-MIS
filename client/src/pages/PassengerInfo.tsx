@@ -27,7 +27,9 @@ const PassengerInfo = () => {
           <div>
             {/* Left Side - Form Section */}
             <div>
-              <h2 className="text-lg font-bold text-purple-950">Passenger Information</h2>
+              <h2 className="text-lg font-bold text-theme-primary-darker">
+                Passenger Information
+              </h2>
               <p className="text-sm text-gray-500">
                 Enter the required information for each traveler and ensure it matches the
                 government-issued ID.

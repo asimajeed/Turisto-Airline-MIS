@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { useState} from "react";
+import { useState } from "react";
 import {
   Drawer,
   DrawerClose,
@@ -35,7 +35,9 @@ const PaymentPage = () => {
             <>
               {/* Left Side - Payment Form */}
               <div className="col-span-2">
-                <h2 className="text-2xl font-semibold text-purple-900">Payment method</h2>
+                <h2 className="text-2xl font-semibold text-theme-primary-darker">
+                  Payment method
+                </h2>
                 <p className="text-sm text-gray-500 mt-1">
                   Select a payment method below. Tripma processes your payment securely with
                   end-to-end encryption.
@@ -60,7 +62,7 @@ const PaymentPage = () => {
 
                 {/* Credit Card Details */}
                 <div className="mt-6">
-                  <h3 className="text-lg font-semibold text-purple-900">
+                  <h3 className="text-lg font-semibold text-theme-primary-darker">
                     Credit card details
                   </h3>
                   <div className="flex items-center space-x-2 mt-4">
@@ -82,12 +84,14 @@ const PaymentPage = () => {
 
               {/* Right Side - Order Summary */}
               <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
-                <h3 className="text-lg font-semibold text-purple-900">Order Summary</h3>
+                <h3 className="text-lg font-semibold text-theme-primary-darker">
+                  Order Summary
+                </h3>
                 <div className="mt-4 space-y-4">
                   {/* Flight Information */}
                   <div className="bg-white p-4 rounded-lg border border-gray-200 flex justify-between items-center">
                     <div>
-                      <p className="font-medium text-purple-900">
+                      <p className="font-medium text-theme-primary-darker">
                         Hawaiian Airlines - FIG4312
                       </p>
                       <p className="text-sm text-gray-500">
@@ -152,12 +156,16 @@ const PaymentPage = () => {
           ) : (
             // Summary Screen Content
             <div className="col-span-3">
-              <h2 className="text-2xl font-semibold text-purple-900">Your Trip Summary</h2>
+              <h2 className="text-2xl font-semibold text-theme-primary-darker">
+                Your Trip Summary
+              </h2>
               <p className="text-gray-600 mt-4">
                 Your flight has been booked successfully! Below is a summary of your trip.
               </p>
               <div className="bg-gray-50 p-6 mt-6 rounded-lg border border-gray-200">
-                <h3 className="text-lg font-semibold text-purple-900">Flight Details</h3>
+                <h3 className="text-lg font-semibold text-theme-primary-darker">
+                  Flight Details
+                </h3>
                 <p className="text-gray-500 mt-2">Departure: February 25th, 2021</p>
                 <p className="text-gray-500">Arrival: March 21st, 2021</p>
                 <p className="text-gray-500 mt-4">Hawaiian Airlines - FIG4312</p>

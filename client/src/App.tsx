@@ -10,13 +10,13 @@ import BoardingPass from "./pages/BoardingPass";
 import PassengerTicket from "./pages/PassengerTicket";
 import PaymentPage from "./pages/Payment";
 import { ThemeProvider } from "./context/ThemeContext";
-import { UserInfoProvider } from "./context/UIContext";
+import { GlobalContextProvider } from "./context/GlobalContext";
 
 const App = () => {
   return (
     <BrowserRouter>
       <ThemeProvider>
-        <UserInfoProvider>
+        <GlobalContextProvider>
           <Layout>
             <Routes>
               <Route path="/" element={<Home />} />
@@ -39,7 +39,7 @@ const App = () => {
               />
             </Routes>
           </Layout>
-        </UserInfoProvider>
+        </GlobalContextProvider>
       </ThemeProvider>
     </BrowserRouter>
   );

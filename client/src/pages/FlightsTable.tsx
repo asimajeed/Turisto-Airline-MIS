@@ -1,7 +1,7 @@
 //import { Label } from "@/components/ui/label"
 //import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Checkbox } from "@/components/ui/checkbox";
-import { DatePickerDemo } from "@/components/ui/DatePicker";
+import { DatePicker } from "@/components/ui/DatePicker";
 import {
   Table,
   TableBody,
@@ -128,7 +128,6 @@ const FlightsTable = () => {
           {/* Flight Search Header */}
           <div className="flex items-center  mt-4 gap-4">
             <div className="flex gap-2">
-              
               <SelectAirports />
               <div
                 className="flex items-center border h-9 w-fit px-3 rounded-md cursor-pointer"
@@ -141,7 +140,7 @@ const FlightsTable = () => {
                 />
                 <span className="flex flex-auto">One-Way</span>
               </div>
-              {isOneWay ? <DatePickerDemo /> : <DatePickerWithRange />}
+              {isOneWay ? <DatePicker /> : <DatePickerWithRange />}
               <Select>
                 <SelectTrigger className="w-[100px]">
                   <SelectValue placeholder="1 adult" />
@@ -170,7 +169,9 @@ const FlightsTable = () => {
           </div>
 
           <div className="mt-8">
-            <h3 className="text-purple-950 text-xl font-bold">Choose a departing flight</h3>
+            <h3 className="text-theme-primary-darker text-xl font-bold">
+              Choose a departing flight
+            </h3>
             <div className="bg-gray-100 p-4 rounded-lg mt-4 hover: bg-inherit ">
               <Table className="z-10">
                 <TableHeader>
@@ -185,11 +186,15 @@ const FlightsTable = () => {
                 <TableBody>
                   {flights.map((flight, index) => (
                     <TableRow key={index}>
-                      <TableCell className="font-medium">{flight.flightNo}</TableCell>
+                      <TableCell className="font-medium">
+                        {flight.flightNo}
+                      </TableCell>
                       <TableCell>{flight.departure}</TableCell>
                       <TableCell>{flight.destination}</TableCell>
                       <TableCell>{flight.status}</TableCell>
-                      <TableCell className="text-right">{flight.price}</TableCell>
+                      <TableCell className="text-right">
+                        {flight.price}
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -209,7 +214,7 @@ const FlightsTable = () => {
             {/* Added flex and space between */}
             {/* Price Grid */}
             <div className="w-1/2">
-              <h4 className="text-lg  text-purple-950  font-bold">
+              <h4 className="text-lg  text-theme-primary-darker  font-bold">
                 Price grid (flexible dates)
               </h4>
               <div className="mt-4 border rounded-lg border-gray-200">
@@ -218,7 +223,9 @@ const FlightsTable = () => {
             </div>
             {/* Price History */}
             <div className="w-1/2">
-              <h4 className="text-lg text-purple-950  font-bold">Price history</h4>
+              <h4 className="text-lg text-theme-primary-darker  font-bold">
+                Price history
+              </h4>
               <div className="p-4 rounded-lg">
                 <Card>
                   <CardHeader>
@@ -272,7 +279,8 @@ const FlightsTable = () => {
                     <div className="flex w-full items-start gap-2 text-sm">
                       <div className="grid gap-2">
                         <div className="flex items-center gap-2 font-medium leading-none">
-                          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
+                          Trending up by 5.2% this month{" "}
+                          <TrendingUp className="h-4 w-4" />
                         </div>
                         <div className="flex items-center gap-2 leading-none text-muted-foreground">
                           January - June 2024

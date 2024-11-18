@@ -1,18 +1,23 @@
-import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
+import { format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover"
-import { useState } from "react"
+} from "@/components/ui/popover";
+import { useGlobalContext } from "@/context/GlobalContext";
 
-export function DatePickerDemo() {
-  const [date, setDate] = useState<Date>()
+export function DatePicker() {
+  // const [date, setDate] = React.useState<Date>()
+  const { user, setUserInfo } = useGlobalContext();
+  const date = user.start_date || undefined;
+  const setDate = (d: Date | undefined) => {
+    setUserInfo({ ...user, start_date: d || null });
+  };
 
   return (
     <Popover>
@@ -37,5 +42,5 @@ export function DatePickerDemo() {
         />
       </PopoverContent>
     </Popover>
-  )
+  );
 }

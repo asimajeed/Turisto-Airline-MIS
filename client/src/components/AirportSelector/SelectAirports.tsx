@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import SelectBox from "./SelectBox";
 import { airportType } from "@/utils/types";
-import { useUserContext } from "@/context/UIContext";
+import { useGlobalContext } from "@/context/GlobalContext";
 
 const SelectAirports = () => {
   const [airportOptions, setAirportOptions] = useState<airportType[]>([]);
   const [fromValue, setFromValue] = useState<airportType | null>(null);
   const [toValue, setToValue] = useState<airportType | null>(null);
-  const { user, setUserInfo } = useUserContext();
+  const { user, setUserInfo } = useGlobalContext();
 
   useEffect(() => {
     if (fromValue) {

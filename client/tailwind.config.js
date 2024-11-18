@@ -15,6 +15,7 @@ export default {
           primary: {
             DEFAULT: "var(--theme-primary)",
             highlight: "var(--theme-primary-highlight)",
+            darker: "var(--theme-primary-darker)",
           },
           secondary: "var(--theme-secondary)",
         },

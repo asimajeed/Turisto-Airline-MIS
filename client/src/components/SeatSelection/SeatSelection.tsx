@@ -3,6 +3,7 @@ import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@/components/
 import { Button } from "@/components/ui/button";
 import Selector from "./Selector";
 import { useState } from "react";
+import { ScrollArea } from "../ui/scroll-area";
 
 const SeatSelection = () => {
   const [selectedSeat, setSelectedSeat] = useState<string | null>(null);
@@ -18,9 +19,9 @@ const SeatSelection = () => {
         <DialogHeader className="pb-2">
           <DialogTitle >Select seat</DialogTitle>
         </DialogHeader>
-        <div className="overflow-y-auto max-h-[94vh]">
+        <ScrollArea className="max-h-[80vh]">
           <Selector selectedSeat={selectedSeat} setSelectedSeat={setSelectedSeat}/>
-        </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

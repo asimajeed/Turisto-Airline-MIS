@@ -27,4 +27,4 @@ SELECT * FROM users;
 ###
 
 ### Fetch Airports
-GET http://localhost:5000/api/airports?search=karachi
+GET http://localhost:5000/api/airports?search=A

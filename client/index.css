@@ -6,13 +6,18 @@
   /* Custom theming */
   :root {
     --theme-primary: hsl(215, 45%, 45%);
-    --theme-primary-highlight: hsl(215, 45%, 55%);
-    --theme-primary-dim: hsl(215, 16%, 35%);
+    --theme-primary-highlight: hsl(215, 45%, 75%);
+    --theme-primary-darker: hsl(215, 45%, 25%);
     --theme-secondary: hsl(215, 45%, 75%);
-    --navbar-height: 4rem;
   }
-
+  .dark {
+    --theme-primary: hsl(215, 45%, 45%);
+    --theme-primary-highlight: hsl(215, 45%, 55%);
+    --theme-primary-darker: hsl(215, 30%, 60%);
+    --theme-secondary: hsl(215, 45%, 75%);
+  }
   :root {
+    --navbar-height: 4rem;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 240 5.9% 10%;
