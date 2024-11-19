@@ -27,6 +27,10 @@ const SelectAirports = () => {
     }
   }, [toValue]);
 
+  useEffect(() => {
+    console.log("User data set", user);
+  })
+
   return (
     <div>
       <SelectBox

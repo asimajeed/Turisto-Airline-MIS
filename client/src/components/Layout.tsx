@@ -1,4 +1,5 @@
 import NavigationBar from "./NavigationBar";
+import Footer from "./Footer";
 
 const Layout = ({ children }: any) => {
   return (
@@ -8,6 +9,7 @@ const Layout = ({ children }: any) => {
         {/* Add padding top to prevent content from being hidden behind the fixed navbar */}
         {children}
       {/* </div> */}
+      <Footer />
     </div>
   );
 };

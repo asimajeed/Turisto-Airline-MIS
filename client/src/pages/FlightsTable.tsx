@@ -44,6 +44,13 @@ import PriceTable from "@/components/PriceTable";
 import SelectAirports from "@/components/AirportSelector/SelectAirports";
 
 export const description = "A stacked area chart";
+interface Flight {
+  flightNo: string;
+  departure: string;
+  destination: string;
+  status: string;
+  price: string;
+}
 
 const chartData = [
   { month: "January", economy: 150, business: 350 },
@@ -54,7 +61,7 @@ const chartData = [
   { month: "June", economy: 190, business: 400 },
 ];
 
-const flights = [
+const flights : Flight[] = [
   {
     flightNo: "FL123",
     departure: "New York (JFK)",
@@ -111,10 +118,18 @@ const chartConfig = {
 
 const FlightsTable = () => {
   const [isOneWay, setIsOneWay] = useState(false);
+  const [selectedFlight, setSelectedFlight] = useState<Flight | null>(null);
+
+
 
   const handleOneWayChange = () => {
     setIsOneWay((prev) => !prev);
   };
+
+  const handleFlightSelect = (flight : Flight) => {
+    setSelectedFlight(flight);
+  };
+
   return (
     <FullscreenSection>
       <div
@@ -176,16 +191,23 @@ const FlightsTable = () => {
               <Table className="z-10">
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="text-gray-800">Flight No.</TableHead>
-                    <TableHead className="text-gray-800">Departure</TableHead>
-                    <TableHead className="text-gray-800">Destination</TableHead>
-                    <TableHead className="text-gray-800">Status</TableHead>
-                    <TableHead className="text-right">Price</TableHead>
+                    <TableHead className="text-theme-primary-darker">Flight No.</TableHead>
+                    <TableHead className="text-theme-primary-darker">Departure</TableHead>
+                    <TableHead className="text-theme-primary-darker">Destination</TableHead>
+                    <TableHead className="text-theme-primary-darker">Status</TableHead>
+                    <TableHead className="text-theme-primary-darker text-right">Price</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {flights.map((flight, index) => (
-                    <TableRow key={index}>
+                  {flights.map((flight : Flight, index) => (
+                    <TableRow
+                      key={index}
+                      className={`cursor-pointer ${selectedFlight?.flightNo === flight.flightNo
+                          ? "bg-theme-primary-light text-white"
+                          : "hover:bg-inherit"
+                        }`}
+                      onClick={() => handleFlightSelect(flight)}
+                    >
                       <TableCell className="font-medium">
                         {flight.flightNo}
                       </TableCell>
@@ -199,12 +221,14 @@ const FlightsTable = () => {
                   ))}
                 </TableBody>
               </Table>
-              {/* <Button variant="link" className="mt-4">Show all flights</Button> */}
-              <Link to="/passenger">
-                <Button className="bg-theme-primary hover:bg-theme-primary-highlight text-white p-4">
-                  Confirm Flight
-                </Button>
-              </Link>
+              {/* Conditionally render Confirm Flight Button */}
+              {selectedFlight && (
+                <Link to="/passenger">
+                  <Button className="mt-4 bg-theme-primary hover:bg-theme-primary-highlight text-white">
+                    Confirm Flight
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
 
