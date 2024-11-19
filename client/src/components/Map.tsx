@@ -136,7 +136,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ className, children }) => {
     };
   }, []);
 
-  const { user } = useGlobalContext();
+  const { data: user } = useGlobalContext();
   useEffect(() => {
     if (user.arrival_airport?.latitude) {
       const temp = {

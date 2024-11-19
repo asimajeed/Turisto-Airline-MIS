@@ -7,20 +7,23 @@ import { DatePickerWithRange } from "@/components/ui/DatePickerWithRange";
 import { DatePicker } from "@/components/ui/DatePicker";
 import SelectAirports from "@/components/AirportSelector/SelectAirports";
 import MapComponent from "@/components/Map";
+import { useGlobalContext } from "@/context/GlobalContext";
 
-function App() {
-  const [isOneWay, setIsOneWay] = useState(false);
-
+function Home() {
+  const { data, setContext } = useGlobalContext();
+  const isOneWay = data.isOneWay;
+  const setIsOneWay = (isOneWay: boolean) =>
+    setContext({ ...data, isOneWay: isOneWay });
   const handleOneWayChange = () => {
-    setIsOneWay((prev) => !prev);
+    setIsOneWay(!isOneWay);
   };
 
   return (
     <>
       <FullscreenSection>
-        <MapComponent className="h-full">
+        <MapComponent className="h-screen">
           <div className="flex flex-col items-center justify-center h-3/4 w-screen">
-            <h1 className="text-8xl font-bold bg-gradient-to-r from-theme-secondary to-theme-primary text-transparent bg-clip-text text-center mb-16 pb-5">
+            <h1 className="text-4xl md:text-6xl xl:text-8xl font-bold bg-gradient-to-r from-theme-secondary to-theme-primary text-transparent bg-clip-text text-center mb-16 pb-5">
               It's more than just a trip
             </h1>
             <div className="flex items-center justify-center mt-4 gap-2">
@@ -52,4 +55,4 @@ function App() {
   );
 }
 
-export default App;
+export default Home;

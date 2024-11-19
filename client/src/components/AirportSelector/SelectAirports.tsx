@@ -5,31 +5,23 @@ import { useGlobalContext } from "@/context/GlobalContext";
 
 const SelectAirports = () => {
   const [airportOptions, setAirportOptions] = useState<airportType[]>([]);
-  const [fromValue, setFromValue] = useState<airportType | null>(null);
-  const [toValue, setToValue] = useState<airportType | null>(null);
-  const { user, setUserInfo } = useGlobalContext();
-
-  useEffect(() => {
-    if (fromValue) {
-      setUserInfo({
-        ...user,
-        departure_airport: fromValue,
-      });
-    }
-  }, [fromValue]);
-
-  useEffect(() => {
-    if (toValue) {
-      setUserInfo({
-        ...user,
-        arrival_airport: toValue,
-      });
-    }
-  }, [toValue]);
+  const { data: user, setContext: setUserInfo } = useGlobalContext();
+  const fromValue = user.departure_airport;
+  const setFromValue = (fromValue: airportType) =>
+    setUserInfo({
+      ...user,
+      departure_airport: fromValue,
+    });
+  const toValue = user.arrival_airport;
+  const setToValue = (toValue: airportType) =>
+    setUserInfo({
+      ...user,
+      arrival_airport: toValue,
+    });
 
   useEffect(() => {
     console.log("User data set", user);
-  })
+  });
 
   return (
     <div>

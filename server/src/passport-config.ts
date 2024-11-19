@@ -29,16 +29,22 @@ passport.use(new LocalStrategy({
 ));
 
 passport.serializeUser((user: any, done) => {
-  done(null, user.id);
+  done(null, user.user_id);
 });
 
 passport.deserializeUser(async (id, done) => {
   try {
-    const result = await query('SELECT * FROM users WHERE id = $1', [id]);
+    const result = await query('SELECT * FROM users WHERE user_id = $1', [id]);
     const user = result.rows[0];
+    
+    if (!user) {
+      return done(new Error('User not found'), null);
+    }
+    
     done(null, user);
   } catch (err) {
-    done(err);
+    console.error('Error deserializing user:', err);
+    done(err, null); 
   }
 });
 

@@ -8,10 +8,10 @@ export async function fetchAirports(search: string, limit: number, offset: numbe
       `
       SELECT airport_id, airport_code, airport_name, city, country, latitude, longitude
       FROM airports
-      WHERE airport_name ILIKE $1 OR airport_code ILIKE $1 OR city ILIKE $1
+      WHERE airport_name ILIKE $1 OR airport_code ILIKE $1 OR city ILIKE $1 OR country ILIKE $1
       LIMIT $2 OFFSET $3
       `,
-      [`%${search}%`, limit, offset]
+      [`${search}%`, limit, offset]
     );
     return result.rows;
   } catch (err) {

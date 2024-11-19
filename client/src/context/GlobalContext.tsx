@@ -11,11 +11,12 @@ export interface globalContextType {
   arrival_airport: airportType | null;
   airport_list: string[] | null;
   adminAccess: boolean;
+  isOneWay: boolean;
 }
 
-interface UserContextType {
-  user: globalContextType;
-  setUserInfo: React.Dispatch<React.SetStateAction<globalContextType>>;
+interface GlobalContextType {
+  data: globalContextType;
+  setContext: React.Dispatch<React.SetStateAction<globalContextType>>;
 }
 
 const defaultUser: globalContextType = {
@@ -29,22 +30,24 @@ const defaultUser: globalContextType = {
   adminAccess: false,
 };
 
-const GlobalContext = createContext<UserContextType>({
-  user: defaultUser,
-  setUserInfo: () => {},
+const GlobalContext = createContext<GlobalContextType>({
+  data: defaultUser,
+  setContext: () => {},
 });
 
-const GlobalContextProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const GlobalContextProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [user, setUser] = useState<globalContextType>(defaultUser);
 
   return (
-    <GlobalContext.Provider value={{ user, setUserInfo: setUser }}>
+    <GlobalContext.Provider value={{ data: user, setContext: setUser }}>
       {children}
     </GlobalContext.Provider>
   );
 };
 
-const useGlobalContext = (): UserContextType => {
+const useGlobalContext = (): GlobalContextType => {
   return useContext(GlobalContext);
 };
 

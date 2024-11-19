@@ -9,9 +9,13 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useState, FC } from "react";
+import { useState, FC, useEffect } from "react";
 import { airportType } from "@/utils/types";
 import axios from "axios";
 
@@ -23,19 +27,35 @@ interface ComboBoxProps {
   setOptions: (options: airportType[]) => void;
 }
 
-const SelectBox: FC<ComboBoxProps> = ({ label, value, setValue, options, setOptions }) => {
+const SelectBox: FC<ComboBoxProps> = ({
+  label,
+  value,
+  setValue,
+  options,
+  setOptions,
+}) => {
   const [open, setOpen] = useState(false);
 
   const fetchMoreAirports = async (search?: string) => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_API_URL}/api/airports?search=${search || "A"}`
+        `${import.meta.env.VITE_BACKEND_API_URL}/api/airports?search=${
+          search || "A"
+        }`
       );
       setOptions(response.data);
     } catch (error) {
       console.error(error);
     }
   };
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchMoreAirports();
+    };
+    fetchData();
+  }, []);
 
   const handleInputChange = (str: string) => {
     fetchMoreAirports(str);

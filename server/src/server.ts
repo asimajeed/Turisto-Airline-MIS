@@ -15,7 +15,8 @@ const app = express();
 // Middleware
 app.use(
   cors({
-    origin: process.env.NODE_ENV === "production" ? "" : "http://localhost:5173",
+    origin:
+      process.env.NODE_ENV === "production" ? "" : "http://localhost:5173",
     credentials: true,
   })
 );
@@ -35,17 +36,20 @@ app.use(express.json());
 // Register user
 app.post("/register", async (req: Request, res: Response) => {
   try {
-    const { name, email, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
-    await query("INSERT INTO users (name, email, password) VALUES ($1, $2, $3)", [
-      name,
-      email,
-      hashedPassword,
-    ]);
-    res.status(201).send("User registered");
+    const { firstName, lastName, email, password } = req.body;
+    if ((await query("SELECT 1 FROM users WHERE email = $1", [email])).rows[0])
+      res.status(400).send("User already exists");
+    else {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      await query(
+        "INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4)",
+        [firstName, lastName, email, hashedPassword]
+      );
+      res.status(201).send("User registered");
+    }
   } catch (err) {
-    console.error(err);
     res.status(500).send("Error registering user");
+    console.error(err);
   }
 });
 
@@ -62,12 +66,11 @@ app.get("/profile", (req: Request, res: Response) => {
 
 app.post("/admin/sql", async (req: Request, res: Response) => {
   try {
-    res.json((await query(req.body.query)));
+    res.json(await query(req.body.query));
   } catch (err) {
     res.json("Server error: " + err);
   }
 });
-
 
 app.get("/api/airports", async (req, res) => {
   const search = req.query.search as string;

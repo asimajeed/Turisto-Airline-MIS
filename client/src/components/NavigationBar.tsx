@@ -1,5 +1,5 @@
 import { useState, useEffect, SetStateAction } from "react";
-import LoginDialog from "@/components/LoginForm/LoginForm";
+import LoginDialog from "@/components/LoginDialog/LoginDialog";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import "@theme-toggles/react/css/Within.css";

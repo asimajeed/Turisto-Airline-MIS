@@ -19,7 +19,7 @@ export function DatePickerWithRange({
   className,
 }: React.HTMLAttributes<HTMLDivElement>) {
   // const [date, setDate] = React.useState<DateRange | undefined>()
-  const { user, setUserInfo } = useGlobalContext();
+  const { data: user, setContext: setUserInfo } = useGlobalContext();
   const date: DateRange | undefined = {
     from: user.start_date || undefined,
     to: user.end_date || undefined,

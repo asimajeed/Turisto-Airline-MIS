@@ -13,7 +13,7 @@
   .dark {
     --theme-primary: hsl(215, 45%, 45%);
     --theme-primary-highlight: hsl(215, 45%, 55%);
-    --theme-primary-darker: hsl(215, 30%, 60%);
+    --theme-primary-darker: hsl(215, 60%, 50%);
     --theme-secondary: hsl(215, 45%, 75%);
   }
   :root {

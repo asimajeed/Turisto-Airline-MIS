@@ -13,7 +13,7 @@ import { useGlobalContext } from "@/context/GlobalContext";
 
 export function DatePicker() {
   // const [date, setDate] = React.useState<Date>()
-  const { user, setUserInfo } = useGlobalContext();
+  const { data: user, setContext: setUserInfo } = useGlobalContext();
   const date = user.start_date || undefined;
   const setDate = (d: Date | undefined) => {
     setUserInfo({ ...user, start_date: d || null });

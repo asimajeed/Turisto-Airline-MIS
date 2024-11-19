@@ -42,6 +42,7 @@ import {
 
 import PriceTable from "@/components/PriceTable";
 import SelectAirports from "@/components/AirportSelector/SelectAirports";
+import { useGlobalContext } from "@/context/GlobalContext";
 
 export const description = "A stacked area chart";
 interface Flight {
@@ -61,7 +62,7 @@ const chartData = [
   { month: "June", economy: 190, business: 400 },
 ];
 
-const flights : Flight[] = [
+const flights: Flight[] = [
   {
     flightNo: "FL123",
     departure: "New York (JFK)",
@@ -117,16 +118,15 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 const FlightsTable = () => {
-  const [isOneWay, setIsOneWay] = useState(false);
   const [selectedFlight, setSelectedFlight] = useState<Flight | null>(null);
-
-
-
+  const { data, setContext } = useGlobalContext();
+  const isOneWay = data.isOneWay;
+  const setIsOneWay = (isOneWay: boolean) =>
+    setContext({ ...data, isOneWay: isOneWay });
   const handleOneWayChange = () => {
-    setIsOneWay((prev) => !prev);
+    setIsOneWay(!isOneWay);
   };
-
-  const handleFlightSelect = (flight : Flight) => {
+  const handleFlightSelect = (flight: Flight) => {
     setSelectedFlight(flight);
   };
 
@@ -151,6 +151,7 @@ const FlightsTable = () => {
                 <Checkbox
                   checked={isOneWay}
                   onCheckedChange={handleOneWayChange}
+                  onClick={handleOneWayChange}
                   className="mr-2 border size-5"
                 />
                 <span className="flex flex-auto">One-Way</span>
@@ -191,21 +192,32 @@ const FlightsTable = () => {
               <Table className="z-10">
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="text-theme-primary-darker">Flight No.</TableHead>
-                    <TableHead className="text-theme-primary-darker">Departure</TableHead>
-                    <TableHead className="text-theme-primary-darker">Destination</TableHead>
-                    <TableHead className="text-theme-primary-darker">Status</TableHead>
-                    <TableHead className="text-theme-primary-darker text-right">Price</TableHead>
+                    <TableHead className="text-theme-primary-darker">
+                      Flight No.
+                    </TableHead>
+                    <TableHead className="text-theme-primary-darker">
+                      Departure
+                    </TableHead>
+                    <TableHead className="text-theme-primary-darker">
+                      Destination
+                    </TableHead>
+                    <TableHead className="text-theme-primary-darker">
+                      Status
+                    </TableHead>
+                    <TableHead className="text-theme-primary-darker text-right">
+                      Price
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {flights.map((flight : Flight, index) => (
+                  {flights.map((flight: Flight, index) => (
                     <TableRow
                       key={index}
-                      className={`cursor-pointer ${selectedFlight?.flightNo === flight.flightNo
+                      className={`cursor-pointer ${
+                        selectedFlight?.flightNo === flight.flightNo
                           ? "bg-theme-primary-light text-white"
                           : "hover:bg-inherit"
-                        }`}
+                      }`}
                       onClick={() => handleFlightSelect(flight)}
                     >
                       <TableCell className="font-medium">
