@@ -10,6 +10,7 @@ import { FaRegCheckCircle } from "react-icons/fa";
 import LoginForm from "./LoginFormBody";
 import RegisterForm from "./RegisterFormBody";
 import axios, { AxiosError } from "axios";
+import { useGlobalContext } from "@/context/GlobalContext";
 
 interface LoginFormProps {
   setIsLoggedIn: (isLoggedIn: boolean) => void;
@@ -31,6 +32,7 @@ const LoginDialog = ({
   const [password, setPassword] = useState("");
   const [feedback, setFeedback] = useState("");
   const feedbackPRef = useRef<HTMLParagraphElement>(null);
+  const { data, setContext } = useGlobalContext();
   const toggleTab = (tab: string) => {
     setActiveTab(tab);
   };
@@ -82,12 +84,14 @@ const LoginDialog = ({
 
   const handleSignIn = async () => {
     try {
-      await axios.post(
+      const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_API_URL}/login`,
         { email, password },
         { withCredentials: true }
       );
       showFeedback("Login successful!");
+      setContext({ ...data, ...response.data });
+      console.log(response.data);
       setIsLoggedIn(true);
       setIsOpen(false);
     } catch (error) {

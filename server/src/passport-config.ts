@@ -1,3 +1,29 @@
+import { Request, Response, NextFunction } from 'express';
+
+// Extend the Express Request interface
+declare global {
+  namespace Express {
+    interface User {
+      user_id: number;
+      first_name: string;
+      last_name: string;
+      email: string;
+      phone_number: string;
+      date_of_birth: Date;
+      loyalty_points: number;
+      loyalty_points_redeemed: number;
+      created_at: Date;
+      updated_at: Date;
+      is_admin: boolean;
+      is_guest: boolean;
+    }
+
+    interface Request {
+      user?: User;
+    }
+  }
+}
+
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import bcrypt from 'bcryptjs';

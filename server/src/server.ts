@@ -55,7 +55,17 @@ app.post("/register", async (req: Request, res: Response) => {
 
 // Login user
 app.post("/login", passport.authenticate("local"), (req, res) => {
-  res.send("Logged in");
+  res.status(200).json(req.user);
+});
+
+app.get("/logout", (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      return res.status(500).send({ message: "Logout failed" });
+    }
+    res.clearCookie("connect.sid"); // Optional: clear the session cookie
+    res.send({ message: "Logged out successfully" });
+  });
 });
 
 app.get("/profile", (req: Request, res: Response) => {

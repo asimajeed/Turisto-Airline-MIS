@@ -5,13 +5,19 @@ import { Link } from "react-router-dom";
 import "@theme-toggles/react/css/Within.css";
 import { Within } from "@theme-toggles/react";
 import { useTheme } from "@/context/ThemeContext";
+import axios from "axios";
+import AvatarButton from "./AvatarButton"
 
 const handleLogout = (setIsLoggedIn: {
   (value: SetStateAction<boolean>): void;
   (arg0: boolean): void;
 }) => {
-  document.cookie = "token=; Max-Age=0";
-  setIsLoggedIn(false);
+  try {
+    axios.get(`${import.meta.env.VITE_BACKEND_API_URL}/logout`);
+    setIsLoggedIn(false);
+  } catch (error) {
+    // do something
+  }
 };
 
 const MyNavbar = () => {
@@ -52,12 +58,7 @@ const MyNavbar = () => {
               toggled={theme.theme == "dark"}
             />
             {isLoggedIn ? (
-              <Button
-                className="bg-theme-primary hover:bg-theme-primary-highlight text-white ml-4"
-                onClick={() => handleLogout(setIsLoggedIn)}
-              >
-                Log out
-              </Button>
+              <AvatarButton handleLogout={handleLogout}></AvatarButton>
             ) : (
               <Button
                 onClick={() => setPopupFlag(true)}
