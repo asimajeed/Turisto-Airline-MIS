@@ -17,7 +17,7 @@ const AvatarButton = (props: AvatarButtonProps) => {
   if (name.length>13)
   name = name.substring(0, 13) + '...';
   return (
-    <div className="flex justify-between content-center">
+    <div className="flex justify-between align-middle items-center">
       <FaUser className="size-8 rounded-full overflow-hidden" />
       <p>{name}</p>
     </div>

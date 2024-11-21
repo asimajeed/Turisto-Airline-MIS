@@ -71,7 +71,9 @@ app.get("/logout", (req, res) => {
 app.get("/profile", (req: Request, res: Response) => {
   if (!req.isAuthenticated()) {
     res.status(401).send("You need to log in first");
-  } else res.send(req.user);
+  } else {
+    res.send(req.user);
+  }
 });
 
 app.post("/admin/sql", async (req: Request, res: Response) => {

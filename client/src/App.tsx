@@ -12,40 +12,106 @@ import PassengerTicket from "./pages/PassengerTicket";
 import PaymentPage from "./pages/Payment";
 import { ThemeProvider } from "./context/ThemeContext";
 import { GlobalContextProvider } from "./context/GlobalContext";
+import SDLayout from "./components/SDLayout";
 
 const App = () => {
   return (
-    // <BrowserRouter>
-    //   <ThemeProvider>
-    //     <GlobalContextProvider>
-    //       <Layout>
-    //         <Routes>
-    //           <Route path="/" element={<Home />} />
-    //           <Route path="/passenger" element={<PassengerInfo />} />
-    //           <Route path="/search" element={<Search />} />
-    //           <Route path="/admin" element={<Admin />} />
-    //           <Route path="/flights" element={<FlightsTable />} />
-    //           <Route path="/boardingpass" element={<BoardingPass />} />
-    //           <Route path="/passengerticket" element={<PassengerTicket />} />
-    //           <Route path="/payment" element={<PaymentPage />} />
-    //           {/* <Route path="/userpage" element={<UserPage />} /> */}
-    //           <Route
-    //             path="*"
-    //             element={
-    //               <FullscreenSection>
-    //                 <code className="flex items-center justify-center h-full text-3xl font-bold">
-    //                   404 Not Found
-    //                 </code>
-    //               </FullscreenSection>
-    //             }
-    //           />
-    //         </Routes>
-    //       </Layout>
-    //     </GlobalContextProvider>
-    //   </ThemeProvider>
-    // </BrowserRouter>
+    <BrowserRouter>
+      <ThemeProvider>
+        <GlobalContextProvider>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <Layout>
+                  <Home />
+                </Layout>
+              }
+            />
 
-    <UserPage/>
+            <Route
+              path="/passenger"
+              element={
+                <Layout>
+                  <PassengerInfo />
+                </Layout>
+              }
+            />
+
+            <Route
+              path="/search"
+              element={
+                <Layout>
+                  <Search />
+                </Layout>
+              }
+            />
+
+            <Route
+              path="/admin"
+              element={
+                <Layout>
+                  <Admin />
+                </Layout>
+              }
+            />
+
+            <Route
+              path="/flights"
+              element={
+                <Layout>
+                  <FlightsTable />
+                </Layout>
+              }
+            />
+
+            <Route
+              path="/boardingpass"
+              element={
+                <Layout>
+                  <BoardingPass />
+                </Layout>
+              }
+            />
+
+            <Route
+              path="/passengerticket"
+              element={
+                <Layout>
+                  <PassengerTicket />
+                </Layout>
+              }
+            />
+
+            <Route
+              path="/payment"
+              element={
+                <Layout>
+                  <PaymentPage />
+                </Layout>
+              }
+            />
+            <Route path="/user" element={<SDLayout />}>
+              <Route path="" element={<UserPage />} />
+            </Route>
+            <Route
+              path="*"
+              element={
+                <Layout>
+                  <div className="w-full h-[55vh]">
+                    <code className="flex items-center justify-center h-full text-3xl font-bold">
+                      404 Not Found
+                    </code>
+                  </div>
+                </Layout>
+              }
+            />
+          </Routes>
+        </GlobalContextProvider>
+      </ThemeProvider>
+    </BrowserRouter>
+
+    // <UserPage/>
   );
 };
 

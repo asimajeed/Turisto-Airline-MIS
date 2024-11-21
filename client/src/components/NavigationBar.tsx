@@ -6,8 +6,9 @@ import "@theme-toggles/react/css/Within.css";
 import { Within } from "@theme-toggles/react";
 import { useTheme } from "@/context/ThemeContext";
 import axios from "axios";
-import AvatarButton from "./AvatarButton"
-
+import AvatarButton from "./AvatarButton";
+import { useGlobalContext } from "@/context/GlobalContext";
+import { motion } from "framer-motion";
 const handleLogout = (setIsLoggedIn: {
   (value: SetStateAction<boolean>): void;
   (arg0: boolean): void;
@@ -24,9 +25,28 @@ const MyNavbar = () => {
   const [popupFlag, setPopupFlag] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-
-  // Scroll event listener to toggle navbar background opacity
+  const { data, setContext } = useGlobalContext();
+  const buttonVariants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.3 } },
+  };
   useEffect(() => {
+    const getLoggedIn = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_API_URL}/profile`,
+          { withCredentials: true }
+        );
+        if (response.status == 200) {
+          setIsLoggedIn(true);
+          setContext(response.data);
+          console.log(response.data);
+        }
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      }
+    };
+    getLoggedIn();
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50); // Threshold for background change
     };
@@ -42,14 +62,14 @@ const MyNavbar = () => {
           isScrolled ? "bg-background bg-opacity-100" : "bg-transparent"
         }`}
       >
-        <div className="flex items-center justify-between h-full px-8">
+        <div className="flex items-center justify-between h-full pl-8">
           <Link to="/">
             <div className="text-3xl font-bold bg-gradient-to-r from-theme-primary to-theme-secondary text-transparent bg-clip-text">
               Turisto
             </div>
           </Link>
 
-          <ul className="flex flex-row items-center h-full">
+          <ul className="flex items-center justify-between h-full w-32">
             <Within
               duration={500}
               onToggle={() => theme.toggleTheme()}
@@ -58,14 +78,28 @@ const MyNavbar = () => {
               toggled={theme.theme == "dark"}
             />
             {isLoggedIn ? (
-              <AvatarButton handleLogout={handleLogout}></AvatarButton>
-            ) : (
-              <Button
-                onClick={() => setPopupFlag(true)}
-                className="bg-theme-primary hover:bg-theme-primary-highlight text-white ml-4"
+              <motion.div
+                variants={buttonVariants}
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
               >
-                Sign In
-              </Button>
+                <AvatarButton handleLogout={handleLogout}></AvatarButton>
+              </motion.div>
+            ) : (
+              <motion.div
+                variants={buttonVariants}
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+              >
+                <Button
+                  onClick={() => setPopupFlag(true)}
+                  className="bg-theme-primary hover:bg-theme-primary-highlight text-white ml-4"
+                >
+                  Sign In
+                </Button>
+              </motion.div>
             )}
           </ul>
         </div>
