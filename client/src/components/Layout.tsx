@@ -6,7 +6,7 @@ const Layout = ({ children }: any) => {
     <>
       <NavigationBar />
       {/* <div className="pt-[var(--navbar-height)]"> */}
-        {/* Add padding top to prevent content from being hidden behind the fixed navbar */}
+      {/* Add padding top to prevent content from being hidden behind the fixed navbar */}
         {children}
       {/* </div> */}
       <Footer />
