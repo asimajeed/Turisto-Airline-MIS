@@ -2,7 +2,6 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import { Outlet } from "react-router-dom";
-import MyNavbar from "./NavigationBar";
 
 export default function SDLayout() {
   return (

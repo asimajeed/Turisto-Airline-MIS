@@ -12,23 +12,26 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 
 // Menu items.
 const items = [
     {
         title: "Profile",
         icon: Home,
-        subItems: [
-            { title: "Update", url: "#profile-update" },
-            { title: "Preference", url: "#profile-preference" },
-        ],
+        subItems: [{ title: "Update", url: "#profile-update" }],
     },
     {
         title: "Bookings",
         icon: Calendar,
         subItems: [
-            { title: "Book", url: "#bookings-book" },
-            { title: "Track Miles", url: "#bookings-track-miles" },
             { title: "Modify", url: "#bookings-modify" },
             { title: "Cancel", url: "#bookings-cancel" },
         ],
@@ -44,10 +47,7 @@ const items = [
     {
         title: "Loyalty Program",
         icon: Settings,
-        subItems: [
-            { title: "View Points", url: "#loyalty-view-points" },
-            { title: "Redeem Points", url: "#loyalty-redeem-points" },
-        ],
+        subItems: [{ title: "Redeem Points", isDialog: true }],
     },
 ];
 
@@ -58,7 +58,6 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ onSelectionChange }: AppSidebarProps) {
-    // Trigger breadcrumb updates on item selection
     const handleSelection = (section: string, subItem: string | null = null) => {
         const path = subItem ? [section, subItem] : [section];
         if (onSelectionChange) onSelectionChange(path);
@@ -84,11 +83,31 @@ export function AppSidebar({ onSelectionChange }: AppSidebarProps) {
                                             <SidebarMenuSub>
                                                 {item.subItems.map((subItem, subIndex) => (
                                                     <SidebarMenuSubItem key={subIndex}>
-                                                        <SidebarMenuButton
-                                                            onClick={() => handleSelection(item.title, subItem.title)}
-                                                        >
-                                                            {subItem.title}
-                                                        </SidebarMenuButton>
+                                                        {subItem.isDialog ? (
+                                                            <Dialog>
+                                                                <DialogTrigger asChild>
+                                                                    <SidebarMenuButton>
+                                                                        {subItem.title}
+                                                                    </SidebarMenuButton>
+                                                                </DialogTrigger>
+                                                                <DialogContent>
+                                                                    <DialogHeader>
+                                                                        <DialogTitle>Redeem Points</DialogTitle>
+                                                                        <DialogDescription>
+                                                                            You can redeem your loyalty points here.
+                                                                        </DialogDescription>
+                                                                    </DialogHeader>
+                                                                </DialogContent>
+                                                            </Dialog>
+                                                        ) : (
+                                                            <SidebarMenuButton
+                                                                onClick={() =>
+                                                                    handleSelection(item.title, subItem.title)
+                                                                }
+                                                            >
+                                                                {subItem.title}
+                                                            </SidebarMenuButton>
+                                                        )}
                                                     </SidebarMenuSubItem>
                                                 ))}
                                             </SidebarMenuSub>

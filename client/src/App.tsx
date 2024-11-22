@@ -89,7 +89,8 @@ const App = () => {
               }
             />
             <Route path="/user" element={<SDLayout />}>
-              <Route path="" element={<UserPage />} />
+            <Route path="" element={<UserPage />} />
+            <Route path="" element={<div></div>} />
             </Route>
             <Route
               path="*"
