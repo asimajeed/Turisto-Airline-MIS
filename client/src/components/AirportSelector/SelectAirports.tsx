@@ -1,23 +1,16 @@
 import { useState, useEffect } from "react";
 import SelectBox from "./SelectBox";
 import { airportType } from "@/utils/types";
-import { useGlobalContext } from "@/context/GlobalContext";
+import { useGlobalStore } from "@/context/GlobalStore";
 
 const SelectAirports = () => {
   const [airportOptions, setAirportOptions] = useState<airportType[]>([]);
-  const { data: user, setContext: setUserInfo } = useGlobalContext();
-  const fromValue = user.departure_airport;
-  const setFromValue = (fromValue: airportType) =>
-    setUserInfo({
-      ...user,
-      departure_airport: fromValue,
-    });
-  const toValue = user.arrival_airport;
-  const setToValue = (toValue: airportType) =>
-    setUserInfo({
-      ...user,
-      arrival_airport: toValue,
-    });
+  const {
+    departure_airport: fromValue,
+    arrival_airport: toValue,
+    setDepartureAirport: setFromValue,
+    setArrivalAirport: setToValue,
+  } = useGlobalStore();
 
   return (
     <div>

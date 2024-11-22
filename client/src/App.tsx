@@ -4,21 +4,18 @@ import Search from "./pages/Search";
 import Admin from "./pages/Admin";
 import { UserPage } from "./pages/UserPage";
 import Layout from "./components/Layout";
-import FullscreenSection from "./components/FullscreenSection";
 import FlightsTable from "./pages/FlightsTable";
 import PassengerInfo from "./pages/PassengerInfo";
 import BoardingPass from "./pages/BoardingPass";
 import PassengerTicket from "./pages/PassengerTicket";
 import PaymentPage from "./pages/Payment";
 import { ThemeProvider } from "./context/ThemeContext";
-import { GlobalContextProvider } from "./context/GlobalContext";
 import SDLayout from "./components/SDLayout";
 
 const App = () => {
   return (
     <BrowserRouter>
       <ThemeProvider>
-        <GlobalContextProvider>
           <Routes>
             <Route
               path="/"
@@ -107,7 +104,6 @@ const App = () => {
               }
             />
           </Routes>
-        </GlobalContextProvider>
       </ThemeProvider>
     </BrowserRouter>
 

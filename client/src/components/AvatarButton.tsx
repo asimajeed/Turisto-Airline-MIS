@@ -1,26 +1,45 @@
-import { IoLogOutOutline } from "react-icons/io5";
-import { FaUser } from "react-icons/fa6";
-import axios from "axios";
-import { SetStateAction } from "react";
-import { useGlobalContext } from "@/context/GlobalContext";
+import { FaUser } from "react-icons/fa";
+import { IoLogOutOutline, IoSettingsOutline } from "react-icons/io5";
+import { useGlobalStore } from "@/context/GlobalStore";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import { Link } from "react-router-dom";
 
-interface AvatarButtonProps {
-  handleLogout: (setIsLoggedIn: {
-    (value: SetStateAction<boolean>): void;
-    (arg0: boolean): void;
-  }) => void;
-}
+// Avatar Component
+const Avatar = () => {
+  return <FaUser className="size-9 rounded-full overflow-hidden" />;
+};
 
-const AvatarButton = (props: AvatarButtonProps) => {
-  const { data, setContext } = useGlobalContext();
-  let name = `${data.first_name} ${data.last_name}`;
-  if (name.length>13)
-  name = name.substring(0, 13) + '...';
+const AvatarButton = ({ onLogout }: { onLogout: () => void }) => {
+  const { first_name, last_name } = useGlobalStore();
   return (
-    <div className="flex justify-between align-middle items-center">
-      <FaUser className="size-8 rounded-full overflow-hidden" />
-      <p>{name}</p>
-    </div>
+    <DropdownMenu modal={false}>
+      <DropdownMenuTrigger className="mt-1">
+        <Avatar />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuLabel>{`${first_name} ${last_name}`}</DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <Link to="/user">
+            <DropdownMenuItem>
+              <IoSettingsOutline />
+              Manage User
+            </DropdownMenuItem>
+          </Link>
+          <DropdownMenuItem onClick={onLogout}>
+            <IoLogOutOutline /> Logout
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 

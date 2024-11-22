@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import FullscreenSection from "@/components/FullscreenSection";
 import { Link } from "react-router-dom";
@@ -7,13 +6,10 @@ import { DatePickerWithRange } from "@/components/ui/DatePickerWithRange";
 import { DatePicker } from "@/components/ui/DatePicker";
 import SelectAirports from "@/components/AirportSelector/SelectAirports";
 import MapComponent from "@/components/Map";
-import { useGlobalContext } from "@/context/GlobalContext";
+import { useGlobalStore } from "@/context/GlobalStore";
 
 function Home() {
-  const { data, setContext } = useGlobalContext();
-  const isOneWay = data.isOneWay;
-  const setIsOneWay = (isOneWay: boolean) =>
-    setContext({ ...data, isOneWay: isOneWay });
+  const { isOneWay, setIsOneWay } = useGlobalStore();
   const handleOneWayChange = () => {
     setIsOneWay(!isOneWay);
   };

@@ -1,4 +1,4 @@
-import { useState, useEffect, SetStateAction } from "react";
+import { useState, useEffect } from "react";
 import LoginDialog from "@/components/LoginDialog/LoginDialog";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -7,28 +7,25 @@ import { Within } from "@theme-toggles/react";
 import { useTheme } from "@/context/ThemeContext";
 import axios from "axios";
 import AvatarButton from "./AvatarButton";
-import { useGlobalContext } from "@/context/GlobalContext";
+import { useGlobalStore } from "@/context/GlobalStore";
 import { motion } from "framer-motion";
-const handleLogout = (setIsLoggedIn: {
-  (value: SetStateAction<boolean>): void;
-  (arg0: boolean): void;
-}) => {
-  try {
-    axios.get(`${import.meta.env.VITE_BACKEND_API_URL}/logout`);
-    setIsLoggedIn(false);
-  } catch (error) {
-    // do something
-  }
-};
 
 const MyNavbar = () => {
   const [popupFlag, setPopupFlag] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const { data, setContext } = useGlobalContext();
+  const { setAll } = useGlobalStore();
   const buttonVariants = {
     hidden: { opacity: 0, scale: 0.8 },
     visible: { opacity: 1, scale: 1, transition: { duration: 0.3 } },
+  };
+  const handleLogout = () => {
+    try {
+      axios.get(`${import.meta.env.VITE_BACKEND_API_URL}/logout`);
+      setIsLoggedIn(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
   useEffect(() => {
     const getLoggedIn = async () => {
@@ -39,7 +36,7 @@ const MyNavbar = () => {
         );
         if (response.status == 200) {
           setIsLoggedIn(true);
-          setContext(response.data);
+          setAll(response.data);
           console.log(response.data);
         }
       } catch (error) {
@@ -48,7 +45,7 @@ const MyNavbar = () => {
     };
     getLoggedIn();
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50); // Threshold for background change
+      setIsScrolled(window.scrollY > 50);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -62,14 +59,14 @@ const MyNavbar = () => {
           isScrolled ? "bg-background bg-opacity-100" : "bg-transparent"
         }`}
       >
-        <div className="flex items-center justify-between h-full pl-8">
+        <div className="flex items-center justify-between h-full px-8">
           <Link to="/">
             <div className="text-3xl font-bold bg-gradient-to-r from-theme-primary to-theme-secondary text-transparent bg-clip-text">
               Turisto
             </div>
           </Link>
 
-          <ul className="flex items-center justify-between h-full w-32">
+          <ul className="flex items-center justify-between h-full w-24">
             <Within
               duration={500}
               onToggle={() => theme.toggleTheme()}
@@ -77,30 +74,23 @@ const MyNavbar = () => {
               style={{ color: `${theme.theme !== "dark" ? "black" : "white"}` }}
               toggled={theme.theme == "dark"}
             />
-            {isLoggedIn ? (
-              <motion.div
-                variants={buttonVariants}
-                initial="hidden"
-                animate="visible"
-                exit="hidden"
-              >
-                <AvatarButton handleLogout={handleLogout}></AvatarButton>
-              </motion.div>
-            ) : (
-              <motion.div
-                variants={buttonVariants}
-                initial="hidden"
-                animate="visible"
-                exit="hidden"
-              >
+            <motion.div
+              variants={buttonVariants}
+              initial="hidden"
+              animate="visible"
+              exit="hidden"
+            >
+              {isLoggedIn ? (
+                <AvatarButton onLogout={handleLogout} />
+              ) : (
                 <Button
                   onClick={() => setPopupFlag(true)}
                   className="bg-theme-primary hover:bg-theme-primary-highlight text-white ml-4"
                 >
                   Sign In
                 </Button>
-              </motion.div>
-            )}
+              )}
+            </motion.div>
           </ul>
         </div>
       </nav>

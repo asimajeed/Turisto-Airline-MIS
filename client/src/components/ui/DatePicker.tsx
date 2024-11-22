@@ -9,14 +9,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useGlobalContext } from "@/context/GlobalContext";
+import { useGlobalStore } from "@/context/GlobalStore";
 
 export function DatePicker() {
   // const [date, setDate] = React.useState<Date>()
-  const { data: user, setContext: setUserInfo } = useGlobalContext();
-  const date = user.start_date || undefined;
+  const { start_date: date, setStartDate } = useGlobalStore();
   const setDate = (d: Date | undefined) => {
-    setUserInfo({ ...user, start_date: d || null });
+    setStartDate(d || null);
   };
 
   return (
@@ -36,7 +35,7 @@ export function DatePicker() {
       <PopoverContent className="w-auto p-0">
         <Calendar
           mode="single"
-          selected={date}
+          selected={date || undefined}
           onSelect={setDate}
           initialFocus
         />

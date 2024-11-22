@@ -13,23 +13,19 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useGlobalContext } from "@/context/GlobalContext";
+import { useGlobalStore } from "@/context/GlobalStore";
 
 export function DatePickerWithRange({
   className,
 }: React.HTMLAttributes<HTMLDivElement>) {
-  // const [date, setDate] = React.useState<DateRange | undefined>()
-  const { data: user, setContext: setUserInfo } = useGlobalContext();
+  const { start_date, end_date, setStartDate, setEndDate } = useGlobalStore();
   const date: DateRange | undefined = {
-    from: user.start_date || undefined,
-    to: user.end_date || undefined,
+    from: start_date || undefined,
+    to: end_date || undefined,
   };
   const setDate = (d: DateRange | undefined) => {
-    setUserInfo({
-      ...user,
-      start_date: d?.from || null,
-      end_date: d?.to || null,
-    });
+    setStartDate(d?.from || null);
+    setEndDate(d?.to || null);
   };
   return (
     <div className={cn("grid gap-2", className)}>

@@ -1,5 +1,5 @@
 import Image from "@/assets/WorldMapScaled.png";
-import { useGlobalContext } from "@/context/GlobalContext";
+import { useGlobalStore } from "@/context/GlobalStore";
 import { cn } from "@/lib/utils";
 import React, { useEffect, useRef, useState } from "react";
 
@@ -136,12 +136,12 @@ const MapComponent: React.FC<MapComponentProps> = ({ className, children }) => {
     };
   }, []);
 
-  const { data: user } = useGlobalContext();
+  const { arrival_airport, departure_airport } = useGlobalStore();
   useEffect(() => {
-    if (user.arrival_airport?.latitude) {
+    if (arrival_airport?.latitude) {
       const temp = {
-        lat: Number(user.arrival_airport.latitude),
-        lng: Number(user.arrival_airport.longitude),
+        lat: Number(arrival_airport.latitude),
+        lng: Number(arrival_airport.longitude),
       };
       setPoints((prevPoints) => [
         ...prevPoints,
@@ -151,13 +151,13 @@ const MapComponent: React.FC<MapComponentProps> = ({ className, children }) => {
         },
       ]);
     }
-  }, [user.arrival_airport]);
+  }, [arrival_airport]);
 
   useEffect(() => {
-    if (user.departure_airport?.latitude) {
+    if (departure_airport?.latitude) {
       const temp = {
-        lat: Number(user.departure_airport.latitude),
-        lng: Number(user.departure_airport.longitude),
+        lat: Number(departure_airport.latitude),
+        lng: Number(departure_airport.longitude),
       };
       setPoints((prevPoints) => [
         ...prevPoints,
@@ -167,7 +167,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ className, children }) => {
         },
       ]);
     }
-  }, [user.departure_airport]);
+  }, [departure_airport]);
 
   const generatePath = (points: { lat: number; lng: number }[]) => {
     if (points.length < 2 || imageDimensions.width === 0) return null;
@@ -188,15 +188,22 @@ const MapComponent: React.FC<MapComponentProps> = ({ className, children }) => {
     );
 
     const pathD = projectedPoints
-      .map((point, index) =>
-        index === 0
-          ? `M ${point.x + imageDimensions.offsetX} ${
-              point.y + imageDimensions.offsetY
-            }`
-          : `L ${point.x + imageDimensions.offsetX} ${
-              point.y + imageDimensions.offsetY
-            }`
-      )
+      .map((point, index, arr) => {
+        if (index === 0) {
+          return `M ${point.x} ${point.y}`; // Start the path
+        }
+
+        // Detect if there is a large jump in longitude (crossing the Date Line)
+        const prevPoint = arr[index - 1];
+        const lngDiff = Math.abs(
+          interpolatedPoints[index - 1].lng - interpolatedPoints[index].lng
+        );
+        const isCrossingDateLine = lngDiff > 180;
+
+        return isCrossingDateLine
+          ? `M ${point.x} ${point.y}` // Pen up: move without drawing
+          : `L ${point.x} ${point.y}`; // Pen down: draw line
+      })
       .join(" ");
 
     return pathD;

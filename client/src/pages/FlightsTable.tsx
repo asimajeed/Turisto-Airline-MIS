@@ -42,7 +42,7 @@ import {
 
 import PriceTable from "@/components/PriceTable";
 import SelectAirports from "@/components/AirportSelector/SelectAirports";
-import { useGlobalContext } from "@/context/GlobalContext";
+import { useGlobalStore } from "@/context/GlobalStore";
 
 export const description = "A stacked area chart";
 interface Flight {
@@ -119,10 +119,7 @@ const chartConfig = {
 
 const FlightsTable = () => {
   const [selectedFlight, setSelectedFlight] = useState<Flight | null>(null);
-  const { data, setContext } = useGlobalContext();
-  const isOneWay = data.isOneWay;
-  const setIsOneWay = (isOneWay: boolean) =>
-    setContext({ ...data, isOneWay: isOneWay });
+  const { isOneWay, setIsOneWay } = useGlobalStore();
   const handleOneWayChange = () => {
     setIsOneWay(!isOneWay);
   };

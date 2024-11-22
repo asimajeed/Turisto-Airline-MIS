@@ -62,7 +62,7 @@ const SelectBox: FC<ComboBoxProps> = ({
   };
 
   return (
-    <Popover open={open} onOpenChange={setOpen} modal>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"

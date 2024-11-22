@@ -27,7 +27,6 @@ declare global {
   }
 }
 
-
 passport.use(
   new LocalStrategy(
     {
@@ -67,13 +66,13 @@ passport.serializeUser((user: any, done) => {
 passport.deserializeUser(async (id, done) => {
   try {
     const result = await query("SELECT * FROM users WHERE user_id = $1", [id]);
-    const user = result.rows[0];
+    const { password, ...storeUser } = result.rows[0];
 
-    if (!user) {
+    if (!storeUser) {
       return done(new Error("User not found"), null);
     }
 
-    done(null, user);
+    done(null, storeUser);
   } catch (err) {
     console.error("Error deserializing user:", err);
     done(err, null);
