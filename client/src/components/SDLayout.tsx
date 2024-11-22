@@ -3,6 +3,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { Separator } from "@/components/ui/separator";
 import { Outlet } from "react-router-dom";
 
+
 export default function SDLayout() {
   return (
     <SidebarProvider>

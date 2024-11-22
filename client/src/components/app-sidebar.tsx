@@ -20,9 +20,21 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
-// Menu items.
-const items = [
+type SubItem =
+    | { title: string; url: string }
+    | { title: string; isDialog: boolean }
+    | { title: string; isCancel: boolean };
+
+type MenuItem = {
+    title: string;
+    icon: React.ComponentType;
+    subItems: SubItem[];
+};
+
+const items: MenuItem[] = [
     {
         title: "Profile",
         icon: Home,
@@ -33,7 +45,7 @@ const items = [
         icon: Calendar,
         subItems: [
             { title: "Modify", url: "#bookings-modify" },
-            { title: "Cancel", url: "#bookings-cancel" },
+            { title: "Cancel", isCancel: true },
         ],
     },
     {
@@ -75,7 +87,7 @@ export function AppSidebar({ onSelectionChange }: AppSidebarProps) {
                                     <SidebarMenuItem>
                                         <CollapsibleTrigger asChild>
                                             <SidebarMenuButton onClick={() => handleSelection(item.title)}>
-                                                <item.icon className="mr-2" />
+                                                <item.icon />
                                                 {item.title}
                                             </SidebarMenuButton>
                                         </CollapsibleTrigger>
@@ -83,7 +95,7 @@ export function AppSidebar({ onSelectionChange }: AppSidebarProps) {
                                             <SidebarMenuSub>
                                                 {item.subItems.map((subItem, subIndex) => (
                                                     <SidebarMenuSubItem key={subIndex}>
-                                                        {subItem.isDialog ? (
+                                                        {"isDialog" in subItem ? (
                                                             <Dialog>
                                                                 <DialogTrigger asChild>
                                                                     <SidebarMenuButton>
@@ -97,6 +109,54 @@ export function AppSidebar({ onSelectionChange }: AppSidebarProps) {
                                                                             You can redeem your loyalty points here.
                                                                         </DialogDescription>
                                                                     </DialogHeader>
+                                                                </DialogContent>
+                                                            </Dialog>
+                                                        ) : "isCancel" in subItem ? (
+                                                            <Dialog>
+                                                                <DialogTrigger asChild>
+                                                                    <SidebarMenuButton>
+                                                                        {subItem.title}
+                                                                    </SidebarMenuButton>
+                                                                </DialogTrigger>
+                                                                <DialogContent>
+                                                                    <DialogHeader>
+                                                                        <DialogTitle>Cancel Booking</DialogTitle>
+                                                                        <DialogDescription>
+                                                                            Please provide the details below to cancel your booking.
+                                                                        </DialogDescription>
+                                                                    </DialogHeader>
+                                                                    <div className="space-y-4 mt-4">
+                                                                        <div>
+                                                                            <label
+                                                                                htmlFor="cancel-booking-reference"
+                                                                                className="block text-sm font-medium text-gray-200"
+                                                                            >
+                                                                                Booking Reference
+                                                                            </label>
+                                                                            <Input
+                                                                                id="cancel-booking-reference"
+                                                                                type="text"
+                                                                                placeholder="Enter your booking reference"
+                                                                            />
+                                                                        </div>
+                                                                        <div>
+                                                                            <label
+                                                                                htmlFor="cancel-passenger-name"
+                                                                                className="block text-sm font-medium text-gray-200"
+                                                                            >
+                                                                                Passenger Name
+                                                                            </label>
+                                                                            <Input
+                                                                                id="cancel-passenger-name"
+                                                                                type="text"
+                                                                                placeholder="Enter passenger name"
+                                                                            />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="flex justify-end mt-4 gap-2">
+                                                                        <Button variant="outline">Cancel</Button>
+                                                                        <Button variant="destructive">Confirm</Button>
+                                                                    </div>
                                                                 </DialogContent>
                                                             </Dialog>
                                                         ) : (

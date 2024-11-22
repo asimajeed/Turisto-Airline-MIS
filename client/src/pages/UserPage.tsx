@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -20,86 +20,76 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-export function UserPage() {
-  const [user, setUser] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phoneNumber: "",
-    dateOfBirth: "",
-    loyaltyPoints: 0,
+interface User {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  dateOfBirth: string;
+  loyaltyPoints: number;
+  isAdmin: boolean;
+}
+
+interface EditFields {
+  [key: string]: string | number;
+}
+
+interface IsEditing {
+  [key: string]: boolean;
+}
+
+export function UserPage(): JSX.Element {
+  const [user, setUser] = useState<User | null>({
+    firstName: "John",
+    lastName: "Doe",
+    email: "john.doe@example.com",
+    phoneNumber: "123-456-7890",
+    dateOfBirth: "1990-01-01",
+    loyaltyPoints: 1500,
     isAdmin: false,
   });
 
-  const [editFields, setEditFields] = useState({});
-  const [isEditing, setIsEditing] = useState({});
+  const [editFields, setEditFields] = useState<EditFields>({});
+  const [isEditing, setIsEditing] = useState<IsEditing>({});
 
-  useEffect(() => {
-    // Fetch current user data (replace with actual API endpoint)
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch("/api/get-user");
-        const data = await response.json();
-        setUser(data);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      }
-    };
-    fetchUserData();
-  }, []);
-
-  const handleFieldChange = (field, value) => {
+  const handleFieldChange = (field: string, value: string | number): void => {
     setEditFields((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleUpdateField = async (field) => {
-    try {
-      const response = await fetch(`/api/update-user`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ [field]: editFields[field] }),
-      });
-      if (response.ok) {
-        alert(`${field} updated successfully!`);
-        setUser((prev) => ({ ...prev, [field]: editFields[field] }));
-        setIsEditing((prev) => ({ ...prev, [field]: false }));
-      } else {
-        alert(`Failed to update ${field}.`);
-      }
-    } catch (error) {
-      console.error(`Error updating ${field}:`, error);
-      alert("An error occurred.");
+  const handleUpdateField = (field: string): void => {
+    if (user) {
+      // Simulate a successful update locally
+      setUser((prev) => (prev ? { ...prev, [field]: editFields[field] } : null));
+      setIsEditing((prev) => ({ ...prev, [field]: false }));
+      alert(`${field} updated successfully!`);
     }
   };
 
-  const toggleEditMode = (field) => {
+  const toggleEditMode = (field: string): void => {
     setIsEditing((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 
-  const handleDeleteUser = async () => {
-    try {
-      const response = await fetch("/api/delete-user", {
-        method: "DELETE",
-      });
-      if (response.ok) {
-        alert("User deleted successfully!");
-        // Redirect or clear user session here
-      } else {
-        alert("Failed to delete user.");
-      }
-    } catch (error) {
-      console.error("Error deleting user:", error);
-      alert("An error occurred.");
-    }
+  const handleDeleteUser = (): void => {
+    // Simulate user deletion
+    alert("User deleted successfully! (This is a frontend simulation)");
+    setUser(null);
   };
 
+  if (!user) {
+    return (
+      <div className="min-h-screen flex justify-center items-center bg-gradient-to-br text-white p-8">
+        <h2 className="text-2xl font-bold">User account deleted.</h2>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br max-h-full max-w-full  text-white p-8">
+    <div className="min-h-screen bg-gradient-to-br max-h-full max-w-full text-white p-8">
       <h2 className="text-2xl font-bold mb-6">User Dashboard</h2>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* User Info Column */}
         <div className="lg:col-span-1 h-full">
-          <div className="p-6 bg-white/10  h-full rounded-xl shadow-lg backdrop-blur-md border border-white/20">
+          <div className="p-6 bg-white/10 h-full rounded-xl shadow-lg backdrop-blur-md border border-white/20">
             <h3 className="text-xl font-bold mb-4">User Information</h3>
             <div className="space-y-2">
               <p><strong>Name:</strong> {user.firstName} {user.lastName}</p>
@@ -136,7 +126,7 @@ export function UserPage() {
                       id={field}
                       value={editFields[field] ?? user[field]}
                       onChange={(e) => handleFieldChange(field, e.target.value)}
-                      className="bg-zinc-900 border border-white/20  text-white"
+                      className="bg-zinc-900 border border-white/20 text-white"
                     />
                     <div className="flex gap-2 mt-2">
                       <Button

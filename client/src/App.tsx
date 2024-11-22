@@ -11,6 +11,7 @@ import PassengerTicket from "./pages/PassengerTicket";
 import PaymentPage from "./pages/Payment";
 import { ThemeProvider } from "./context/ThemeContext";
 import SDLayout from "./components/SDLayout";
+import { ModifyFlight } from "./pages/ModifyFlight";
 
 const App = () => {
   return (
@@ -89,8 +90,8 @@ const App = () => {
               }
             />
             <Route path="/user" element={<SDLayout />}>
-            <Route path="" element={<UserPage />} />
-            <Route path="" element={<div></div>} />
+              <Route path="update" element={<UserPage />} />
+              <Route path="modify" element={<ModifyFlight />} />
             </Route>
             <Route
               path="*"
@@ -107,8 +108,6 @@ const App = () => {
           </Routes>
       </ThemeProvider>
     </BrowserRouter>
-
-    // <UserPage/>
   );
 };
 
