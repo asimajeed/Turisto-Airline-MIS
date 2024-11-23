@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { useGlobalStore } from "@/context/GlobalStore";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -39,15 +40,18 @@ interface IsEditing {
 }
 
 export function UserPage(): JSX.Element {
-  const [user, setUser] = useState<User | null>({
-    firstName: "John",
-    lastName: "Doe",
-    email: "john.doe@example.com",
-    phoneNumber: "123-456-7890",
-    dateOfBirth: "1990-01-01",
-    loyaltyPoints: 1500,
-    isAdmin: false,
-  });
+  // const [user, setUser] = useState<User | null>({
+  //   firstName: "John",
+  //   lastName: "Doe",
+  //   email: "john.doe@example.com",
+  //   phoneNumber: "123-456-7890",
+  //   dateOfBirth: "1990-01-01",
+  //   loyaltyPoints: 1500,
+  //   isAdmin: false,
+  // });
+
+  const [first_name, setFirstName] = useGlobalStore();
+  const [last_name, setLastName] = useGlobalStore();
 
   const [editFields, setEditFields] = useState<EditFields>({});
   const [isEditing, setIsEditing] = useState<IsEditing>({});
@@ -92,7 +96,7 @@ export function UserPage(): JSX.Element {
           <div className="p-6 bg-white/10 h-full rounded-xl shadow-lg backdrop-blur-md border border-white/20">
             <h3 className="text-xl font-bold mb-4">User Information</h3>
             <div className="space-y-2">
-              <p><strong>Name:</strong> {user.firstName} {user.lastName}</p>
+              <p><strong>Name:</strong> {first_name} {last_name}</p>
               <p><strong>Email:</strong> {user.email}</p>
               <p><strong>Phone:</strong> {user.phoneNumber || "Not provided"}</p>
               <p><strong>Date of Birth:</strong> {user.dateOfBirth || "Not provided"}</p>

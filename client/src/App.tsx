@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Search from "./pages/Search";
 import Admin from "./pages/Admin";
-import { UserPage } from "./pages/UserPage";
+import { UserPage } from "./pages/NewUserPage";
 import Layout from "./components/Layout";
 import FlightsTable from "./pages/FlightsTable";
 import PassengerInfo from "./pages/PassengerInfo";
