@@ -19,13 +19,14 @@ const Avatar = () => {
 
 const AvatarButton = ({ onLogout }: { onLogout: () => void }) => {
   const { first_name, last_name } = useGlobalStore();
+  const name = `${first_name} ${last_name}`;
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger className="mt-1">
         <Avatar />
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56">
-        <DropdownMenuLabel>{`${first_name} ${last_name}`}</DropdownMenuLabel>
+        <DropdownMenuLabel>{name}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <Link to="/user">
