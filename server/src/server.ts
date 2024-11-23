@@ -58,17 +58,17 @@ app.post("/login", passport.authenticate("local"), (req, res) => {
   res.status(200).json(req.user);
 });
 
-app.get("/logout", (req, res) => {
+app.delete("/logout", (req, res) => {
   req.logout((err) => {
     if (err) {
       return res.status(500).send({ message: "Logout failed" });
     }
-    res.clearCookie("connect.sid"); // Optional: clear the session cookie
-    res.send({ message: "Logged out successfully" });
+    res.clearCookie('connect.sid').send({ message: "Logged out successfully" });
   });
 });
 
 app.get("/profile", (req: Request, res: Response) => {
+  console.log(req.isAuthenticated())
   if (!req.isAuthenticated()) {
     res.status(401).send("You need to log in first");
   } else {
@@ -77,11 +77,14 @@ app.get("/profile", (req: Request, res: Response) => {
 });
 
 app.post("/admin/sql", async (req: Request, res: Response) => {
-  try {
-    res.json(await query(req.body.query));
-  } catch (err) {
-    res.json("Server error: " + err);
-  }
+  console.log(req.isAuthenticated(), req.user, req.user?.is_admin)
+  if (req.isAuthenticated() && req.user.is_admin) {
+    try {
+      res.json(await query(req.body.query));
+    } catch (err) {
+      res.json({ message: "Server error: " + err });
+    }
+  } else res.status(401).json({ message: "Unauthorized request" });
 });
 
 app.get("/api/airports", async (req, res) => {

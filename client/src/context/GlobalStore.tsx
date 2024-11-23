@@ -9,29 +9,31 @@ export interface GlobalState {
   date_of_birth: string | null;
   loyalty_points: number | null;
   loyalty_points_redeemed: number | null;
-  start_date: Date | null;
-  end_date: Date | null;
   departure_airport: airportType | null;
   arrival_airport: airportType | null;
-  airport_list: string[] | null;
   is_admin: boolean;
   is_guest: boolean;
+
+  start_date: Date | null;
+  end_date: Date | null;
   isOneWay: boolean;
-  
+  airport_list: string[] | null;
+
   setFirstName: (firstName: string | null) => void;
   setLastName: (lastName: string | null) => void;
   setEmail: (email: string | null) => void;
   setPhoneNumber: (phoneNumber: string | null) => void;
   setDateOfBirth: (dateOfBirth: string | null) => void;
   setLoyaltyPoints: (points: number | null) => void;
-  setStartDate: (startDate: Date | null) => void;
-  setEndDate: (endDate: Date | null) => void;
   setDepartureAirport: (airport: airportType | null) => void;
   setArrivalAirport: (airport: airportType | null) => void;
-  setAirportList: (airportList: string[] | null) => void;
   setAdminAccess: (access: boolean) => void;
+  setStartDate: (startDate: Date | null) => void;
+  setEndDate: (endDate: Date | null) => void;
   setIsOneWay: (isOneWay: boolean) => void;
+  setAirportList: (airportList: string[] | null) => void;
   setAll: (newState: Partial<GlobalState>) => void;
+  resetUserFields: () => void; // New method to reset user-related fields
 }
 
 const defaultUserState: GlobalState = {
@@ -64,6 +66,7 @@ const defaultUserState: GlobalState = {
   setAdminAccess: () => {},
   setIsOneWay: () => {},
   setAll: () => {},
+  resetUserFields: () => {}, // Initialize with an empty function
 };
 
 export const useGlobalStore = create<GlobalState>((set) => ({
@@ -82,4 +85,18 @@ export const useGlobalStore = create<GlobalState>((set) => ({
   setAdminAccess: (access) => set({ is_admin: access }),
   setIsOneWay: (isOneWay) => set({ isOneWay }),
   setAll: (newState) => set(newState),
+
+  resetUserFields: () => {
+    set({
+      first_name: null,
+      last_name: null,
+      email: null,
+      phone_number: null,
+      date_of_birth: null,
+      loyalty_points: null,
+      loyalty_points_redeemed: null,
+      is_admin: false,
+      is_guest: false,
+    });
+  },
 }));

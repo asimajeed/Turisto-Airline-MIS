@@ -40,7 +40,7 @@ const SelectBox: FC<ComboBoxProps> = ({
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_BACKEND_API_URL}/api/airports?search=${
-          search || "A"
+          search || ""
         }`
       );
       setOptions(response.data);

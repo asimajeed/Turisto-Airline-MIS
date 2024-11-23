@@ -36,6 +36,7 @@ export function DatePicker() {
         <Calendar
           mode="single"
           selected={date || undefined}
+          fromDate={new Date()}
           onSelect={setDate}
           initialFocus
         />

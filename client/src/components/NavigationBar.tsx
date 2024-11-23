@@ -1,4 +1,9 @@
-import { useState, useEffect, ReactNode } from "react";
+import {
+  useState,
+  useEffect,
+  ReactNode,
+  forwardRef,
+} from "react";
 import LoginDialog from "@/components/LoginDialog/LoginDialog";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -11,15 +16,12 @@ import { useGlobalStore } from "@/context/GlobalStore";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
-const NavBar = ({
-  children,
-  className,
-}: {
-  children?: ReactNode;
-  className?: string;
-}) => {
+const NavBar = forwardRef<
+  HTMLElement,
+  { children?: ReactNode; className?: string }
+>(({ children, className }, ref) => {
   const [popupFlag, setPopupFlag] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | undefined>(undefined);
   const [isScrolled, setIsScrolled] = useState(false);
   const { setAll } = useGlobalStore();
   const buttonVariants = {
@@ -28,7 +30,9 @@ const NavBar = ({
   };
   const handleLogout = () => {
     try {
-      axios.get(`${import.meta.env.VITE_BACKEND_API_URL}/logout`);
+      axios.delete(`${import.meta.env.VITE_BACKEND_API_URL}/logout`, {
+        withCredentials: true,
+      });
       setIsLoggedIn(false);
     } catch (error) {
       console.log(error);
@@ -48,6 +52,7 @@ const NavBar = ({
         }
       } catch (error) {
         console.error("Error fetching profile:", error);
+        setIsLoggedIn(false);
       }
     };
     getLoggedIn();
@@ -63,10 +68,12 @@ const NavBar = ({
     <>
       <nav
         className={cn(
-          `fixed w-full h-[var(--navbar-height)] z-10 text-foreground transition-colors duration-200 ${isScrolled ? "bg-background bg-opacity-100" : "bg-transparent"
+          `fixed w-full h-[var(--navbar-height)] z-10 text-foreground transition-colors duration-200 ${
+            isScrolled ? "bg-background bg-opacity-100" : "bg-transparent"
           }`,
           className
         )}
+        ref={ref}
       >
         <div className="flex items-center justify-between h-full px-8">
           <Link to="/">
@@ -91,13 +98,15 @@ const NavBar = ({
             >
               {isLoggedIn ? (
                 <AvatarButton onLogout={handleLogout} />
-              ) : (
+              ) : isLoggedIn !== undefined ? (
                 <Button
                   onClick={() => setPopupFlag(true)}
                   className="bg-theme-primary hover:bg-theme-primary-highlight text-white ml-4"
                 >
                   Sign In
                 </Button>
+              ) : (
+                <div></div>
               )}
             </motion.div>
           </ul>
@@ -108,10 +117,10 @@ const NavBar = ({
         isOpen={popupFlag}
         setIsOpen={setPopupFlag}
         setIsLoggedIn={setIsLoggedIn}
-        isLoggedIn={isLoggedIn}
+        isLoggedIn={!!isLoggedIn}
       />
     </>
   );
-};
+});
 
 export default NavBar;

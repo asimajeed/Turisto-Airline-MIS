@@ -58,7 +58,6 @@ const LoginDialog = ({
       );
 
       if (response.status === 201) {
-        // Successful registration
         if (feedbackPRef.current) {
           feedbackPRef.current.style.color = "lawngreen";
         }

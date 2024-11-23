@@ -15,13 +15,15 @@ CREATE TABLE users (
 );
 
 CREATE TABLE flights (
-    flight_number VARCHAR(50) PRIMARY KEY,
-    departure_airport VARCHAR(5) NOT NULL,
-    arrival_airport VARCHAR(5) NOT NULL,
+    flight_id SERIAL PRIMARY KEY,
+    flight_number VARCHAR(10) NOT NULL,
+    departure_airport_id INT NOT NULL,
+    arrival_airport_id INT NOT NULL,
     departure_date TIMESTAMP NOT NULL,
     arrival_date TIMESTAMP NOT NULL,
     total_seats INT NOT NULL,
-    status VARCHAR(50) NOT NULL
+    status VARCHAR(50) NOT NULL,
+    base_price NUMERIC(10, 2) NOT NULL
 );
 
 CREATE TABLE airports (
@@ -50,7 +52,7 @@ CREATE TABLE seats (
 
 -- Booking is made by both guest user and signed in user
 CREATE TABLE bookings (
-    booking_id INT PRIMARY KEY AUTO_INCREMENT,
+    booking_id SERIAL PRIMARY KEY,
     user_id INT, -- For registered users
     guest_user_id INT, -- For guest users
     flight_number VARCHAR(50) NOT NULL,
