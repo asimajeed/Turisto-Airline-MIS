@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, ReactNode } from "react";
 import LoginDialog from "@/components/LoginDialog/LoginDialog";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -9,8 +9,15 @@ import axios from "axios";
 import AvatarButton from "./AvatarButton";
 import { useGlobalStore } from "@/context/GlobalStore";
 import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
-const MyNavbar = () => {
+const NavBar = ({
+  children,
+  className,
+}: {
+  children?: ReactNode;
+  className?: string;
+}) => {
   const [popupFlag, setPopupFlag] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -55,9 +62,11 @@ const MyNavbar = () => {
   return (
     <>
       <nav
-        className={`fixed w-full h-[var(--navbar-height)] z-10 text-foreground transition-colors duration-500 ${
-          isScrolled ? "bg-background bg-opacity-100" : "bg-transparent"
-        }`}
+        className={cn(
+          `fixed w-full h-[var(--navbar-height)] z-10 text-foreground transition-colors duration-200 ${isScrolled ? "bg-background bg-opacity-100" : "bg-transparent"
+          }`,
+          className
+        )}
       >
         <div className="flex items-center justify-between h-full px-8">
           <Link to="/">
@@ -93,6 +102,7 @@ const MyNavbar = () => {
             </motion.div>
           </ul>
         </div>
+        {children}
       </nav>
       <LoginDialog
         isOpen={popupFlag}
@@ -104,4 +114,4 @@ const MyNavbar = () => {
   );
 };
 
-export default MyNavbar;
+export default NavBar;

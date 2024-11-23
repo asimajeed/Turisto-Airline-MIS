@@ -64,17 +64,16 @@ export function Update(): JSX.Element {
 
   if (!first_name && !last_name) {
     return (
-      <div className="min-h-screen flex justify-center items-center bg-gradient-to-br text-white p-8">
+      <div className="min-h-screen flex justify-center items-center bg-gradient-to-br text-foreground p-8">
         <h2 className="text-2xl font-bold">User account deleted.</h2>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br max-h-full w-full text-white p-8">
+    <div className="min-h-screen bg-gradient-to-br max-h-full w-full text-foreground p-8">
       <h2 className="text-2xl font-bold mb-6">User Dashboard</h2>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* User Info Column */}
         <div className="lg:col-span-1 h-full">
           <div className="p-6 bg-white/10 h-full rounded-xl shadow-lg backdrop-blur-md border border-white/20">
             <h3 className="text-xl font-bold mb-4">User Information</h3>
@@ -155,7 +154,7 @@ export function Update(): JSX.Element {
                       type === "number" ? +e.target.value : e.target.value
                     )
                   }
-                  className="bg-zinc-900 border border-white/20 text-white"
+                  className="border border-white/20 text-foreground"
                 />
               </div>
             ))}

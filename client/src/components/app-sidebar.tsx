@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 type SubItem =
   | { title: string; url: string }
@@ -42,13 +43,13 @@ const items: MenuItem[] = [
   {
     title: "Profile",
     icon: Home,
-    subItems: [{ title: "Update", url: "#profile-update" }],
+    subItems: [{ title: "Update", url: "/user/update" }],
   },
   {
     title: "Bookings",
     icon: Calendar,
     subItems: [
-      { title: "Modify", url: "#bookings-modify" },
+      { title: "Modify", url: "/user/modify" },
       { title: "Cancel", isCancel: true },
     ],
   },
@@ -56,8 +57,8 @@ const items: MenuItem[] = [
     title: "Tickets",
     icon: Inbox,
     subItems: [
-      { title: "Boarding Pass", url: "#tickets-boarding-pass" },
-      { title: "Ticket", url: "#tickets-ticket" },
+      { title: "Boarding Pass", url: "/boardingpass" },
+      { title: "Ticket", url: "/passengerticket" },
     ],
   },
   {
@@ -173,13 +174,15 @@ export function AppSidebar({ onSelectionChange }: AppSidebarProps) {
                                 </DialogContent>
                               </Dialog>
                             ) : (
-                              <SidebarMenuButton
-                                onClick={() =>
-                                  handleSelection(item.title, subItem.title)
-                                }
-                              >
-                                {subItem.title}
-                              </SidebarMenuButton>
+                              <Link to={subItem.url!}>
+                                <SidebarMenuButton
+                                  onClick={() =>
+                                    handleSelection(item.title, subItem.title)
+                                  }
+                                >
+                                  {subItem.title}
+                                </SidebarMenuButton>
+                              </Link>
                             )}
                           </SidebarMenuSubItem>
                         ))}

@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Search from "./pages/Search";
 import Admin from "./pages/Admin";
-import { Update } from "./pages/user/User";
+import { Update } from "./pages/user/Update";
 import Layout from "./components/Layout";
 import FlightsTable from "./pages/FlightsTable";
 import PassengerInfo from "./pages/PassengerInfo";
@@ -90,7 +90,7 @@ const App = () => {
             }
           />
           <Route path="/user" element={<SDLayout />}>
-            <Route path="" element={<Update />} />
+            <Route path="update" element={<Update />} />
             <Route path="modify" element={<ModifyFlight />} />
           </Route>
           <Route
