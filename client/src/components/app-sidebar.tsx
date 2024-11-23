@@ -58,7 +58,7 @@ const items: MenuItem[] = [
     icon: Inbox,
     subItems: [
       { title: "Boarding Pass", url: "/boardingpass" },
-      { title: "Ticket", url: "/passengerticket" },
+      { title: "Ticket", url: "/user/ticket" },
     ],
   },
   {

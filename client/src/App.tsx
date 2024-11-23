@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Search from "./pages/Search";
-import Admin from "./pages/Admin";
+import ManageDatabase from "./pages/admin/ManageDatabase";
 import { Update } from "./pages/user/Update";
 import Layout from "./components/Layout";
 import FlightsTable from "./pages/FlightsTable";
@@ -11,6 +11,7 @@ import PassengerTicket from "./pages/PassengerTicket";
 import PaymentPage from "./pages/Payment";
 import { ThemeProvider } from "./context/ThemeContext";
 import SDLayout from "./components/SDLayout";
+import SDALayout from "./components/SDALayout";
 import { ModifyFlight } from "./pages/user/ModifyFlight";
 
 const App = () => {
@@ -41,15 +42,6 @@ const App = () => {
             element={
               <Layout>
                 <Search />
-              </Layout>
-            }
-          />
-
-          <Route
-            path="/admin"
-            element={
-              <Layout>
-                <Admin />
               </Layout>
             }
           />
@@ -92,6 +84,9 @@ const App = () => {
           <Route path="/user" element={<SDLayout />}>
             <Route path="update" element={<Update />} />
             <Route path="modify" element={<ModifyFlight />} />
+          </Route>
+          <Route path="/admin" element={<SDALayout />}>
+            <Route path="sql" element={<ManageDatabase />} />
           </Route>
           <Route
             path="*"

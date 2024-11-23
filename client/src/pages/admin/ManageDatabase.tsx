@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { useState } from "react";
 // import SDLayout from "@/components/SDLayout";
 
-const AdminDashboard = () => {
+const ManageDatabase = () => {
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState("");
 
@@ -59,4 +59,4 @@ const AdminDashboard = () => {
     //</SDLayout>
   );
 };
-export default AdminDashboard;
+export default ManageDatabase;
