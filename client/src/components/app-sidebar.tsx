@@ -51,6 +51,7 @@ const items: MenuItem[] = [
     subItems: [
       { title: "Modify", url: "/user/modify" },
       { title: "Cancel", isCancel: true },
+      { title: "History" , url: "/user/history"}
     ],
   },
   {

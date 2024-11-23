@@ -44,7 +44,7 @@ const items: MenuItem[] = [
         title: "Manage User",
         icon: Users, // Represents user management
         subItems: [
-            { title: "Add", url: "/user/add" },
+            { title: "Add", url: "/admin/add" },
             { title: "Update", url: "/user/update" },
             { title: "Delete", url: "/user/delete" },
         ],

@@ -90,14 +90,14 @@ const ManageDatabase = () => {
 
   return (
     <div className="max-w-[100vw] flex justify-center items-center text-black">
-      <Card className="w-full max-w-4xl p-6 bg-white rounded-lg shadow-lg">
-        <h1 className="text-2xl font-bold text-gray-700 mb-4">
+      <Card className="w-full max-w-4xl p-6 bg-card rounded-lg shadow-lg">
+        <h1 className="text-2xl font-bold text-foreground mb-4">
           Admin Dashboard - SQL Terminal
         </h1>
 
         <form onSubmit={handleQueryRun} className="space-y-4">
           <textarea
-            className="w-full text-black h-40 p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+            className="w-full bg-card text-foreground h-40 p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Enter SQL command here"
@@ -105,13 +105,13 @@ const ManageDatabase = () => {
           />
           <button
             type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200"
+            className="w-full bg-blue-500 hover:bg-blue-600 text-foreground font-semibold py-2 px-4 rounded-lg transition-all duration-200"
           >
             Run Query
           </button>
           <button
             type="button"
-            className="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200"
+            className="w-full bg-red-500 hover:bg-red-600 text-foreground font-semibold py-2 px-4 rounded-lg transition-all duration-200"
             onClick={resetForm}
           >
             Reset
@@ -119,7 +119,7 @@ const ManageDatabase = () => {
         </form>
 
         <div className="mt-6">
-          <h3 className="text-lg font-semibold text-gray-600 mb-2">
+          <h3 className="text-lg font-semibold text-foreground mb-2">
             Query Response:
           </h3>
           {error ? (

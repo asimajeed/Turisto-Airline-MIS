@@ -22,25 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 import { useState } from "react";
-import { TrendingUp } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart";
-
-import PriceTable from "@/components/PriceTable";
 import SelectAirports from "@/components/AirportSelector/SelectAirports";
 import { useGlobalStore } from "@/context/GlobalStore";
 
@@ -53,14 +35,6 @@ interface Flight {
   price: string;
 }
 
-const chartData = [
-  { month: "January", economy: 150, business: 350 },
-  { month: "February", economy: 160, business: 360 },
-  { month: "March", economy: 140, business: 340 },
-  { month: "April", economy: 180, business: 380 },
-  { month: "May", economy: 170, business: 390 },
-  { month: "June", economy: 190, business: 400 },
-];
 
 const flights: Flight[] = [
   {
@@ -106,16 +80,6 @@ const flights: Flight[] = [
 //   }
 // };
 
-const chartConfig = {
-  economy: {
-    label: "Economy",
-    color: "hsl(var(--chart-1))",
-  },
-  business: {
-    label: "Business",
-    color: "hsl(var(--chart-2))",
-  },
-} satisfies ChartConfig;
 
 const FlightsTable = () => {
   const [selectedFlight, setSelectedFlight] = useState<Flight | null>(null);
@@ -240,93 +204,8 @@ const FlightsTable = () => {
               )}
             </div>
           </div>
-
-          {/* Price Grid and History */}
-          <div className="w-full flex justify-between space-x-4">
-            {" "}
-            {/* Added flex and space between */}
-            {/* Price Grid */}
-            <div className="w-1/2">
-              <h4 className="text-lg  text-theme-primary-darker  font-bold">
-                Price grid (flexible dates)
-              </h4>
-              <div className="mt-4 border rounded-lg border-gray-200">
-                <PriceTable></PriceTable>
               </div>
             </div>
-            {/* Price History */}
-            <div className="w-1/2">
-              <h4 className="text-lg text-theme-primary-darker  font-bold">
-                Price history
-              </h4>
-              <div className="p-4 rounded-lg">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Area Chart - Flight Prices</CardTitle>
-                    <CardDescription>
-                      Showing average flight prices for the last 6 months
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <ChartContainer config={chartConfig}>
-                      <AreaChart
-                        accessibilityLayer
-                        data={chartData}
-                        margin={{
-                          left: 12,
-                          right: 12,
-                        }}
-                      >
-                        <CartesianGrid vertical={false} />
-                        <XAxis
-                          dataKey="month"
-                          tickLine={false}
-                          axisLine={false}
-                          tickMargin={8}
-                          tickFormatter={(value) => value.slice(0, 3)}
-                        />
-                        <ChartTooltip
-                          cursor={false}
-                          content={<ChartTooltipContent indicator="dot" />}
-                        />
-                        <Area
-                          dataKey="economy"
-                          type="natural"
-                          fill="var(--color-economy)"
-                          fillOpacity={0.4}
-                          stroke="var(--color-economy)"
-                          stackId="a"
-                        />
-                        <Area
-                          dataKey="business"
-                          type="natural"
-                          fill="var(--color-business)"
-                          fillOpacity={0.4}
-                          stroke="var(--color-business)"
-                          stackId="a"
-                        />
-                      </AreaChart>
-                    </ChartContainer>
-                  </CardContent>
-                  <CardFooter>
-                    <div className="flex w-full items-start gap-2 text-sm">
-                      <div className="grid gap-2">
-                        <div className="flex items-center gap-2 font-medium leading-none">
-                          Trending up by 5.2% this month{" "}
-                          <TrendingUp className="h-4 w-4" />
-                        </div>
-                        <div className="flex items-center gap-2 leading-none text-muted-foreground">
-                          January - June 2024
-                        </div>
-                      </div>
-                    </div>
-                  </CardFooter>
-                </Card>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </FullscreenSection>
   );
 };

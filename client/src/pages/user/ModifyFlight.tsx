@@ -78,7 +78,7 @@ export function ModifyFlight() {
       {/* Summary and Actions Section */}
       <div className="p-6 bg-white/10 backdrop-blur-md shadow-lg rounded-xl border border-white/20">
         <h2 className="text-xl font-semibold text-foreground
-  ">Summary</h2>
+  ">Save Changes</h2>
         <div className="mt-4 space-y-2">
           <p className="text-sm text-foreground
     /70">

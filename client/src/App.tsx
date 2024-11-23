@@ -13,6 +13,8 @@ import { ThemeProvider } from "./context/ThemeContext";
 import SDLayout from "./components/SDLayout";
 import SDALayout from "./components/SDALayout";
 import { ModifyFlight } from "./pages/user/ModifyFlight";
+import { AddUser } from "./pages/admin/AddUser";
+import History from "./pages/user/History"
 
 const App = () => {
   return (
@@ -58,18 +60,14 @@ const App = () => {
           <Route
             path="/boardingpass"
             element={
-              <Layout>
                 <BoardingPass />
-              </Layout>
             }
           />
 
           <Route
             path="/passengerticket"
             element={
-              <Layout>
                 <PassengerTicket />
-              </Layout>
             }
           />
 
@@ -84,9 +82,11 @@ const App = () => {
           <Route path="/user" element={<SDLayout />}>
             <Route path="update" element={<Update />} />
             <Route path="modify" element={<ModifyFlight />} />
+            <Route path="history" element={<History />} />
           </Route>
           <Route path="/admin" element={<SDALayout />}>
             <Route path="sql" element={<ManageDatabase />} />
+            <Route path="add" element={<AddUser />} />
           </Route>
           <Route
             path="*"

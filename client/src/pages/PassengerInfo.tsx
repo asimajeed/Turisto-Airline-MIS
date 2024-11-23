@@ -39,11 +39,9 @@ const PassengerInfo = () => {
                 <h3 className="font-medium">Passenger 1 (Adult)</h3>
                 <div className="grid grid-cols-3 gap-4">
                   <Input placeholder="First name*" />
-                  <Input placeholder="Middle" />
                   <Input placeholder="Last name*" />
                 </div>
                 <div className="grid grid-cols-3 gap-4">
-                  <Input placeholder="Suffix" />
                   <Input placeholder="Date of birth*" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -51,7 +49,6 @@ const PassengerInfo = () => {
                   <Input placeholder="Phone number*" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <Input placeholder="Redress number" />
                   <Input placeholder="Known traveler number" />
                 </div>
 
