@@ -28,7 +28,6 @@ import MapComponent from "@/components/Map";
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
@@ -85,7 +84,11 @@ const FlightsTable = () => {
   };
 
   const handleFlightSelect = (flight: Flight) => {
-    setSelectedFlight(flight);
+    setSelectedFlight({
+      ...flight,
+      departure_date: new Date(flight.departure_date),
+      arrival_date: new Date(flight.arrival_date),
+    });
   };
 
   const handlePageChange = (page: number) => {

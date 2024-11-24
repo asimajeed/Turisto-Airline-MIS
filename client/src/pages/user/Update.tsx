@@ -62,7 +62,7 @@ export function Update(): JSX.Element {
     });
   };
 
-  if (!first_name && !last_name) {
+  if (!email) {
     return (
       <div className="min-h-screen flex justify-center items-center bg-gradient-to-br text-foreground p-8">
         <h2 className="text-2xl font-bold">User account deleted.</h2>

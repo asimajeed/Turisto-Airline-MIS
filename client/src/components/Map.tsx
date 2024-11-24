@@ -1,8 +1,8 @@
 import Image from "@/assets/WorldMapScaled.png";
 import { useGlobalStore } from "@/context/GlobalStore";
 import { cn } from "@/lib/utils";
-import React, { useEffect, useRef, useState } from "react";
-
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 function MillerProjection(
   latitude: number,
   longitude: number,
@@ -95,74 +95,93 @@ const MapComponent: React.FC<MapComponentProps> = ({ className, children }) => {
     offsetY: 0,
     offsetX: 0,
   });
-  const [points, setPoints] = useState<{ lat: number; lng: number }[]>([]);
+  const [scale, setScale] = useState(
+    (imageRef.current && imageRef.current.width / document.body.clientWidth) ||
+      1
+  );
+  const [points, setPoints] = useState<{ lat?: number; lng?: number }[]>([
+    {},
+    {},
+  ]);
+  const [centerPoint, setCenterPoint] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
 
   const updateImageDimensions = () => {
     if (imageRef.current) {
-      const naturalAspectRatio =
-        imageRef.current.naturalWidth / imageRef.current.naturalHeight;
-
       const rect = imageRef.current.getBoundingClientRect();
-      const containerWidth = rect.width;
-      const containerHeight = rect.height;
-
-      let renderedWidth, renderedHeight;
-      if (containerWidth / containerHeight < naturalAspectRatio) {
-        renderedHeight = containerHeight;
-        renderedWidth = containerHeight * naturalAspectRatio;
-      } else {
-        renderedWidth = containerWidth;
-        renderedHeight = containerWidth / naturalAspectRatio;
-      }
-
-      const offsetX = (containerWidth - renderedWidth) / 2;
-      const offsetY = (containerHeight - renderedHeight) / 2;
+      const renderedWidth = rect.width;
+      const renderedHeight = rect.height;
+      console.log(renderedHeight);
+      console.log(rect.height);
+      console.log(window.innerHeight);
 
       setImageDimensions({
         width: renderedWidth,
         height: renderedHeight,
-        offsetX,
-        offsetY,
+        offsetX: 0,
+        offsetY: 0,
       });
+      console.log(scale);
+      setScale(window.innerHeight / renderedHeight);
     }
   };
-
-  useEffect(() => {
-    const timer = setTimeout(updateImageDimensions, 0);
+  useLayoutEffect(() => {
     window.addEventListener("resize", updateImageDimensions);
     return () => {
-      clearTimeout(timer);
       window.removeEventListener("resize", updateImageDimensions);
     };
   }, []);
 
   const { arrival_airport, departure_airport } = useGlobalStore();
   useEffect(() => {
-    const points = [];
-
     if (departure_airport?.latitude) {
-      points.push({
+      points[0] = {
         lat: parseFloat(departure_airport.latitude),
         lng: parseFloat(departure_airport.longitude),
-      });
+      };
     }
 
     if (arrival_airport?.latitude) {
-      points.push({
+      points[1] = {
         lat: parseFloat(arrival_airport.latitude),
         lng: parseFloat(arrival_airport.longitude),
-      });
+      };
     }
 
     setPoints(points);
-  }, [arrival_airport?.latitude, departure_airport?.latitude]);
 
-  const generatePath = (points: { lat: number; lng: number }[]) => {
-    if (points.length < 2 || imageDimensions.width === 0) return null;
+    if ((points[1].lat && points[1].lng) || (points[0].lat && points[0].lng)) {
+      const { x, y } = MillerProjection(
+        (points[0] && points[0]?.lat) || points[1]?.lat || 0,
+        (points[0] && points[0]?.lng) || points[1]?.lng || 0,
+        imageDimensions.width,
+        imageDimensions.height
+      );
+      setCenterPoint({ x, y });
+    }
+    if (points[1].lat && points[1].lng && points[0].lat && points[0].lng) {
+      const { x, y } = MillerProjection(
+        (points[0].lat + points[1].lat) / 2,
+        (points[0].lng + points[1].lng) / 2,
+        imageDimensions.width,
+        imageDimensions.height
+      );
+      setCenterPoint({ x, y });
+    }
+  }, [arrival_airport?.latitude, departure_airport?.latitude, imageDimensions]);
 
+  const generatePath = (pointz: { lat?: number; lng?: number }[]) => {
+    if (
+      pointz[0].lat === undefined ||
+      pointz[1].lat === undefined ||
+      imageDimensions.width === 0
+    )
+      return null;
+    const points = pointz as { lat: number; lng: number }[];
     const start = points[0];
     const end = points[1];
-    console.log(points);
     const interpolatedPoints = interpolateGreatCircle(start, end, 100);
 
     const projectedPoints = interpolatedPoints.map(
@@ -176,86 +195,93 @@ const MapComponent: React.FC<MapComponentProps> = ({ className, children }) => {
     );
 
     const pathD = projectedPoints
-      .map((point, index, arr) => {
+      .map((point, index) => {
         if (index === 0) {
-          return `M ${point.x} ${point.y}`; // Start the path
+          return `M ${point.x} ${point.y}`;
         }
 
-        // Detect if there is a large jump in longitude (crossing the Date Line)
-        const prevPoint = arr[index - 1];
         const lngDiff = Math.abs(
           interpolatedPoints[index - 1].lng - interpolatedPoints[index].lng
         );
         const isCrossingDateLine = lngDiff > 180;
 
         return isCrossingDateLine
-          ? `M ${point.x} ${point.y}` // Pen up: move without drawing
-          : `L ${point.x} ${point.y}`; // Pen down: draw line
+          ? `M ${point.x} ${point.y}`
+          : `L ${point.x} ${point.y}`;
       })
       .join(" ");
 
     return pathD;
   };
-
   return (
-    <div className={cn("relative overflow-hidden", className)}>
-      <img
-        ref={imageRef}
-        src={Image}
-        alt="Map"
-        className="absolute w-full h-full object-cover"
+    <div className={`relative overflow-hidden ${className}`}>
+      <motion.div
+        initial={{ scale: 1, x: 0, y: 0 }}
+        animate={{
+          scale: scale,
+          x: centerPoint ? -centerPoint.x + imageDimensions.width / 2 : 0,
+          y: centerPoint ? -centerPoint.y + imageDimensions.height / 2 : 0,
+        }}
+        transition={{ duration: 1 }}
         style={{ zIndex: -2 }}
-      />
+      >
+        <img
+          ref={imageRef}
+          src={Image}
+          alt="Map"
+          className="absolute object-contain"
+          onLoad={updateImageDimensions}
+        />
 
-      {/* Render Points */}
-      {imageDimensions.width > 0 &&
-        imageDimensions.height > 0 &&
-        points.map((point, index) => {
-          const { x, y } = MillerProjection(
-            point.lat,
-            point.lng,
-            imageDimensions.width,
-            imageDimensions.height
-          );
-          return (
-            <div
-              key={index}
-              className="absolute bg-foreground rounded-full"
-              style={{
-                width: "5px",
-                height: "5px",
-                left: `${x + imageDimensions.offsetX}px`,
-                top: `${y + imageDimensions.offsetY}px`,
-                transform: "translate(-50%, -50%)",
-                zIndex: -1,
-              }}
+        {/* Render Points */}
+        {imageDimensions.width > 0 &&
+          imageDimensions.height > 0 &&
+          points.map((point, index) => {
+            if (!(point?.lat && point?.lng)) return;
+            const { x, y } = MillerProjection(
+              point.lat,
+              point.lng,
+              imageDimensions.width,
+              imageDimensions.height
+            );
+            return (
+              <div
+                key={index}
+                className="absolute bg-foreground rounded-full"
+                style={{
+                  width: "3px",
+                  height: "3px",
+                  left: `${x + imageDimensions.offsetX}px`,
+                  top: `${y + imageDimensions.offsetY}px`,
+                  transform: "translate(-50%, -50%)",
+                  zIndex: -1,
+                }}
+              />
+            );
+          })}
+
+        {points.length >= 2 && (
+          <svg
+            className="absolute"
+            style={{
+              left: `${imageDimensions.offsetX}px`,
+              top: `${imageDimensions.offsetY}px`,
+              width: `${imageDimensions.width}px`,
+              height: `${imageDimensions.height}px`,
+              zIndex: -1,
+            }}
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d={generatePath(points) || ""}
+              fill="none"
+              stroke="var(--theme-primary-darker)"
+              strokeWidth="2"
             />
-          );
-        })}
-
-      {/* Render Path */}
-      {points.length >= 2 && (
-        <svg
-          className="absolute"
-          style={{
-            left: `${imageDimensions.offsetX}px`,
-            top: `${imageDimensions.offsetY}px`,
-            width: `${imageDimensions.width}px`,
-            height: `${imageDimensions.height}px`,
-            zIndex: -1,
-          }}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d={generatePath(points) || ""}
-            fill="none"
-            stroke="var(--theme-primary-darker)"
-            strokeWidth="2"
-          />
-        </svg>
-      )}
-
-      {children}
+          </svg>
+        )}
+      </motion.div>
+      <div className="w-full h-full relative">{children}</div>
     </div>
   );
 };

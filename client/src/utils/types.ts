@@ -13,22 +13,30 @@ export interface Flight {
   arrival_time(arrival_time: any): unknown;
   flight_id: number;
   flight_number: string;
-  departureAirport: airportType;
-  arrivalAirport: airportType;
-  departureDate: Date;
-  arrivalDate: Date;
+  departure_airport: airportType;
+  arrival_airport: airportType;
+  departure_date: Date;
+  arrival_date: Date;
   status: string;
   base_price: number;
 }
 
 export interface Booking {
-  booking_id: number; 
-  user_id?: number; 
-  guest_user_id?: number; 
-  flight_number: string; 
+  booking_id: number;
+  user_id?: number;
+  guest_user_id?: number;
+  flight_number: string;
   seat_number: string;
-  booking_date: string; 
-  total_price: number; 
-  discount_code?: string; 
-  status: string; 
+  booking_date: string;
+  total_price: number;
+  discount_code?: string;
+  status: string;
 }
+
+export type Passenger = {
+  first_name: string;
+  last_name: string;
+  date_of_birth: string;
+  email: string;
+  seat: string;
+};

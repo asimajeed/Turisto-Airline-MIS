@@ -39,7 +39,7 @@ CREATE TABLE airports (
 
 
 CREATE TABLE seats (
-    flight_number VARCHAR(50),
+    flight_id INT,
     seat_number VARCHAR(10),
     PRIMARY KEY (flight_number, seat_number),
     FOREIGN KEY (flight_number) REFERENCES flights(flight_number) ON DELETE CASCADE
@@ -53,28 +53,17 @@ CREATE TABLE seats (
 -- Booking is made by both guest user and signed in user
 CREATE TABLE bookings (
     booking_id SERIAL PRIMARY KEY,
-    user_id INT, -- For registered users
-    guest_user_id INT, -- For guest users
-    flight_number VARCHAR(50) NOT NULL,
-    seat_number VARCHAR(10) NOT NULL,
+    user_id INT NOT NULL,
+    flight_id INT NOT NULL,
+    seat_number VARCHAR(5) NOT NULL,
     booking_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    total_price DECIMAL(10, 2) NOT NULL,
+    total_price NUMERIC(10, 2) NOT NULL,
     discount_code VARCHAR(50),
-    status VARCHAR(50) NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (guest_user_id) REFERENCES guest_users(guest_user_id) ON DELETE CASCADE,
+    booking_status VARCHAR(50) NOT NULL,
+    FOREIGN KEY (users_user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (guest_user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (flight_number) REFERENCES flights(flight_number) ON DELETE CASCADE,
     FOREIGN KEY (seat_number) REFERENCES seats(seat_number) ON DELETE CASCADE
-);
-
-CREATE TABLE guest_users (
-    guest_user_id INT PRIMARY KEY AUTO_INCREMENT,
-    booking_id INT,
-    first_name VARCHAR(255) NOT NULL,
-    last_name VARCHAR(255) NOT NULL,
-    email VARCHAR(100) NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    FOREIGN KEY (booking_id) REFERENCES bookings(booking_id) ON DELETE CASCADE
 );
 
 CREATE TABLE payments (
@@ -131,16 +120,6 @@ CREATE TABLE group_bookings (
     group_size INT NOT NULL,
     group_discount DECIMAL(5, 2),
     FOREIGN KEY (main_booking_id) REFERENCES bookings(booking_id) ON DELETE CASCADE
-);
-
-
-CREATE TABLE group_booking_guests (
-    group_booking_id INT,
-    guest_user_id INT,
-    seat_number ,
-    PRIMARY KEY (group_booking_id, guest_user_id),
-    FOREIGN KEY (group_booking_id) REFERENCES group_bookings(group_booking_id) ON DELETE CASCADE,
-    FOREIGN KEY (guest_user_id) REFERENCES guest_users(guest_user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE check_ins (

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import FullscreenSection from "@/components/FullscreenSection";
 import { Link } from "react-router-dom";
@@ -9,7 +10,14 @@ import MapComponent from "@/components/Map";
 import { useGlobalStore } from "@/context/GlobalStore";
 
 function Home() {
-  const { isOneWay, setIsOneWay } = useGlobalStore();
+  const { isOneWay, setIsOneWay, departure_airport, arrival_airport, start_date } = useGlobalStore();
+  const [isSearchEnabled, setIsSearchEnabled] = useState(false);
+
+  useEffect(() => {
+    const isFilled = !!departure_airport && !!arrival_airport && !!start_date;
+    setIsSearchEnabled(isFilled);
+  }, [departure_airport, arrival_airport, start_date]);
+
   const handleOneWayChange = () => {
     setIsOneWay(!isOneWay);
   };
@@ -38,8 +46,11 @@ function Home() {
                 <span className="text-foreground select-none">One-Way</span>
               </div>
               {isOneWay ? <DatePicker /> : <DatePickerWithRange />}
-              <Link to="/flights">
-                <Button className="bg-theme-primary hover:bg-theme-primary-highlight text-white">
+              <Link to={isSearchEnabled ? "/flights" : "#"} onClick={(e) => !isSearchEnabled && e.preventDefault()}>
+                <Button
+                  className="bg-theme-primary hover:bg-theme-primary-highlight text-white"
+                  disabled={!isSearchEnabled}
+                >
                   Search
                 </Button>
               </Link>

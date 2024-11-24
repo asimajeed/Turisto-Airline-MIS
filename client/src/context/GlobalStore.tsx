@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Booking , airportType, Flight } from "@/utils/types";
+import { airportType, Flight, Passenger } from "@/utils/types";
 
 export interface GlobalState {
   isLoggedIn: boolean | undefined;
@@ -22,6 +22,9 @@ export interface GlobalState {
   airport_list: string[] | null;
 
   selected_flight: Flight | null;
+  selectedSeat: string | null;
+
+  passengers: Passenger[];
 
   setIsLoggedIn: (isLoggedIn: boolean) => void;
   setFirstName: (firstName: string | null) => void;
@@ -38,8 +41,10 @@ export interface GlobalState {
   setIsOneWay: (isOneWay: boolean) => void;
   setAirportList: (airportList: string[] | null) => void;
   setSelectedFlight: (flight: Flight) => void;
+  setSelectedSeat: (s: string) => void;
   setAll: (newState: Partial<GlobalState>) => void;
   resetUserFields: () => void;
+  setPassengers: (p: Passenger[]) => void;
 }
 
 const defaultUserState: GlobalState = {
@@ -60,23 +65,27 @@ const defaultUserState: GlobalState = {
   is_guest: false,
   isOneWay: false,
   selected_flight: null,
-  setIsLoggedIn: () => { },
-  setFirstName: () => { },
-  setLastName: () => { },
-  setEmail: () => { },
-  setPhoneNumber: () => { },
-  setDateOfBirth: () => { },
-  setLoyaltyPoints: () => { },
-  setStartDate: () => { },
-  setEndDate: () => { },
-  setDepartureAirport: () => { },
-  setArrivalAirport: () => { },
-  setAdminAccess: () => { },
-  setIsOneWay: () => { },
-  setAirportList: () => { },
-  setSelectedFlight: () => { },
-  setAll: () => { },
-  resetUserFields: () => { }, // Initialize with an empty function
+  selectedSeat: null,
+  passengers: [],
+  setIsLoggedIn: () => {},
+  setFirstName: () => {},
+  setLastName: () => {},
+  setEmail: () => {},
+  setPhoneNumber: () => {},
+  setDateOfBirth: () => {},
+  setLoyaltyPoints: () => {},
+  setStartDate: () => {},
+  setEndDate: () => {},
+  setDepartureAirport: () => {},
+  setArrivalAirport: () => {},
+  setAdminAccess: () => {},
+  setIsOneWay: () => {},
+  setAirportList: () => {},
+  setSelectedFlight: () => {},
+  setSelectedSeat: () => {},
+  setAll: () => {},
+  resetUserFields: () => {},
+  setPassengers: () => {},
 };
 
 export const useGlobalStore = create<GlobalState>((set) => ({
@@ -95,6 +104,7 @@ export const useGlobalStore = create<GlobalState>((set) => ({
   setAirportList: (airportList) => set({ airport_list: airportList }),
   setAdminAccess: (access) => set({ is_admin: access }),
   setIsOneWay: (isOneWay) => set({ isOneWay }),
+  setSelectedSeat: (s) => set({ selectedSeat: s }),
   setAll: (newState) => set(newState),
   setSelectedFlight: (flight) => set({ selected_flight: flight }),
   resetUserFields: () => {
@@ -109,5 +119,8 @@ export const useGlobalStore = create<GlobalState>((set) => ({
       is_admin: false,
       is_guest: false,
     });
+  },
+  setPassengers: (passengers: Passenger[]) => {
+    set({ passengers });
   },
 }));

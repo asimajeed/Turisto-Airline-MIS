@@ -45,7 +45,6 @@ const NavBar = forwardRef<
           setAll(response.data);
         }
       } catch (error) {
-        console.error("Error fetching profile:", error);
         setIsLoggedIn(false);
       }
     };

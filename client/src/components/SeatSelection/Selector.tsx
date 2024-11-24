@@ -3,14 +3,14 @@ import { LuInfo } from "react-icons/lu";
 
 interface SelectorProps {
   selectedSeat: string | null;
-  setSelectedSeat: React.Dispatch<React.SetStateAction<string | null>>;
+  setSelectedSeat: (s: string) => void;
 }
 
 let seatsFromDb = [true, false, true];
 seatsFromDb = Array.from({ length: 30 * 8 }, (_, i) => i % 15 == 0 || i % 13 == 0);
 
 const Selector = (props: SelectorProps) => {
-  const rowLength = 30;
+  const rowLength = 24;
   const colLength = 8;
   let index = 0;
   const columns = Array.from({ length: colLength }, (_, i) =>

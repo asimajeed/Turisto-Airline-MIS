@@ -71,7 +71,7 @@ const SelectBox: FC<ComboBoxProps> = ({
           aria-expanded={open}
           className="w-52 justify-between mx-0.5"
         >
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 overflow-hidden">
             <Icon className="w-5 h-5" /> {/* Properly render the icon */}
             <span className="overflow-hidden w-full">
               {value ? `${value.airport_code}, ${value.airport_name}` : label}
