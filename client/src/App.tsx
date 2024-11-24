@@ -14,9 +14,11 @@ import SDLayout from "./components/SDLayout";
 import SDALayout from "./components/SDALayout";
 import { ModifyFlight } from "./pages/user/ModifyFlight";
 import { AddUser } from "./pages/admin/AddUser";
-import History from "./pages/user/History";
 import { useGlobalStore } from "./context/GlobalStore";
 import ErrorPage from "./pages/ErrorPage";
+import History from "./pages/user/History"
+import { UpdateUser } from "./pages/admin/UpdateUser";
+import UpdateBooking from "./pages/admin/UpdateBooking"
 
 const App = () => {
   const { isLoggedIn, is_admin } = useGlobalStore();
@@ -83,6 +85,8 @@ const App = () => {
                 <Route path="/admin" element={<SDALayout />}>
                   <Route path="sql" element={<ManageDatabase />} />
                   <Route path="add" element={<AddUser />} />
+                  <Route path="update" element={<UpdateUser />} />
+                  <Route path="updateBook" element={<UpdateBooking />} />
                 </Route>
               ) : (
                 <>

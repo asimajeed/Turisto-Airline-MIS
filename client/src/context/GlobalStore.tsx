@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { airportType, Flight } from "@/utils/types";
+import { Booking , airportType, Flight } from "@/utils/types";
 
 export interface GlobalState {
   isLoggedIn: boolean | undefined;
@@ -60,23 +60,23 @@ const defaultUserState: GlobalState = {
   is_guest: false,
   isOneWay: false,
   selected_flight: null,
-  setIsLoggedIn: () => {},
-  setFirstName: () => {},
-  setLastName: () => {},
-  setEmail: () => {},
-  setPhoneNumber: () => {},
-  setDateOfBirth: () => {},
-  setLoyaltyPoints: () => {},
-  setStartDate: () => {},
-  setEndDate: () => {},
-  setDepartureAirport: () => {},
-  setArrivalAirport: () => {},
-  setAdminAccess: () => {},
-  setIsOneWay: () => {},
-  setAirportList: () => {},
-  setSelectedFlight: () => {},
-  setAll: () => {},
-  resetUserFields: () => {}, // Initialize with an empty function
+  setIsLoggedIn: () => { },
+  setFirstName: () => { },
+  setLastName: () => { },
+  setEmail: () => { },
+  setPhoneNumber: () => { },
+  setDateOfBirth: () => { },
+  setLoyaltyPoints: () => { },
+  setStartDate: () => { },
+  setEndDate: () => { },
+  setDepartureAirport: () => { },
+  setArrivalAirport: () => { },
+  setAdminAccess: () => { },
+  setIsOneWay: () => { },
+  setAirportList: () => { },
+  setSelectedFlight: () => { },
+  setAll: () => { },
+  resetUserFields: () => { }, // Initialize with an empty function
 };
 
 export const useGlobalStore = create<GlobalState>((set) => ({

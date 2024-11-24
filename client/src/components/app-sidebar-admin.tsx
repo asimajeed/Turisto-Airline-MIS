@@ -1,4 +1,4 @@
-import { Users, ClipboardList, Plane, BarChart2 , Database} from "lucide-react";
+import { Users, ClipboardList, Plane, BarChart2, Database } from "lucide-react";
 import {
     Collapsible,
     CollapsibleTrigger,
@@ -30,8 +30,9 @@ import { Link } from "react-router-dom";
 
 type SubItem =
     | { title: string; url: string }
-    | { title: string; isDialog: boolean }
-    | { title: string; isCancel: boolean };
+    | { title: string; isDeleteUser: boolean }
+    | { title: string; isDeleteFlight: boolean }
+    | { title: string; isDeleteBooking: boolean };
 
 type MenuItem = {
     title: string;
@@ -42,57 +43,47 @@ type MenuItem = {
 const items: MenuItem[] = [
     {
         title: "Manage User",
-        icon: Users, // Represents user management
+        icon: Users,
         subItems: [
             { title: "Add", url: "/admin/add" },
-            { title: "Update", url: "/user/update" },
-            { title: "Delete", url: "/user/delete" },
+            { title: "Update", url: "/admin/update" },
+            { title: "Delete", isDeleteUser: true },
         ],
     },
     {
         title: "Bookings",
-        icon: ClipboardList, // Represents booking management
+        icon: ClipboardList,
         subItems: [
-            { title: "Update", url: "/bookings/update" },
-            { title: "Delete", url: "/bookings/delete" },
+            { title: "UpdateBooking", url: "/admin/updateBook" },
+            { title: "Delete", isDeleteBooking: true },
         ],
     },
     {
         title: "System",
-        icon: Plane, // Represents flight system management
+        icon: Plane,
         subItems: [
             { title: "Create Flights", url: "/system/add-flights" },
-            { title: "Delete Flights", url: "/system/delete-flights" },
+            { title: "Delete Flights", isDeleteFlight: true },
             { title: "Edit Flights", url: "/system/edit-flights" },
         ],
     },
     {
         title: "Report Generation",
-        icon: BarChart2, // Represents reporting and analytics
+        icon: BarChart2,
         subItems: [
             { title: "Generate Reports", url: "/reports/generate" },
         ],
     },
     {
         title: "Database",
-        icon: Database, // Represents database management
+        icon: Database,
         subItems: [
             { title: "Manage", url: "/admin/sql" },
         ],
     },
 ];
-type SidebarSelectionCallback = (path: string[]) => void;
 
-interface AppSidebarProps {
-    onSelectionChange?: SidebarSelectionCallback;
-}
-
-export function AppSidebarAdmin({ onSelectionChange }: AppSidebarProps) {
-    const handleSelection = (section: string, subItem: string | null = null) => {
-        const path = subItem ? [section, subItem] : [section];
-        if (onSelectionChange) onSelectionChange(path);
-    };
-
+export function AppSidebarAdmin() {
     return (
         <Sidebar>
             <SidebarContent>
@@ -108,9 +99,7 @@ export function AppSidebarAdmin({ onSelectionChange }: AppSidebarProps) {
                                 >
                                     <SidebarMenuItem>
                                         <CollapsibleTrigger asChild>
-                                            <SidebarMenuButton
-                                                onClick={() => handleSelection(item.title)}
-                                            >
+                                            <SidebarMenuButton>
                                                 <item.icon />
                                                 {item.title}
                                             </SidebarMenuButton>
@@ -119,7 +108,7 @@ export function AppSidebarAdmin({ onSelectionChange }: AppSidebarProps) {
                                             <SidebarMenuSub>
                                                 {item.subItems.map((subItem, subIndex) => (
                                                     <SidebarMenuSubItem key={subIndex}>
-                                                        {"isDialog" in subItem ? (
+                                                        {"isDeleteUser" in subItem ? (
                                                             <Dialog>
                                                                 <DialogTrigger asChild>
                                                                     <SidebarMenuButton>
@@ -128,71 +117,81 @@ export function AppSidebarAdmin({ onSelectionChange }: AppSidebarProps) {
                                                                 </DialogTrigger>
                                                                 <DialogContent>
                                                                     <DialogHeader>
-                                                                        <DialogTitle>Redeem Points</DialogTitle>
+                                                                        <DialogTitle>Delete User</DialogTitle>
                                                                         <DialogDescription>
-                                                                            You can redeem your loyalty points here.
+                                                                            Enter the user's email to delete their account.
                                                                         </DialogDescription>
                                                                     </DialogHeader>
-                                                                </DialogContent>
-                                                            </Dialog>
-                                                        ) : "isCancel" in subItem ? (
-                                                            <Dialog>
-                                                                <DialogTrigger asChild>
-                                                                    <SidebarMenuButton>
-                                                                        {subItem.title}
-                                                                    </SidebarMenuButton>
-                                                                </DialogTrigger>
-                                                                <DialogContent>
-                                                                    <DialogHeader>
-                                                                        <DialogTitle>Cancel Booking</DialogTitle>
-                                                                        <DialogDescription>
-                                                                            Please provide the details below to cancel
-                                                                            your booking.
-                                                                        </DialogDescription>
-                                                                    </DialogHeader>
-                                                                    <div className="space-y-4 mt-4">
-                                                                        <div>
-                                                                            <label
-                                                                                htmlFor="cancel-booking-reference"
-                                                                                className="block text-sm font-medium text-gray-200"
-                                                                            >
-                                                                                Booking Reference
-                                                                            </label>
-                                                                            <Input
-                                                                                id="cancel-booking-reference"
-                                                                                type="text"
-                                                                                placeholder="Enter your booking reference"
-                                                                            />
-                                                                        </div>
-                                                                        <div>
-                                                                            <label
-                                                                                htmlFor="cancel-passenger-name"
-                                                                                className="block text-sm font-medium text-gray-200"
-                                                                            >
-                                                                                Passenger Name
-                                                                            </label>
-                                                                            <Input
-                                                                                id="cancel-passenger-name"
-                                                                                type="text"
-                                                                                placeholder="Enter passenger name"
-                                                                            />
-                                                                        </div>
-                                                                    </div>
-                                                                    <div className="flex justify-end mt-4 gap-2">
+                                                                    <Input
+                                                                        type="email"
+                                                                        placeholder="Enter user email"
+                                                                        className="my-4"
+                                                                    />
+                                                                    <div className="flex justify-end gap-2">
                                                                         <Button variant="outline">Cancel</Button>
                                                                         <Button variant="destructive">
-                                                                            Confirm
+                                                                            Delete User
+                                                                        </Button>
+                                                                    </div>
+                                                                </DialogContent>
+                                                            </Dialog>
+                                                        ) : "isDeleteBooking" in subItem ? (
+                                                            <Dialog>
+                                                                <DialogTrigger asChild>
+                                                                    <SidebarMenuButton>
+                                                                        {subItem.title}
+                                                                    </SidebarMenuButton>
+                                                                </DialogTrigger>
+                                                                <DialogContent>
+                                                                    <DialogHeader>
+                                                                        <DialogTitle>Delete Booking</DialogTitle>
+                                                                        <DialogDescription>
+                                                                            Enter the booking reference to delete the booking.
+                                                                        </DialogDescription>
+                                                                    </DialogHeader>
+                                                                    <Input
+                                                                        type="text"
+                                                                        placeholder="Enter booking reference"
+                                                                        className="my-4"
+                                                                    />
+                                                                    <div className="flex justify-end gap-2">
+                                                                        <Button variant="outline">Cancel</Button>
+                                                                        <Button variant="destructive">
+                                                                            Delete Booking
+                                                                        </Button>
+                                                                    </div>
+                                                                </DialogContent>
+                                                            </Dialog>
+                                                        ) : "isDeleteFlight" in subItem ? (
+                                                            <Dialog>
+                                                                <DialogTrigger asChild>
+                                                                    <SidebarMenuButton>
+                                                                        {subItem.title}
+                                                                    </SidebarMenuButton>
+                                                                </DialogTrigger>
+                                                                <DialogContent>
+                                                                    <DialogHeader>
+                                                                        <DialogTitle>Delete Flight</DialogTitle>
+                                                                        <DialogDescription>
+                                                                            Enter the flight reference number to delete the flight.
+                                                                        </DialogDescription>
+                                                                    </DialogHeader>
+                                                                    <Input
+                                                                        type="text"
+                                                                        placeholder="Enter flight reference number"
+                                                                        className="my-4"
+                                                                    />
+                                                                    <div className="flex justify-end gap-2">
+                                                                        <Button variant="outline">Cancel</Button>
+                                                                        <Button variant="destructive">
+                                                                            Delete Flight
                                                                         </Button>
                                                                     </div>
                                                                 </DialogContent>
                                                             </Dialog>
                                                         ) : (
                                                             <Link to={subItem.url!}>
-                                                                <SidebarMenuButton
-                                                                    onClick={() =>
-                                                                        handleSelection(item.title, subItem.title)
-                                                                    }
-                                                                >
+                                                                <SidebarMenuButton>
                                                                     {subItem.title}
                                                                 </SidebarMenuButton>
                                                             </Link>
