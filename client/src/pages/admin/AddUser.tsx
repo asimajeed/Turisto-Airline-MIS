@@ -56,26 +56,25 @@ export function AddUser(): JSX.Element {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br text-foreground p-8 flex justify-center items-center">
-            <div className="w-full max-w-xl p-6 bg-white/10 rounded-xl shadow-lg backdrop-blur-md border border-white/20">
-                <h2 className="text-2xl font-bold mb-6">Add New User</h2>
+        <div className="min-h-screen bg-card text-foreground p-8 flex justify-center items-center">
+            <div className="w-full max-w-xl p-6 bg-card rounded-xl shadow-lg backdrop-blur-md border border-white/20">
+                <h2 className="text-2xl font-bold mb-6 text-foreground">Add New User</h2>
                 <form
                     onSubmit={(e) => {
                         e.preventDefault();
                         handleAddUser();
                     }}
-                    className="space-y-4"
+                    className="space-y-6"
                 >
                     {[
                         { label: "First Name", field: "first_name", value: first_name, type: "text" },
                         { label: "Last Name", field: "last_name", value: last_name, type: "text" },
                         { label: "Email", field: "email", value: email, type: "email" },
                         { label: "Phone Number", field: "phone_number", value: phone_number, type: "tel" },
-                        { label: "Date of Birth", field: "date_of_birth", value: date_of_birth, type: "date" },
-                        
+                        { label: "Date of Birth", field: "date_of_birth", value: date_of_birth, type: "date" }
                     ].map(({ label, field, value, type }) => (
                         <div key={field}>
-                            <Label htmlFor={field} className="block text-sm font-bold mb-2">
+                            <Label htmlFor={field} className="block text-sm font-bold text-foreground mb-2">
                                 {label}
                             </Label>
                             <Input
@@ -88,7 +87,7 @@ export function AddUser(): JSX.Element {
                                         type === "number" ? +e.target.value : e.target.value
                                     )
                                 }
-                                className="border border-white/20 text-foreground w-full"
+                                className="border border-white/20 text-foreground w-full rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-theme-primary focus:border-transparent"
                                 required={field !== "phone_number" && field !== "date_of_birth"}
                             />
                         </div>
@@ -96,27 +95,32 @@ export function AddUser(): JSX.Element {
 
                     {/* Admin and Guest Toggles */}
                     <div className="flex items-center space-x-4">
-                        <Label htmlFor="is_admin" className="flex items-center space-x-2">
+                        <Label htmlFor="is_admin" className="flex items-center space-x-2 text-foreground">
                             <Input
                                 id="is_admin"
                                 type="checkbox"
                                 checked={is_admin}
                                 onChange={(e) => handleFieldChange("is_admin", e.target.checked)}
+                                className="rounded-md"
                             />
                             <span>Admin</span>
                         </Label>
-                        <Label htmlFor="is_guest" className="flex items-center space-x-2">
+                        <Label htmlFor="is_guest" className="flex items-center space-x-2 text-foreground">
                             <Input
                                 id="is_guest"
                                 type="checkbox"
                                 checked={is_guest}
                                 onChange={(e) => handleFieldChange("is_guest", e.target.checked)}
+                                className="rounded-md"
                             />
                             <span>Guest</span>
                         </Label>
                     </div>
 
-                    <Button type="submit" className="w-full">
+                    <Button
+                        type="submit"
+                        className="w-full bg-theme-primary hover:bg-theme-primary-highlight text-white font-semibold py-2 rounded-lg mt-4"
+                    >
                         Add User
                     </Button>
                 </form>

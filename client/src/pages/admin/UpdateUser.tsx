@@ -49,17 +49,17 @@ export function UpdateUser(): JSX.Element {
     ];
 
     return (
-        <div className="min-h-screen bg-gradient-to-br text-foreground p-8 flex justify-center items-center">
+        <div className="min-h-screen bg-card text-foreground p-8 flex justify-center items-center">
             {/* Glass effect container */}
-            <div className="w-full max-w-2xl p-6 bg-white/10 rounded-xl shadow-lg backdrop-blur-md border border-white/20">
-                <h2 className="text-2xl font-bold mb-6">Update User Information</h2>
+            <div className="w-full max-w-2xl p-6 bg-card rounded-xl shadow-lg backdrop-blur-md border border-white/20">
+                <h2 className="text-2xl font-bold mb-6 text-foreground">Update User Information</h2>
                 <div className="space-y-6">
                     {fields.map(({ label, field, value, type }) => (
                         <div
                             key={field}
-                            className="p-4 bg-white/10 rounded-lg shadow-md border border-white/20 flex flex-col gap-4"
+                            className="flex flex-col gap-4"
                         >
-                            <Label htmlFor={field} className="text-sm font-bold">
+                            <Label htmlFor={field} className="text-sm font-bold text-foreground">
                                 {label}
                             </Label>
 
@@ -79,7 +79,7 @@ export function UpdateUser(): JSX.Element {
                                                     : e.target.value
                                         )
                                     }
-                                    className="flex-1 border border-white/20 text-foreground"
+                                    className="flex-1 border border-white/20 text-foreground rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-theme-primary focus:border-transparent"
                                 />
 
                                 <Button
@@ -89,7 +89,7 @@ export function UpdateUser(): JSX.Element {
                                             type === "checkbox" ? !value : value
                                         )
                                     }
-                                    className="w-32"
+                                    className="w-32 bg-theme-primary hover:bg-theme-primary-highlight text-white font-semibold py-2 rounded-lg"
                                 >
                                     Update
                                 </Button>

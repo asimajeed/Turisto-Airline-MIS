@@ -10,6 +10,7 @@ export type airportType = {
 };
 
 export interface Flight {
+  arrival_time(arrival_time: any): unknown;
   flight_id: number;
   flight_number: string;
   departureAirport: airportType;

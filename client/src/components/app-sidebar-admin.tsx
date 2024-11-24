@@ -62,9 +62,9 @@ const items: MenuItem[] = [
         title: "System",
         icon: Plane,
         subItems: [
-            { title: "Create Flights", url: "/system/add-flights" },
+            { title: "Create Flights", url: "/admin/createflight" },
             { title: "Delete Flights", isDeleteFlight: true },
-            { title: "Edit Flights", url: "/system/edit-flights" },
+            { title: "Edit Flights", url: "/admin/editflight" },
         ],
     },
     {

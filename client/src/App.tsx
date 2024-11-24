@@ -19,6 +19,8 @@ import ErrorPage from "./pages/ErrorPage";
 import History from "./pages/user/History"
 import { UpdateUser } from "./pages/admin/UpdateUser";
 import UpdateBooking from "./pages/admin/UpdateBooking"
+import CreateFlight from "./pages/admin/CreateFlight";
+import EditFlight from "./pages/admin/Editflight";
 
 const App = () => {
   const { isLoggedIn, is_admin } = useGlobalStore();
@@ -87,6 +89,8 @@ const App = () => {
                   <Route path="add" element={<AddUser />} />
                   <Route path="update" element={<UpdateUser />} />
                   <Route path="updateBook" element={<UpdateBooking />} />
+                  <Route path="createflight" element={<CreateFlight />} />
+                  <Route path="editflight" element={<EditFlight />} />
                 </Route>
               ) : (
                 <>
