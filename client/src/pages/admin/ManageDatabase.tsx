@@ -11,7 +11,7 @@ const renderTable = (rows: any[]) => {
 
   return (
     <div className="overflow-scroll max-h-[50vh]">
-      <table className="text-black min-w-full border-collapse">
+      <table className="text-foreground min-w-full border-collapse">
         <thead>
           <tr>
             {headers.map((header, index) => (

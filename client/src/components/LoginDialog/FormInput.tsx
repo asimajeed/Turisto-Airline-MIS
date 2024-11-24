@@ -1,11 +1,17 @@
-import { useState } from "react";
+import { useState, KeyboardEventHandler } from "react";
 import { GrFormViewHide } from "react-icons/gr";
 import { GrFormView } from "react-icons/gr";
-const FormInput = ({ label, type, value, onChange, placeHolder }: any) => {
+const FormInput = ({ label, type, value, onChange, placeHolder, onEnterPress }: any) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
+  };
+
+  const handleKeyPress:KeyboardEventHandler<HTMLInputElement> = (event) => {
+    if (event.key === "Enter") {
+      onEnterPress();
+    }
   };
 
   const isPasswordField = type === "password";
@@ -17,6 +23,7 @@ const FormInput = ({ label, type, value, onChange, placeHolder }: any) => {
         type={isPasswordField && showPassword ? "text" : type}
         value={value}
         onChange={onChange}
+        onKeyDown={handleKeyPress}
         className="w-full border border-gray-300 rounded p-2 text-black"
         placeholder={placeHolder}
         required
@@ -26,7 +33,11 @@ const FormInput = ({ label, type, value, onChange, placeHolder }: any) => {
           onClick={togglePasswordVisibility}
           className="absolute opacity-80 right-0 mt-[0.33rem] mr-1 cursor-pointer text-gray-500"
         >
-          {showPassword ? <GrFormView color="black" size={"2rem"} /> : <GrFormViewHide color="black" size={"2rem"} /> }
+          {showPassword ? (
+            <GrFormView color="black" size={"2rem"} />
+          ) : (
+            <GrFormViewHide color="black" size={"2rem"} />
+          )}
         </span>
       )}
     </div>

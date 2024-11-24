@@ -10,17 +10,15 @@ export async function fetchAirports(
   try {
     if (search) {
       const result = await query(
-        `SELECT airport_id, airport_code, airport_name, city, country, latitude, longitude
-      FROM airports
-      WHERE airport_name ILIKE $1 OR airport_code ILIKE $1 OR city ILIKE $1 OR country ILIKE $1
-      LIMIT $2 OFFSET $3`,
+        `SELECT * FROM airports WHERE airport_name
+        ILIKE $1 OR airport_code ILIKE $1 OR city ILIKE $1 OR country ILIKE $1 LIMIT $2 OFFSET $3`,
         [`${search}%`, limit, offset]
       );
       return result.rows;
     }
-    const result =
-      await query(`SELECT airport_id, airport_code, airport_name, city, country, latitude, longitude
-FROM airports WHERE airport_code IN ('LHR', 'DXB', 'KHI', 'LHE', 'HND', 'DEL', 'CAN', 'DFW', 'ATL', 'DEN', 'ORD', 'IST')`);
+    const result = await query(
+      `SELECT * FROM airports WHERE airport_code IN ('LHR', 'DXB', 'KHI', 'LHE', 'HND', 'CAN', 'DFW', 'ATL', 'DEN', 'ORD', 'IST')`
+    );
     return result.rows;
   } catch (err) {
     console.error("Error fetching airports:", err);

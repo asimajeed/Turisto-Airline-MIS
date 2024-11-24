@@ -20,9 +20,10 @@ const SeatSelection = () => {
           <DialogTitle >Select seat</DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[80vh]">
-          <Selector selectedSeat={selectedSeat} setSelectedSeat={setSelectedSeat}/>
+          <Selector selectedSeat={selectedSeat} setSelectedSeat={setSelectedSeat} />
         </ScrollArea>
-      </DialogContent>
+        {selectedSeat && <Button>Confirm selection</Button>}
+        </DialogContent>
     </Dialog>
   );
 };

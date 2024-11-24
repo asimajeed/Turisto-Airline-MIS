@@ -1,9 +1,4 @@
-import {
-  useState,
-  useEffect,
-  ReactNode,
-  forwardRef,
-} from "react";
+import { useState, useEffect, ReactNode, forwardRef } from "react";
 import LoginDialog from "@/components/LoginDialog/LoginDialog";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -21,7 +16,7 @@ const NavBar = forwardRef<
   { children?: ReactNode; className?: string }
 >(({ children, className }, ref) => {
   const [popupFlag, setPopupFlag] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean | undefined>(undefined);
+  const { isLoggedIn, setIsLoggedIn } = useGlobalStore();
   const [isScrolled, setIsScrolled] = useState(false);
   const { setAll } = useGlobalStore();
   const buttonVariants = {
@@ -48,7 +43,6 @@ const NavBar = forwardRef<
         if (response.status == 200) {
           setIsLoggedIn(true);
           setAll(response.data);
-          console.log(response.data);
         }
       } catch (error) {
         console.error("Error fetching profile:", error);

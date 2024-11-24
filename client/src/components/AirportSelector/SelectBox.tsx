@@ -68,7 +68,7 @@ const SelectBox: FC<ComboBoxProps> = ({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between mx-0.5"
+          className="w-52 justify-between mx-0.5"
         >
           <p className="overflow-hidden w-full">
             {value ? `${value.airport_code}, ${value.airport_name}` : label}

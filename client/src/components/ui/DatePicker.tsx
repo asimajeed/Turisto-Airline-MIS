@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { CalendarIcon } from "@radix-ui/react-icons";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -24,9 +24,10 @@ export function DatePicker() {
         <Button
           variant={"outline"}
           className={cn(
-            "w-[280px] justify-start text-left font-normal",
+            "justify-start text-left font-normal",
             !date && "text-muted-foreground"
           )}
+          style={{width:'13.5rem'}}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {date ? format(date, "PPP") : <span>Pick a date</span>}
@@ -38,6 +39,7 @@ export function DatePicker() {
           selected={date || undefined}
           fromDate={new Date()}
           onSelect={setDate}
+          weekStartsOn={1}
           initialFocus
         />
       </PopoverContent>

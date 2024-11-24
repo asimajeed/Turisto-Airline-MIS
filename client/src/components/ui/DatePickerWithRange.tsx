@@ -35,16 +35,16 @@ export function DatePickerWithRange({
             id="date"
             variant={"outline"}
             className={cn(
-              "w-[280px] justify-start text-left font-normal",
-              !date && "text-muted-foreground"
+              "justify-start text-left font-normal",
+              !date.from && "text-muted-foreground"
             )}
+            style={{ width: "13.5rem" }}
           >
-            <CalendarIcon className="mr-2 h-4 w-4" />
+            <CalendarIcon className="h-4 w-4" />
             {date?.from ? (
               date.to ? (
                 <>
-                  {format(date.from, "LLL dd, y")} -{" "}
-                  {format(date.to, "LLL dd, y")}
+                  {format(date.from, "d LLL y")} - {format(date.to, "d LLL y")}
                 </>
               ) : (
                 format(date.from, "LLL dd, y")
@@ -62,6 +62,7 @@ export function DatePickerWithRange({
             fromDate={new Date()}
             selected={date}
             onSelect={setDate}
+            weekStartsOn={1}
             numberOfMonths={2}
           />
         </PopoverContent>

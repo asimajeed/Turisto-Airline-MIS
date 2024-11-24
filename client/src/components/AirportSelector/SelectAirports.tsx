@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import SelectBox from "./SelectBox";
 import { airportType } from "@/utils/types";
 import { useGlobalStore } from "@/context/GlobalStore";
@@ -13,7 +13,7 @@ const SelectAirports = () => {
   } = useGlobalStore();
 
   return (
-    <div>
+    <div className="flex">
       <SelectBox
         label="From where?"
         value={fromValue}

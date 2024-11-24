@@ -1,7 +1,9 @@
 import { create } from "zustand";
-import { airportType } from "@/utils/types";
+import { airportType, Flight } from "@/utils/types";
 
 export interface GlobalState {
+  isLoggedIn: boolean | undefined;
+
   first_name: string | null;
   last_name: string | null;
   email: string | null;
@@ -19,6 +21,9 @@ export interface GlobalState {
   isOneWay: boolean;
   airport_list: string[] | null;
 
+  selected_flight: Flight | null;
+
+  setIsLoggedIn: (isLoggedIn: boolean) => void;
   setFirstName: (firstName: string | null) => void;
   setLastName: (lastName: string | null) => void;
   setEmail: (email: string | null) => void;
@@ -32,11 +37,13 @@ export interface GlobalState {
   setEndDate: (endDate: Date | null) => void;
   setIsOneWay: (isOneWay: boolean) => void;
   setAirportList: (airportList: string[] | null) => void;
+  setSelectedFlight: (flight: Flight) => void;
   setAll: (newState: Partial<GlobalState>) => void;
-  resetUserFields: () => void; // New method to reset user-related fields
+  resetUserFields: () => void;
 }
 
 const defaultUserState: GlobalState = {
+  isLoggedIn: undefined,
   first_name: null,
   last_name: null,
   email: null,
@@ -52,6 +59,8 @@ const defaultUserState: GlobalState = {
   is_admin: false,
   is_guest: false,
   isOneWay: false,
+  selected_flight: null,
+  setIsLoggedIn: () => {},
   setFirstName: () => {},
   setLastName: () => {},
   setEmail: () => {},
@@ -62,15 +71,17 @@ const defaultUserState: GlobalState = {
   setEndDate: () => {},
   setDepartureAirport: () => {},
   setArrivalAirport: () => {},
-  setAirportList: () => {},
   setAdminAccess: () => {},
   setIsOneWay: () => {},
+  setAirportList: () => {},
+  setSelectedFlight: () => {},
   setAll: () => {},
   resetUserFields: () => {}, // Initialize with an empty function
 };
 
 export const useGlobalStore = create<GlobalState>((set) => ({
   ...defaultUserState,
+  setIsLoggedIn: (isLoggedIn) => set({ isLoggedIn: isLoggedIn }),
   setFirstName: (firstName) => set({ first_name: firstName }),
   setLastName: (lastName) => set({ last_name: lastName }),
   setEmail: (email) => set({ email }),
@@ -85,7 +96,7 @@ export const useGlobalStore = create<GlobalState>((set) => ({
   setAdminAccess: (access) => set({ is_admin: access }),
   setIsOneWay: (isOneWay) => set({ isOneWay }),
   setAll: (newState) => set(newState),
-
+  setSelectedFlight: (flight) => set({ selected_flight: flight }),
   resetUserFields: () => {
     set({
       first_name: null,

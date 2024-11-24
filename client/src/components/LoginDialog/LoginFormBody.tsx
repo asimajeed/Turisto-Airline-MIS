@@ -27,6 +27,7 @@ const LoginForm = ({
       type="password"
       value={password}
       onChange={(e: any) => setPassword(e.target.value)}
+      onEnterPress={handleSignIn}
     />
     <div className="flex justify-between mb-4">
       <label className="flex items-center text-white">
@@ -34,7 +35,6 @@ const LoginForm = ({
         Remember me
       </label>
       <a
-        href="#!"
         onClick={() => alert("Good luck bozo")}
         className="text-white"
       >

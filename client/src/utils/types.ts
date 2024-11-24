@@ -6,4 +6,16 @@ export type airportType = {
   country: string;
   latitude: string;
   longitude: string;
+  timezone: number;
 };
+
+export interface Flight {
+  flight_id: number;
+  flight_number: string;
+  departureAirport: airportType;
+  arrivalAirport: airportType;
+  departureDate: Date;
+  arrivalDate: Date;
+  status: string;
+  base_price: number;
+}

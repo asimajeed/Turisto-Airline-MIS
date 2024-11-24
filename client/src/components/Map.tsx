@@ -83,7 +83,7 @@ function interpolateGreatCircle(
 }
 
 interface MapComponentProps {
-  className: string;
+  className?: string;
   children: React.ReactNode;
 }
 
@@ -138,36 +138,24 @@ const MapComponent: React.FC<MapComponentProps> = ({ className, children }) => {
 
   const { arrival_airport, departure_airport } = useGlobalStore();
   useEffect(() => {
-    if (arrival_airport?.latitude) {
-      const temp = {
-        lat: Number(arrival_airport.latitude),
-        lng: Number(arrival_airport.longitude),
-      };
-      setPoints((prevPoints) => [
-        ...prevPoints,
-        {
-          lat: temp.lat,
-          lng: temp.lng,
-        },
-      ]);
-    }
-  }, [arrival_airport]);
+    const points = [];
 
-  useEffect(() => {
     if (departure_airport?.latitude) {
-      const temp = {
-        lat: Number(departure_airport.latitude),
-        lng: Number(departure_airport.longitude),
-      };
-      setPoints((prevPoints) => [
-        ...prevPoints,
-        {
-          lat: temp.lat,
-          lng: temp.lng,
-        },
-      ]);
+      points.push({
+        lat: parseFloat(departure_airport.latitude),
+        lng: parseFloat(departure_airport.longitude),
+      });
     }
-  }, [departure_airport]);
+
+    if (arrival_airport?.latitude) {
+      points.push({
+        lat: parseFloat(arrival_airport.latitude),
+        lng: parseFloat(arrival_airport.longitude),
+      });
+    }
+
+    setPoints(points);
+  }, [arrival_airport?.latitude, departure_airport?.latitude]);
 
   const generatePath = (points: { lat: number; lng: number }[]) => {
     if (points.length < 2 || imageDimensions.width === 0) return null;

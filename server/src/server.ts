@@ -63,12 +63,11 @@ app.delete("/logout", (req, res) => {
     if (err) {
       return res.status(500).send({ message: "Logout failed" });
     }
-    res.clearCookie('connect.sid').send({ message: "Logged out successfully" });
+    res.clearCookie("connect.sid").send({ message: "Logged out successfully" });
   });
 });
 
 app.get("/profile", (req: Request, res: Response) => {
-  console.log(req.isAuthenticated())
   if (!req.isAuthenticated()) {
     res.status(401).send("You need to log in first");
   } else {
@@ -77,7 +76,6 @@ app.get("/profile", (req: Request, res: Response) => {
 });
 
 app.post("/admin/sql", async (req: Request, res: Response) => {
-  console.log(req.isAuthenticated(), req.user, req.user?.is_admin)
   if (req.isAuthenticated() && req.user.is_admin) {
     try {
       res.json(await query(req.body.query));
@@ -96,6 +94,53 @@ app.get("/api/airports", async (req, res) => {
     res.json(airports);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch airports" });
+  }
+});
+
+app.get("/api/flights", async (req: Request, res: Response) => {
+  try {
+    const { departure_date, departure_airport_id, arrival_airport_id, page } =
+      req.query;
+
+    if (!departure_date || !departure_airport_id || !arrival_airport_id) {
+      res.status(400).json({
+        message:
+          "Missing required query parameters: departure_date, departure_airport_id, arrival_airport_id",
+      });
+      return;
+    }
+
+    const queryStr = `
+      SELECT 
+        flight_id, 
+        flight_number, 
+        departure_airport_id, 
+        arrival_airport_id, 
+        departure_date, 
+        arrival_date, 
+        total_seats, 
+        status, 
+        base_price
+      FROM flights
+      WHERE departure_date::date = $1::date
+        AND departure_airport_id = $2
+        AND arrival_airport_id = $3
+      LIMIT 10
+      OFFSET $4
+    `;
+    const values = [
+      departure_date,
+      departure_airport_id,
+      arrival_airport_id,
+      parseInt(page as string) * 10,
+    ];
+
+    const result = await query(queryStr, values);
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching flights:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 
