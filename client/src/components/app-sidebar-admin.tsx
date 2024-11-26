@@ -71,7 +71,7 @@ const items: MenuItem[] = [
         title: "Report Generation",
         icon: BarChart2,
         subItems: [
-            { title: "Generate Reports", url: "/reports/generate" },
+            { title: "Generate Reports", url: "/admin/report" },
         ],
     },
     {
