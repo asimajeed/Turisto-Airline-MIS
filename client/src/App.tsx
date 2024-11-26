@@ -79,14 +79,14 @@ const App = () => {
           {isLoggedIn ? (
             <>
               <Route path="/user" element={<SDLayout />}>
-                <Route path="update" element={<Update />} />
+                <Route path="" element={<Update />} />
                 <Route path="modify" element={<ModifyFlight />} />
                 <Route path="history" element={<History />} />
               </Route>
               {is_admin ? (
                 <Route path="/admin" element={<SDALayout />}>
                   <Route path="sql" element={<ManageDatabase />} />
-                  <Route path="add" element={<AddUser />} />
+                  <Route path="" element={<AddUser />} />
                   <Route path="update" element={<UpdateUser />} />
                   <Route path="updateBook" element={<UpdateBooking />} />
                   <Route path="createflight" element={<CreateFlight />} />

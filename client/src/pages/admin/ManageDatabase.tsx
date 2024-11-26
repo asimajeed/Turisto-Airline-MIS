@@ -105,13 +105,13 @@ const ManageDatabase = () => {
           />
           <button
             type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-600 text-foreground font-semibold py-2 px-4 rounded-lg transition-all duration-200"
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200"
           >
             Run Query
           </button>
           <button
             type="button"
-            className="w-full bg-red-500 hover:bg-red-600 text-foreground font-semibold py-2 px-4 rounded-lg transition-all duration-200"
+            className="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200"
             onClick={resetForm}
           >
             Reset

@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import express, { Request, Response } from "express";
+import express, { Request, response, Response } from "express";
 import cors from "cors";
 import { query } from "./db-config";
 import passport from "passport";
@@ -141,6 +141,104 @@ app.get("/api/flights", async (req: Request, res: Response) => {
   } catch (error) {
     console.error("Error fetching flights:", error);
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.get("/api/flight", async (req, res) => {
+  const { searchId } = req.query;
+
+  // Validate `searchId`
+  if (!searchId) {
+    res.status(400).json({ error: "Flight ID is required." });
+    return;
+  }
+
+  try {
+    // Execute query
+    const result = await query("SELECT * FROM flights WHERE flight_id = $1", [
+      searchId,
+    ]);
+
+    // Check if flight exists
+    if (result.rows.length === 0) {
+      res
+        .status(404)
+        .json({ error: "No flight corresponds to the provided Flight ID." });
+      return;
+    }
+
+    // Return the flight details
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Error fetching flight details:", err);
+    res
+      .status(500)
+      .json({ error: "Internal server error. Please try again later." });
+  }
+});
+
+app.put("/api/flight/:flightId", async (req, res) => {
+  const { flightId } = req.params;
+  const {
+    flight_number,
+    departure_airport_id,
+    arrival_airport_id,
+    departure_date,
+    arrival_date,
+    total_seats,
+    status,
+    base_price,
+  } = req.body;
+
+  // Validate input
+  if (!flightId) {
+    res.status(400).json({ error: "Flight ID is required." });
+    return;
+  }
+
+  try {
+    // Check if the flight exists
+    const flightCheck = await query(
+      "SELECT * FROM flights WHERE flight_id = $1",
+      [flightId]
+    );
+    if (flightCheck.rows.length === 0) {
+      res.status(404).json({ error: "Flight not found." });
+      return;
+    }
+
+    // Update the flight details
+    const updateQuery = `
+      UPDATE flights
+      SET
+        flight_number = $1,
+        departure_airport_id = $2,
+        arrival_airport_id = $3,
+        departure_date = $4,
+        arrival_date = $5,
+        total_seats = $6,
+        status = $7,
+        base_price = $8
+      WHERE flight_id = $9
+    `;
+    await query(updateQuery, [
+      flight_number,
+      departure_airport_id,
+      arrival_airport_id,
+      departure_date,
+      arrival_date,
+      total_seats,
+      status,
+      base_price,
+      flightId,
+    ]);
+
+    res.status(200).json({ message: "Flight updated successfully." });
+  } catch (err) {
+    console.error("Error updating flight:", err);
+    res
+      .status(500)
+      .json({ error: "Internal server error. Please try again later." });
   }
 });
 

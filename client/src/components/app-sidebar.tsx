@@ -43,7 +43,7 @@ const items: MenuItem[] = [
   {
     title: "Profile",
     icon: Home,
-    subItems: [{ title: "Update", url: "/user/update" }],
+    subItems: [{ title: "Update", url: "/user" }],
   },
   {
     title: "Bookings",

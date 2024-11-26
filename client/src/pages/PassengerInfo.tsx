@@ -203,7 +203,7 @@ const PassengerInfo = () => {
             <div className="flex space-x-4 mt-6">
               <Sheet>
                 <SheetTrigger>
-                  <Button className="bg-theme-primary hover:bg-theme-primary-highlight text-foreground">
+                  <Button className="bg-theme-primary hover:bg-theme-primary-highlight text-white">
                     View Summary
                   </Button>
                 </SheetTrigger>
