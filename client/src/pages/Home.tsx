@@ -34,7 +34,7 @@ function Home() {
               {/* Airport selection component */}
               <SelectAirports />
               <div
-                className="flex items-center border border-muted h-9 w-32 px-3 rounded-md cursor-pointer"
+                className="flex items-center border h-9 w-32 px-3 rounded-md cursor-pointer bg-card  border-muted"
                 onClick={handleOneWayChange}
               >
                 <Checkbox

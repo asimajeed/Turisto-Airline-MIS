@@ -16,7 +16,7 @@ import { ModifyFlight } from "./pages/user/ModifyFlight";
 import { AddUser } from "./pages/admin/AddUser";
 import { useGlobalStore } from "./context/GlobalStore";
 import ErrorPage from "./pages/ErrorPage";
-import History from "./pages/user/History"
+import BookingHistoryPage from "./pages/user/BookingHistoryPage"
 import { UpdateUser } from "./pages/admin/UpdateUser";
 import UpdateBooking from "./pages/admin/UpdateBooking"
 import CreateFlight from "./pages/admin/CreateFlight";
@@ -82,7 +82,7 @@ const App = () => {
               <Route path="/user" element={<SDLayout />}>
                 <Route path="" element={<Update />} />
                 <Route path="modify" element={<ModifyFlight />} />
-                <Route path="history" element={<History />} />
+                <Route path="history" element={<BookingHistoryPage />} />
               </Route>
               {is_admin ? (
                 <Route path="/admin" element={<SDALayout />}>
