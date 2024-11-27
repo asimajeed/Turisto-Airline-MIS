@@ -39,6 +39,11 @@ const PassengerInfo = () => {
     ]);
   };
 
+  const removePassenger = () => {
+    if (groupPassengers.length == 1) setGroupPassengers([]);
+    else setGroupPassengers(groupPassengers.pop());
+  };
+
   const updatePassenger = (
     index: number,
     key: keyof Passenger,
@@ -189,6 +194,17 @@ const PassengerInfo = () => {
               >
                 Add Another Passenger
               </Button>
+              {groupPassengers.length >= 1 ? (
+                <Button
+                  variant="destructive"
+                  onClick={removePassenger}
+                  className="ml-2"
+                >
+                  Remove A Passenger
+                </Button>
+              ) : (
+                ""
+              )}
             </div>
           </div>
 
@@ -224,13 +240,6 @@ const PassengerInfo = () => {
                         ).toLocaleTimeString([], {
                           hour: "2-digit",
                           minute: "2-digit",
-                        })}{" "}
-                        on{" "}
-                        {new Date(
-                          flightDetails.departure_time
-                        ).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
                         })}{" "}
                         -{" "}
                         {new Date(

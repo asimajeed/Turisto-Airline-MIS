@@ -44,7 +44,7 @@ export interface GlobalState {
   setSelectedSeat: (s: string) => void;
   setAll: (newState: Partial<GlobalState>) => void;
   resetUserFields: () => void;
-  setPassengers: (p: Passenger[]) => void;
+  setPassengers: (p: Passenger[] | []) => void;
 }
 
 const defaultUserState: GlobalState = {
@@ -120,7 +120,7 @@ export const useGlobalStore = create<GlobalState>((set) => ({
       is_guest: false,
     });
   },
-  setPassengers: (passengers: Passenger[]) => {
+  setPassengers: (passengers: Passenger[] | []) => {
     set({ passengers });
   },
 }));

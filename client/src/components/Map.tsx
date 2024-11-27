@@ -2,7 +2,7 @@ import Image from "@/assets/WorldMapScaled.png";
 import { useGlobalStore } from "@/context/GlobalStore";
 import { cn } from "@/lib/utils";
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+// import { motion } from "framer-motion";
 function MillerProjection(
   latitude: number,
   longitude: number,
@@ -95,41 +95,57 @@ const MapComponent: React.FC<MapComponentProps> = ({ className, children }) => {
     offsetY: 0,
     offsetX: 0,
   });
-  const [scale, setScale] = useState(
-    (imageRef.current && imageRef.current.width / document.body.clientWidth) ||
-      1
-  );
+  // const [scale, setScale] = useState(
+  //   (imageRef.current && imageRef.current.width / document.body.clientWidth) ||
+  //     1
+  // );
   const [points, setPoints] = useState<{ lat?: number; lng?: number }[]>([
     {},
     {},
   ]);
-  const [centerPoint, setCenterPoint] = useState<{
-    x: number;
-    y: number;
-  } | null>(null);
+  // const [centerPoint, setCenterPoint] = useState<{
+  //   x: number;
+  //   y: number;
+  // } | null>(null);
 
   const updateImageDimensions = () => {
     if (imageRef.current) {
+      const naturalAspectRatio =
+        imageRef.current.naturalWidth / imageRef.current.naturalHeight;
+
       const rect = imageRef.current.getBoundingClientRect();
-      const renderedWidth = rect.width;
-      const renderedHeight = rect.height;
-      console.log(renderedHeight);
-      console.log(rect.height);
-      console.log(window.innerHeight);
+      const containerWidth = rect.width;
+      const containerHeight = rect.height;
+
+      let renderedWidth, renderedHeight;
+      if (containerWidth / containerHeight < naturalAspectRatio) {
+        renderedHeight = containerHeight;
+        renderedWidth = containerHeight * naturalAspectRatio;
+      } else {
+        renderedWidth = containerWidth;
+        renderedHeight = containerWidth / naturalAspectRatio;
+      }
+
+      const offsetX = (containerWidth - renderedWidth) / 2;
+      const offsetY = (containerHeight - renderedHeight) / 2;
 
       setImageDimensions({
         width: renderedWidth,
         height: renderedHeight,
-        offsetX: 0,
-        offsetY: 0,
+        offsetX,
+        offsetY,
       });
-      console.log(scale);
-      setScale(window.innerHeight / renderedHeight);
+      // setScale(window.innerHeight / renderedHeight);
     }
   };
   useLayoutEffect(() => {
+    const resizeObserver = new ResizeObserver(updateImageDimensions);
+
+    imageRef.current && resizeObserver.observe(imageRef.current);
+    // Start observing the container
     window.addEventListener("resize", updateImageDimensions);
     return () => {
+      resizeObserver.disconnect();
       window.removeEventListener("resize", updateImageDimensions);
     };
   }, []);
@@ -152,25 +168,25 @@ const MapComponent: React.FC<MapComponentProps> = ({ className, children }) => {
 
     setPoints(points);
 
-    if ((points[1].lat && points[1].lng) || (points[0].lat && points[0].lng)) {
-      const { x, y } = MillerProjection(
-        (points[0] && points[0]?.lat) || points[1]?.lat || 0,
-        (points[0] && points[0]?.lng) || points[1]?.lng || 0,
-        imageDimensions.width,
-        imageDimensions.height
-      );
-      setCenterPoint({ x, y });
-    }
-    if (points[1].lat && points[1].lng && points[0].lat && points[0].lng) {
-      const { x, y } = MillerProjection(
-        (points[0].lat + points[1].lat) / 2,
-        (points[0].lng + points[1].lng) / 2,
-        imageDimensions.width,
-        imageDimensions.height
-      );
-      setCenterPoint({ x, y });
-    }
-  }, [arrival_airport?.latitude, departure_airport?.latitude, imageDimensions]);
+    // if ((points[1].lat && points[1].lng) || (points[0].lat && points[0].lng)) {
+    //   const { x, y } = MillerProjection(
+    //     (points[0] && points[0]?.lat) || points[1]?.lat || 0,
+    //     (points[0] && points[0]?.lng) || points[1]?.lng || 0,
+    //     imageDimensions.width,
+    //     imageDimensions.height
+    //   );
+    //   setCenterPoint({ x, y });
+    // }
+    // if (points[1].lat && points[1].lng && points[0].lat && points[0].lng) {
+    //   const { x, y } = MillerProjection(
+    //     (points[0].lat + points[1].lat) / 2,
+    //     (points[0].lng + points[1].lng) / 2,
+    //     imageDimensions.width,
+    //     imageDimensions.height
+    //   );
+    //   setCenterPoint({ x, y });
+    // }
+  }, [arrival_airport?.latitude, departure_airport?.latitude]);
 
   const generatePath = (pointz: { lat?: number; lng?: number }[]) => {
     if (
@@ -214,8 +230,8 @@ const MapComponent: React.FC<MapComponentProps> = ({ className, children }) => {
     return pathD;
   };
   return (
-    <div className={`relative overflow-hidden ${className}`}>
-      <motion.div
+    <div className={cn('relative overflow-hidden', className)}>
+      {/* <motion.div
         initial={{ scale: 1, x: 0, y: 0 }}
         animate={{
           scale: scale,
@@ -224,63 +240,64 @@ const MapComponent: React.FC<MapComponentProps> = ({ className, children }) => {
         }}
         transition={{ duration: 1 }}
         style={{ zIndex: -2 }}
-      >
-        <img
-          ref={imageRef}
-          src={Image}
-          alt="Map"
-          className="absolute object-contain"
-          onLoad={updateImageDimensions}
-        />
+      > */}
+      <img
+        ref={imageRef}
+        src={Image}
+        alt="Map"
+        className="absolute object-cover h-full max-h-[120vh]"
+        onLoad={updateImageDimensions}
+        onResize={updateImageDimensions}
+      />
 
-        {/* Render Points */}
-        {imageDimensions.width > 0 &&
-          imageDimensions.height > 0 &&
-          points.map((point, index) => {
-            if (!(point?.lat && point?.lng)) return;
-            const { x, y } = MillerProjection(
-              point.lat,
-              point.lng,
-              imageDimensions.width,
-              imageDimensions.height
-            );
-            return (
-              <div
-                key={index}
-                className="absolute bg-foreground rounded-full"
-                style={{
-                  width: "3px",
-                  height: "3px",
-                  left: `${x + imageDimensions.offsetX}px`,
-                  top: `${y + imageDimensions.offsetY}px`,
-                  transform: "translate(-50%, -50%)",
-                  zIndex: -1,
-                }}
-              />
-            );
-          })}
-
-        {points.length >= 2 && (
-          <svg
-            className="absolute"
-            style={{
-              left: `${imageDimensions.offsetX}px`,
-              top: `${imageDimensions.offsetY}px`,
-              width: `${imageDimensions.width}px`,
-              height: `${imageDimensions.height}px`,
-              zIndex: -1,
-            }}
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d={generatePath(points) || ""}
-              fill="none"
-              stroke="var(--theme-primary-darker)"
-              strokeWidth="2"
+      {/* Render Points */}
+      {imageDimensions.width > 0 &&
+        imageDimensions.height > 0 &&
+        points.map((point, index) => {
+          if (!(point?.lat && point?.lng)) return;
+          const { x, y } = MillerProjection(
+            point.lat,
+            point.lng,
+            imageDimensions.width,
+            imageDimensions.height
+          );
+          return (
+            <div
+              key={index}
+              className="absolute bg-foreground rounded-full"
+              style={{
+                width: "3px",
+                height: "3px",
+                left: `${x + imageDimensions.offsetX}px`,
+                top: `${y + imageDimensions.offsetY}px`,
+                transform: "translate(-50%, -50%)",
+                zIndex: -1,
+              }}
             />
-          </svg>
-        )}
-      </motion.div>
+          );
+        })}
+
+      {points.length >= 2 && (
+        <svg
+          className="absolute"
+          style={{
+            left: `${imageDimensions.offsetX}px`,
+            top: `${imageDimensions.offsetY}px`,
+            width: `${imageDimensions.width}px`,
+            height: `${imageDimensions.height}px`,
+            zIndex: -1,
+          }}
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d={generatePath(points) || ""}
+            fill="none"
+            stroke="var(--theme-primary-darker)"
+            strokeWidth="2"
+          />
+        </svg>
+      )}
+      {/* </motion.div> */}
       <div className="w-full h-full relative">{children}</div>
     </div>
   );

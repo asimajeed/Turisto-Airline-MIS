@@ -19,49 +19,22 @@ type BookingHistory = {
 };
 
 const BookingHistoryPage: React.FC = () => {
-    const [bookingHistories, setBookingHistories] = useState<BookingHistory[]>([]);
+    const [bookingHistories, setBookingHistories] = useState<BookingHistory[]>([{user_id:12, booking_id:123, action_date: '123', action_type:'123'}]);
     const [selectedBooking, setSelectedBooking] = useState<BookingHistory | null>(null);
 
-    // Mock hardcoded data for demonstration
-    const hardcodedData: BookingHistory[] = [
-        {
-            booking_history_id: 1,
-            user_id: 101,
-            booking_id: 5001,
-            action_date: "2024-11-26T18:30:00.000Z",
-            action_type: "Created",
-        },
-        {
-            booking_history_id: 2,
-            user_id: 102,
-            booking_id: 5002,
-            action_date: "2024-11-27T10:15:00.000Z",
-            action_type: "Cancelled",
-        },
-        {
-            booking_history_id: 3,
-            user_id: 103,
-            booking_id: 5003,
-            action_date: "2024-11-27T15:00:00.000Z",
-            action_type: "Modified",
-        },
-    ];
+    // Fetch Booking History from API
+    // useEffect(() => {
+    //     const fetchBookingHistories = async () => {
+    //         try {
+    //             const response = await axios.get<BookingHistory[]>("/api/bookings-history");
+    //             setBookingHistories(response.data);
+    //         } catch (error) {
+    //             console.error("Error fetching booking histories", error);
+    //         }
+    //     };
 
-    // Fetch Booking History from mock data (simulating an API call)
-    useEffect(() => {
-        // Uncomment this when connecting to backend
-        // const fetchBookingHistories = async () => {
-        //   try {
-        //     const response = await axios.get<BookingHistory[]>("/api/bookings-history");
-        //     setBookingHistories(response.data);
-        //   } catch (error) {
-        //     console.error("Error fetching booking histories", error);
-        //   }
-        // };
-
-        // Simulate data fetching
-        setBookingHistories(hardcodedData); // Using mock data for now
-    }, []);
+    //     fetchBookingHistories();
+    // }, []);
 
     // Handle selecting a booking
     const handleSelectBooking = (booking: BookingHistory) => {
