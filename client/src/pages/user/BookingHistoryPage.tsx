@@ -1,7 +1,17 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from "react";
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 type BookingHistory = {
+    booking_history_id: number;
     user_id: number;
     booking_id: number;
     action_date: string;
@@ -12,18 +22,45 @@ const BookingHistoryPage: React.FC = () => {
     const [bookingHistories, setBookingHistories] = useState<BookingHistory[]>([]);
     const [selectedBooking, setSelectedBooking] = useState<BookingHistory | null>(null);
 
-    // Fetch Booking History from API
-    useEffect(() => {
-        const fetchBookingHistories = async () => {
-            try {
-                const response = await axios.get<BookingHistory[]>("/api/bookings-history");
-                setBookingHistories(response.data);
-            } catch (error) {
-                console.error("Error fetching booking histories", error);
-            }
-        };
+    // Mock hardcoded data for demonstration
+    const hardcodedData: BookingHistory[] = [
+        {
+            booking_history_id: 1,
+            user_id: 101,
+            booking_id: 5001,
+            action_date: "2024-11-26T18:30:00.000Z",
+            action_type: "Created",
+        },
+        {
+            booking_history_id: 2,
+            user_id: 102,
+            booking_id: 5002,
+            action_date: "2024-11-27T10:15:00.000Z",
+            action_type: "Cancelled",
+        },
+        {
+            booking_history_id: 3,
+            user_id: 103,
+            booking_id: 5003,
+            action_date: "2024-11-27T15:00:00.000Z",
+            action_type: "Modified",
+        },
+    ];
 
-        fetchBookingHistories();
+    // Fetch Booking History from mock data (simulating an API call)
+    useEffect(() => {
+        // Uncomment this when connecting to backend
+        // const fetchBookingHistories = async () => {
+        //   try {
+        //     const response = await axios.get<BookingHistory[]>("/api/bookings-history");
+        //     setBookingHistories(response.data);
+        //   } catch (error) {
+        //     console.error("Error fetching booking histories", error);
+        //   }
+        // };
+
+        // Simulate data fetching
+        setBookingHistories(hardcodedData); // Using mock data for now
     }, []);
 
     // Handle selecting a booking
@@ -31,39 +68,86 @@ const BookingHistoryPage: React.FC = () => {
         setSelectedBooking(booking);
     };
 
+    // Handle "Print Ticket" button click
+    const handlePrintTicket = () => {
+        if (selectedBooking) {
+            alert(`Printing ticket for Booking ID: ${selectedBooking.booking_id}`);
+            // You can replace this alert with actual print logic or redirect to a print page.
+        }
+    };
+
     return (
         <div style={{ padding: "20px" }}>
-            <h1>Booking History</h1>
-            {bookingHistories.length > 0 ? (
-                <ul style={{ listStyleType: "none", padding: 0 }}>
+            <h1
+            className="text-3xl"
+            >Booking History</h1>
+            <div className="p-3">
+            <Table>
+                <TableCaption>A list of your booking history.</TableCaption>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead className="w-[100px]">Booking ID</TableHead>
+                        <TableHead>User ID</TableHead>
+                        <TableHead>Action Date</TableHead>
+                        <TableHead>Action Type</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
                     {bookingHistories.map((booking) => (
-                        <li
-                            key={booking.booking_id}
-                            style={{
-                                marginBottom: "10px",
-                                padding: "10px",
-                                border: "1px solid #ddd",
-                                cursor: "pointer",
-                            }}
+                        <TableRow
+                            key={booking.booking_history_id}
                             onClick={() => handleSelectBooking(booking)}
+                            className={`cursor-pointer ${selectedBooking?.booking_id === booking.booking_id
+                                ? "bg-inherit text-muted-foreground"
+                                : ""
+                                }`}
                         >
-                            <strong>Booking ID:</strong> {booking.booking_id} <br />
-                            <strong>Action Date:</strong> {new Date(booking.action_date).toLocaleString()} <br />
-                            <strong>Action Type:</strong> {booking.action_type}
-                        </li>
+                            <TableCell className="font-medium">{booking.booking_id}</TableCell>
+                            <TableCell>{booking.user_id}</TableCell>
+                            <TableCell>{new Date(booking.action_date).toLocaleString()}</TableCell>
+                            <TableCell>{booking.action_type}</TableCell>
+                        </TableRow>
                     ))}
-                </ul>
-            ) : (
-                <p>No booking history found.</p>
-            )}
+                </TableBody>
+                </Table>
+            </div>    
 
             {selectedBooking && (
-                <div style={{ marginTop: "20px" }}>
+                <div
+                    className="bg-card"
+                    style={{
+                        marginTop: "20px",
+                        padding: "20px",
+                        border: "1px solid #ddd",
+                        borderRadius: "8px",
+                        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+                    }
+                    }
+                >
                     <h2>Selected Booking Details</h2>
-                    <p><strong>Booking ID:</strong> {selectedBooking.booking_id}</p>
-                    <p><strong>User ID:</strong> {selectedBooking.user_id}</p>
-                    <p><strong>Action Date:</strong> {new Date(selectedBooking.action_date).toLocaleString()}</p>
-                    <p><strong>Action Type:</strong> {selectedBooking.action_type}</p>
+                    <p>
+                        <strong>Booking History ID:</strong> {selectedBooking.booking_history_id}
+                    </p>
+                    <p>
+                        <strong>Booking ID:</strong> {selectedBooking.booking_id}
+                    </p>
+                    <p>
+                        <strong>User ID:</strong> {selectedBooking.user_id}
+                    </p>
+                    <p>
+                        <strong>Action Date:</strong> {new Date(selectedBooking.action_date).toLocaleString()}
+                    </p>
+                    <p>
+                        <strong>Action Type:</strong> {selectedBooking.action_type}
+                    </p>
+                    <div className="p-3">
+                    <Button
+                        onClick={handlePrintTicket}
+                        className="bg-theme-primary hover:bg-theme-primary-highlight text-white p-3"
+                    >
+                        Print Ticket
+                        </Button>
+                    </div>
                 </div>
             )}
         </div>
