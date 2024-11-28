@@ -128,7 +128,6 @@ export function AppSidebarAdmin() {
                                                                         className="my-4"
                                                                     />
                                                                     <div className="flex justify-end gap-2">
-                                                                        <Button variant="outline">Cancel</Button>
                                                                         <Button variant="destructive">
                                                                             Delete User
                                                                         </Button>
@@ -155,7 +154,6 @@ export function AppSidebarAdmin() {
                                                                         className="my-4"
                                                                     />
                                                                     <div className="flex justify-end gap-2">
-                                                                        <Button variant="outline">Cancel</Button>
                                                                         <Button variant="destructive">
                                                                             Delete Booking
                                                                         </Button>
@@ -182,7 +180,6 @@ export function AppSidebarAdmin() {
                                                                         className="my-4"
                                                                     />
                                                                     <div className="flex justify-end gap-2">
-                                                                        <Button variant="outline">Cancel</Button>
                                                                         <Button variant="destructive">
                                                                             Delete Flight
                                                                         </Button>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
     Table,
     TableBody,
@@ -11,7 +11,6 @@ import {
 import { Button } from "@/components/ui/button";
 
 type BookingHistory = {
-    booking_history_id: number;
     user_id: number;
     booking_id: number;
     action_date: string;
@@ -68,7 +67,7 @@ const BookingHistoryPage: React.FC = () => {
                 <TableBody>
                     {bookingHistories.map((booking) => (
                         <TableRow
-                            key={booking.booking_history_id}
+                            key={booking.booking_id}
                             onClick={() => handleSelectBooking(booking)}
                             className={`cursor-pointer ${selectedBooking?.booking_id === booking.booking_id
                                 ? "bg-inherit text-muted-foreground"
@@ -98,9 +97,6 @@ const BookingHistoryPage: React.FC = () => {
                     }
                 >
                     <h2>Selected Booking Details</h2>
-                    <p>
-                        <strong>Booking History ID:</strong> {selectedBooking.booking_history_id}
-                    </p>
                     <p>
                         <strong>Booking ID:</strong> {selectedBooking.booking_id}
                     </p>

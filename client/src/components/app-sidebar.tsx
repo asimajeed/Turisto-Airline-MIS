@@ -1,4 +1,5 @@
 import { Calendar, Home, Inbox, Settings } from "lucide-react";
+import { useGlobalStore } from "@/context/GlobalStore"; // Update the path as per your project structure
 import {
   Collapsible,
   CollapsibleTrigger,
@@ -75,6 +76,33 @@ interface AppSidebarProps {
   onSelectionChange?: SidebarSelectionCallback;
 }
 
+
+function RedeemCode() {
+  const loyaltyPoints = useGlobalStore((state) => state.loyalty_points);
+
+  let redeemCode = "";
+  if (loyaltyPoints !== null) {
+    if (loyaltyPoints>250 && loyaltyPoints < 500) redeemCode = "TUR25";
+    else if (loyaltyPoints > 250 && loyaltyPoints < 750) redeemCode = "TUR50";
+    else if (loyaltyPoints > 750) redeemCode = "TUR75";
+  }
+
+  return (
+    <div className="flex flex-col items-center">
+      <p className="text-lg font-medium text-foreground">
+        Your Redeem Code:{" "}
+        <span className="text-theme-primary-highlight font-semibold">{redeemCode || "Not enough Points"}</span>
+      </p>
+      {redeemCode && (
+        <p className="text-sm text-gray-500">
+          Use this code during checkout to redeem your points.
+        </p>
+      )}
+    </div>
+  );
+}
+
+
 export function AppSidebar({ onSelectionChange }: AppSidebarProps) {
   const handleSelection = (section: string, subItem: string | null = null) => {
     const path = subItem ? [section, subItem] : [section];
@@ -110,9 +138,7 @@ export function AppSidebar({ onSelectionChange }: AppSidebarProps) {
                             {"isDialog" in subItem ? (
                               <Dialog>
                                 <DialogTrigger asChild>
-                                  <SidebarMenuButton>
-                                    {subItem.title}
-                                  </SidebarMenuButton>
+                                  <SidebarMenuButton>{subItem.title}</SidebarMenuButton>
                                 </DialogTrigger>
                                 <DialogContent>
                                   <DialogHeader>
@@ -121,6 +147,10 @@ export function AppSidebar({ onSelectionChange }: AppSidebarProps) {
                                       You can redeem your loyalty points here.
                                     </DialogDescription>
                                   </DialogHeader>
+                                  <div className="mt-4 space-y-4">
+                                    {/* Display Redeem Code */}
+                                    <RedeemCode />
+                                  </div>
                                 </DialogContent>
                               </Dialog>
                             ) : "isCancel" in subItem ? (
@@ -167,7 +197,6 @@ export function AppSidebar({ onSelectionChange }: AppSidebarProps) {
                                     </div>
                                   </div>
                                   <div className="flex justify-end mt-4 gap-2">
-                                    <Button variant="outline">Cancel</Button>
                                     <Button variant="destructive">
                                       Confirm
                                     </Button>
