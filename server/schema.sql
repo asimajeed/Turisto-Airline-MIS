@@ -23,7 +23,9 @@ CREATE TABLE flights (
     arrival_date TIMESTAMP NOT NULL,
     total_seats INT NOT NULL,
     status VARCHAR(50) NOT NULL,
-    base_price NUMERIC(10, 2) NOT NULL
+    base_price NUMERIC(10, 2) NOT NULL,
+    FOREIGN KEY (departure_airport_id) REFERENCES airports(airport_id) ON DELETE CASCADE,
+    FOREIGN KEY (arrival_airport_id) REFERENCES airports(airport_id) ON DELETE CASCADE
 );
 
 CREATE TABLE airports (
@@ -37,37 +39,41 @@ CREATE TABLE airports (
     timezone NUMERIC(4,1)
 );
 
-
-CREATE TABLE seats (
-    flight_id INT,
-    seat_number VARCHAR(10),
-    PRIMARY KEY (flight_number, seat_number),
-    FOREIGN KEY (flight_number) REFERENCES flights(flight_number) ON DELETE CASCADE
+-- This table will be pre-filled with psosible seat numbers
+-- (1-24)(A-H)
+CREATE TABLE seat_list (
+    seat_id SERIAL PRIMARY KEY,
+    seat_number VARCHAR(4) UNIQUE
 );
 
--- example: For a flight with flight_number 'AB123'
--- INSERT INTO seats (flight_number, seat_number) VALUES
--- ('AB123', '1A'), ('AB123', '1B'), ('AB123', '1C'), ..., ('AB123', '30C');
+-- If a row exists in this table it means that that seat has been
+-- allready allocated and can't be taken by someone else
+CREATE TABLE seat_allocation (
+    flight_id INT,
+    seat_id INT,
+    PRIMARY KEY (flight_id, seat_id),
+    FOREIGN KEY (flight_id) REFERENCES flights(flight_id) ON DELETE CASCADE,
+    FOREIGN KEY (seat_id) REFERENCES seat_list(seat_id) ON DELETE CASCADE
+);
 
-
--- Booking is made by both guest user and signed in user
 CREATE TABLE bookings (
     booking_id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
     flight_id INT NOT NULL,
-    seat_number VARCHAR(5) NOT NULL,
+    seat_id INT NOT NULL,
     booking_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     total_price NUMERIC(10, 2) NOT NULL,
     discount_code VARCHAR(50),
     booking_status VARCHAR(50) NOT NULL,
-    FOREIGN KEY (users_user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (guest_user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (flight_number) REFERENCES flights(flight_number) ON DELETE CASCADE,
-    FOREIGN KEY (seat_number) REFERENCES seats(seat_number) ON DELETE CASCADE
+    group_booking_id INT,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (flight_id) REFERENCES flights(flight_id) ON DELETE CASCADE,
+    FOREIGN KEY (flight_id, seat_id) REFERENCES seat_allocation(flight_id, seat_number) ON DELETE CASCADE,
+    FOREIGN KEY (group_booking_id) REFERENCES group_bookings(group_booking_id) ON DELETE CASCADE
 );
 
 CREATE TABLE payments (
-    payment_id INT PRIMARY KEY AUTO_INCREMENT,
+    payment_id SERIAL PRIMARY KEY,
     booking_id INT NOT NULL,
     payment_amount DECIMAL(10, 2) NOT NULL,
     payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -76,22 +82,11 @@ CREATE TABLE payments (
     FOREIGN KEY (booking_id) REFERENCES bookings(booking_id) ON DELETE CASCADE
 );
 
-
 CREATE TABLE tickets (
-    ticket_id INT PRIMARY KEY AUTO_INCREMENT,
+    ticket_id SERIAL PRIMARY KEY,
     booking_id INT NOT NULL,
     ticket_issued_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     ticket_status VARCHAR(50) NOT NULL,
-    FOREIGN KEY (booking_id) REFERENCES bookings(booking_id) ON DELETE CASCADE
-);
-
-CREATE TABLE booking_history (
-    booking_history_id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    booking_id INT NOT NULL,
-    action_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    action_type VARCHAR(50) NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (booking_id) REFERENCES bookings(booking_id) ON DELETE CASCADE
 );
 

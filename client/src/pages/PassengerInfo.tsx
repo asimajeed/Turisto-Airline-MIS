@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import Summary from "@/components/Summary";
 import {
   Sheet,
   SheetContent,
@@ -24,13 +25,11 @@ const PassengerInfo = () => {
     setLastName,
     setEmail,
     setPhoneNumber,
-    selected_flight,
     selectedSeat,
     setSelectedSeat,
     passengers: groupPassengers,
     setPassengers: setGroupPassengers,
   } = useGlobalStore();
-  // const [groupPassengers, setGroupPassengers] = useState<Passenger[]>([]);
 
   const addPassenger = () => {
     setGroupPassengers([
@@ -41,7 +40,10 @@ const PassengerInfo = () => {
 
   const removePassenger = () => {
     if (groupPassengers.length == 1) setGroupPassengers([]);
-    else setGroupPassengers(groupPassengers.pop());
+    else {
+      groupPassengers.pop();
+      setGroupPassengers(groupPassengers);
+    }
   };
 
   const updatePassenger = (
@@ -53,28 +55,6 @@ const PassengerInfo = () => {
     updatedPassengers[index][key] = value;
     setGroupPassengers(updatedPassengers);
   };
-  const flightDetails = selected_flight
-    ? {
-        flight_number: selected_flight.flight_number,
-        duration: `${Math.floor(
-          (selected_flight.arrival_date.getTime() -
-            selected_flight.departure_date.getTime()) /
-            36e5
-        )}h ${
-          ((selected_flight.arrival_date.getTime() -
-            selected_flight.departure_date.getTime()) /
-            6e4) %
-          60
-        }m`,
-        departure_time: selected_flight.departure_date,
-        arrival_time: selected_flight.arrival_date,
-      }
-    : {
-        flight_number: "Not Selected",
-        duration: "N/A",
-        departure_time: "N/A",
-        arrival_time: "N/A",
-      };
 
   return (
     <MapComponent className="h-full">
@@ -208,7 +188,6 @@ const PassengerInfo = () => {
             </div>
           </div>
 
-          {/* Bag Information and Summary Section */}
           <div className="mt-8">
             <h3 className="font-medium mt-6">Bag Information</h3>
             <p className="text-sm text-gray-500">
@@ -230,78 +209,13 @@ const PassengerInfo = () => {
                       Review your flight details and total costs.
                     </SheetDescription>
                   </SheetHeader>
-                  <div className="mt-4 space-y-4">
-                    <div className="bg-card p-4 border rounded-lg">
-                      <p>{flightDetails.flight_number}</p>
-                      <p>
-                        {flightDetails.duration} (
-                        {new Date(
-                          flightDetails.departure_time
-                        ).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}{" "}
-                        -{" "}
-                        {new Date(
-                          flightDetails.arrival_time
-                        ).toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}{" "}
-                        on{" "}
-                        {new Date(
-                          flightDetails.arrival_time
-                        ).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                        })}
-                        )
-                      </p>
-                    </div>
-
-                    <div className="flex justify-between text-sm mt-6">
-                      <span>Subtotal</span>
-                      <span>${selected_flight?.base_price}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span>Taxes and Fees</span>
-                      <span>
-                        <div className="flex justify-between text-sm">
-                          <span>Taxes and Fees</span>
-                          <span>
-                            $
-                            {(
-                              (selected_flight?.base_price ?? 0) * 0.16
-                            ).toFixed(2)}
-                          </span>
-                        </div>
-                        <div className="flex justify-between font-semibold text-lg">
-                          <span>Total</span>
-                          <span>
-                            $
-                            {(
-                              (selected_flight?.base_price ?? 0) * 1.16
-                            ).toFixed(2)}
-                          </span>
-                        </div>
-                        $
-                        {((selected_flight?.base_price ?? 0) * 0.16).toFixed(2)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between font-semibold text-lg">
-                      <span>Total</span>
-                      <span>
-                        $
-                        {((selected_flight?.base_price ?? 0) * 1.16).toFixed(2)}
-                      </span>
-                    </div>
-
-                    <Link to="/payment">
-                      <Button className="bg-theme-primary hover:bg-theme-primary-highlight text-foreground m-3">
-                        Pay
-                      </Button>
-                    </Link>
-                  </div>
+                  {/* Summary Section here */}
+                  <Summary />
+                  <Link to="/payment">
+                    <Button className="bg-theme-primary hover:bg-theme-primary-highlight text-foreground m-3">
+                      Pay
+                    </Button>
+                  </Link>
                 </SheetContent>
               </Sheet>
             </div>

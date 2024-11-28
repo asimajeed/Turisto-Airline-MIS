@@ -42,7 +42,10 @@ const NavBar = forwardRef<
         );
         if (response.status == 200) {
           setIsLoggedIn(true);
-          setAll(response.data);
+          setAll({
+            ...response.data,
+            date_of_birth: new Date(response.data.date_of_birth),
+          });
         }
       } catch (error) {
         setIsLoggedIn(false);

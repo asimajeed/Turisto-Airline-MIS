@@ -1,15 +1,16 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import express, { Request, response, Response } from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import { query } from "./db-config";
 import passport from "passport";
 import session from "express-session";
-import bcrypt from "bcryptjs";
 import "./passport-config";
 import { fetchAirports } from "./queryFunctions/publicQueries";
-
+import { userLogout, userRegister, userUpdate } from "./routes/user";
+import { sql } from "./routes/admin";
+import booking from "./routes/booking";
 const app = express();
 
 // Middleware
@@ -34,38 +35,14 @@ app.use(passport.session());
 app.use(express.json());
 
 // Register user
-app.post("/register", async (req: Request, res: Response) => {
-  try {
-    const { firstName, lastName, email, password } = req.body;
-    if ((await query("SELECT 1 FROM users WHERE email = $1", [email])).rows[0])
-      res.status(400).send("User already exists");
-    else {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      await query(
-        "INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4)",
-        [firstName, lastName, email, hashedPassword]
-      );
-      res.status(201).send("User registered");
-    }
-  } catch (err) {
-    res.status(500).send("Error registering user");
-    console.error(err);
-  }
-});
+app.post("/register", userRegister);
 
 // Login user
 app.post("/login", passport.authenticate("local"), (req, res) => {
   res.status(200).json(req.user);
 });
 
-app.delete("/logout", (req, res) => {
-  req.logout((err) => {
-    if (err) {
-      return res.status(500).send({ message: "Logout failed" });
-    }
-    res.clearCookie("connect.sid").send({ message: "Logged out successfully" });
-  });
-});
+app.delete("/logout", userLogout);
 
 app.get("/profile", (req: Request, res: Response) => {
   if (!req.isAuthenticated()) {
@@ -75,15 +52,7 @@ app.get("/profile", (req: Request, res: Response) => {
   }
 });
 
-app.post("/admin/sql", async (req: Request, res: Response) => {
-  if (req.isAuthenticated() && req.user.is_admin) {
-    try {
-      res.json(await query(req.body.query));
-    } catch (err) {
-      res.json({ message: "Server error: " + err });
-    }
-  } else res.status(401).json({ message: "Unauthorized request" });
-});
+app.post("/admin/sql", sql);
 
 app.get("/api/airports", async (req, res) => {
   const search = req.query.search as string;
@@ -241,6 +210,32 @@ app.put("/api/flight/:flightId", async (req, res) => {
       .json({ error: "Internal server error. Please try again later." });
   }
 });
+
+app.get("/api/flight/seats/:flight_id", async (req, res) => {
+  const flightId = req.params.flight_id;
+  try {
+    const result = await query(
+      `
+      SELECT seat_number 
+      FROM seat_list 
+      WHERE seat_id NOT IN (
+          SELECT seat_id 
+          FROM seat_allocation 
+          WHERE flight_id = $1
+      );
+      `,
+      [flightId]
+    );
+    res.json(result.rows.map((row) => row.seat_number));
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error fetching seats");
+  }
+});
+
+app.post("/user/update", userUpdate);
+
+app.use('/booking',booking);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

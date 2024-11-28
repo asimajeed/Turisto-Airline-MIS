@@ -152,21 +152,21 @@ const MapComponent: React.FC<MapComponentProps> = ({ className, children }) => {
 
   const { arrival_airport, departure_airport } = useGlobalStore();
   useEffect(() => {
+    const newPoints = [...points];
     if (departure_airport?.latitude) {
-      points[0] = {
+      newPoints[0] = {
         lat: parseFloat(departure_airport.latitude),
         lng: parseFloat(departure_airport.longitude),
       };
     }
 
     if (arrival_airport?.latitude) {
-      points[1] = {
+      newPoints[1] = {
         lat: parseFloat(arrival_airport.latitude),
         lng: parseFloat(arrival_airport.longitude),
       };
     }
-
-    setPoints(points);
+    setPoints(newPoints);
 
     // if ((points[1].lat && points[1].lng) || (points[0].lat && points[0].lng)) {
     //   const { x, y } = MillerProjection(
@@ -230,7 +230,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ className, children }) => {
     return pathD;
   };
   return (
-    <div className={cn('relative overflow-hidden', className)}>
+    <div className={cn("relative overflow-hidden", className)}>
       {/* <motion.div
         initial={{ scale: 1, x: 0, y: 0 }}
         animate={{

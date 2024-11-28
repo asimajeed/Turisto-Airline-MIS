@@ -85,7 +85,7 @@ async function executeQuery(query: string) {
 async function startApp() {
   await connectToDatabase();
   console.log(
-    "Enter your SQL queries below (type 'exit' to quit or 'tables' to list all tables):"
+    "Enter your SQL queries below (type 'exit' to quit or 'tables' to list all tables and 'use file <fileName>' to run sql from a file):"
   );
 
   let queryBuffer = "";

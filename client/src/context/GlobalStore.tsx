@@ -8,7 +8,7 @@ export interface GlobalState {
   last_name: string | null;
   email: string | null;
   phone_number: string | null;
-  date_of_birth: string | null;
+  date_of_birth: Date | null;
   loyalty_points: number | null;
   loyalty_points_redeemed: number | null;
   departure_airport: airportType | null;
@@ -31,7 +31,7 @@ export interface GlobalState {
   setLastName: (lastName: string | null) => void;
   setEmail: (email: string | null) => void;
   setPhoneNumber: (phoneNumber: string | null) => void;
-  setDateOfBirth: (dateOfBirth: string | null) => void;
+  setDateOfBirth: (dateOfBirth: Date | null) => void;
   setLoyaltyPoints: (points: number | null) => void;
   setDepartureAirport: (airport: airportType | null) => void;
   setArrivalAirport: (airport: airportType | null) => void;

@@ -13,6 +13,8 @@ import {
 import { Link } from "react-router-dom";
 import FullscreenSection from "@/components/FullscreenSection";
 import { useGlobalStore } from "@/context/GlobalStore";
+import axios from "axios";
+import { Passenger } from "@/utils/types";
 
 const PaymentPage = () => {
   const [paymentSuccess, setPaymentSuccess] = useState(false);
@@ -23,8 +25,16 @@ const PaymentPage = () => {
   const [totalPrice, setTotalPrice] = useState<number>(0);
 
   // Access GlobalStore
-  const { selected_flight } = useGlobalStore();
-
+  const {
+    selected_flight,
+    isLoggedIn,
+    first_name,
+    last_name,
+    email,
+    phone_number,
+    selectedSeat,
+    passengers,
+  } = useGlobalStore();
   // Update totalPrice whenever the discount is applied
   useEffect(() => {
     if (selected_flight) {
@@ -44,7 +54,7 @@ const PaymentPage = () => {
       case "TUR25":
         return 0.25;
       case "TUR50":
-        return 0.50;
+        return 0.5;
       case "TUR75":
         return 0.75;
       default:
@@ -63,6 +73,37 @@ const PaymentPage = () => {
   };
 
   const handlePayment = () => {
+    if (!selected_flight || !selectedSeat)
+      return alert("Incomplete information");
+    let data: {
+      flight_id: number;
+      seat_number: string;
+      total_price: number;
+      discountCode: string;
+      first_name?: string;
+      last_name?: string;
+      email?: string;
+      phone_number?: string;
+      passengers?: Array<Passenger>;
+    } = {
+      flight_id: selected_flight.flight_id,
+      seat_number: selectedSeat,
+      total_price: totalPrice,
+      discountCode,
+    };
+    if (!isLoggedIn && first_name && last_name && email) {
+      data = {
+        ...data,
+        first_name,
+        last_name,
+        email,
+        phone_number: phone_number || undefined,
+      };
+    }
+    if (passengers.length > 0) data.passengers = passengers;
+    axios.post(`${import.meta.env.VITE_BACKEND_API_URL}/booking/create`, data, {
+      withCredentials: true,
+    });
     setPaymentSuccess(true);
     setTimeout(() => {
       setPaymentSuccess(false);
@@ -72,37 +113,42 @@ const PaymentPage = () => {
 
   const flightDetails = selected_flight
     ? {
-      flight_number: selected_flight.flight_number,
-      duration: `${Math.floor(
-        (selected_flight.arrival_date.getTime() - selected_flight.departure_date.getTime()) / 36e5
-      )}h ${Math.floor(
-        ((selected_flight.arrival_date.getTime() - selected_flight.departure_date.getTime()) / 6e4) % 60
-      )}m`,
-      departure_time: selected_flight.departure_date.toLocaleString("en-US", {
-        weekday: "long",
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      arrival_time: selected_flight.arrival_date.toLocaleString("en-US", {
-        weekday: "long",
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-      base_price: selected_flight.base_price.toFixed(2),
-    }
+        flight_number: selected_flight.flight_number,
+        duration: `${Math.floor(
+          (selected_flight.arrival_date.getTime() -
+            selected_flight.departure_date.getTime()) /
+            36e5
+        )}h ${Math.floor(
+          ((selected_flight.arrival_date.getTime() -
+            selected_flight.departure_date.getTime()) /
+            6e4) %
+            60
+        )}m`,
+        departure_time: selected_flight.departure_date.toLocaleString("en-US", {
+          weekday: "long",
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        arrival_time: selected_flight.arrival_date.toLocaleString("en-US", {
+          weekday: "long",
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        base_price: selected_flight.base_price.toFixed(2),
+      }
     : {
-      flight_number: "Not Selected",
-      duration: "N/A",
-      departure_time: "N/A",
-      arrival_time: "N/A",
-      base_price: "0.00",
-    };
+        flight_number: "Not Selected",
+        duration: "N/A",
+        departure_time: "N/A",
+        arrival_time: "N/A",
+        base_price: "0.00",
+      };
 
   return (
     <FullscreenSection>
@@ -116,24 +162,27 @@ const PaymentPage = () => {
                   Payment Method
                 </h2>
                 <p className="text-sm text-foreground mt-1">
-                  Select a payment method below. Tripma processes your payment securely with
-                  end-to-end encryption.
+                  Select a payment method below. Tripma processes your payment
+                  securely with end-to-end encryption.
                 </p>
 
                 {/* Payment Method Buttons */}
                 <div className="flex space-x-4 mt-6">
-                  {["Credit card", "Google Pay", "Apple Pay", "Paypal"].map((method) => (
-                    <Button
-                      key={method}
-                      className={`${paymentMethod === method
-                        ? "bg-theme-primary hover:bg-theme-primary-highlight text-white"
-                        : "bg-theme-primary hover:bg-theme-primary-highlight text-white"
+                  {["Credit card", "Google Pay", "Apple Pay", "Paypal"].map(
+                    (method) => (
+                      <Button
+                        key={method}
+                        className={`${
+                          paymentMethod === method
+                            ? "bg-theme-primary hover:bg-theme-primary-highlight text-white"
+                            : "bg-theme-primary hover:bg-theme-primary-highlight text-white"
                         }`}
-                      onClick={() => setPaymentMethod(method)}
-                    >
-                      {method}
-                    </Button>
-                  ))}
+                        onClick={() => setPaymentMethod(method)}
+                      >
+                        {method}
+                      </Button>
+                    )
+                  )}
                 </div>
 
                 {/* Credit Card Details */}
@@ -168,7 +217,6 @@ const PaymentPage = () => {
               </div>
 
               {/* Order Summary */}
-              {/* Order Summary */}
               <div className="bg-card p-6 rounded-lg shadow-lg border border-gray-200">
                 <h3 className="text-lg font-semibold text-theme-primary-darker">
                   Order Summary
@@ -180,7 +228,8 @@ const PaymentPage = () => {
                         {flightDetails.flight_number}
                       </p>
                       <p className="text-sm text-foreground">
-                        {flightDetails.duration} - {flightDetails.departure_time} to{" "}
+                        {flightDetails.duration} -{" "}
+                        {flightDetails.departure_time} to{" "}
                         {flightDetails.arrival_time}
                       </p>
                     </div>
@@ -192,7 +241,9 @@ const PaymentPage = () => {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Taxes and Fees</span>
-                    <span>${(Number(flightDetails.base_price) * 0.16).toFixed(2)}</span>
+                    <span>
+                      ${(Number(flightDetails.base_price) * 0.16).toFixed(2)}
+                    </span>
                   </div>
                   <div className="flex justify-between font-semibold text-lg mt-4">
                     <span>Total</span>
@@ -222,7 +273,8 @@ const PaymentPage = () => {
                         Payment Successful!
                       </DrawerTitle>
                       <DrawerDescription className="text-foreground mt-2">
-                        Thank you for your purchase. Your payment was processed successfully.
+                        Thank you for your purchase. Your payment was processed
+                        successfully.
                       </DrawerDescription>
                     </motion.div>
                   </DrawerHeader>
@@ -234,12 +286,14 @@ const PaymentPage = () => {
             </>
           ) : (
             // Summary Screen Content
-              <div className="col-span-3 bg-card p-6 rounded-lg shadow-lg border border-gray-200">
+            <div className="col-span-3 bg-card p-6 rounded-lg shadow-lg border border-gray-200">
               <h2 className="text-2xl font-semibold text-theme-primary-darker">
                 Your Trip Summary
               </h2>
               <div className="bg-card p-6 mt-6 rounded-lg border border-gray-200">
-                <h3 className="text-lg font-semibold text-theme-primary-darker">Flight Details</h3>
+                <h3 className="text-lg font-semibold text-theme-primary-darker">
+                  Flight Details
+                </h3>
                 <p className="text-foreground mt-2">
                   Departure: {flightDetails.departure_time}
                 </p>
@@ -252,11 +306,11 @@ const PaymentPage = () => {
               </div>
               <Button className="bg-theme-primary hover:bg-theme-primary-highlight text-white m-4 shadow-md">
                 <Link to="/boardingpass">Boarding Pass</Link>
-                </Button>
-                
-                <Button className="bg-theme-primary hover:bg-theme-primary-highlight text-white m-4 shadow-md">
-                  <Link to="/passengerticket">Ticket</Link>
-                </Button>
+              </Button>
+
+              <Button className="bg-theme-primary hover:bg-theme-primary-highlight text-white m-4 shadow-md">
+                <Link to="/passengerticket">Ticket</Link>
+              </Button>
             </div>
           )}
         </div>

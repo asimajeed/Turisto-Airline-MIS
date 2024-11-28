@@ -88,6 +88,7 @@ const FlightsTable = () => {
       ...flight,
       departure_date: new Date(flight.departure_date),
       arrival_date: new Date(flight.arrival_date),
+      base_price: Number(flight.base_price),
     });
   };
 

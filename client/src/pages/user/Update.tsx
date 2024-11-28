@@ -19,8 +19,12 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useState } from "react";
+import axios from "axios";
+import { FaSpinner } from "react-icons/fa";
 
 export function Update(): JSX.Element {
+  const [loading, setLoading] = useState(false);
   const {
     first_name,
     last_name,
@@ -29,23 +33,20 @@ export function Update(): JSX.Element {
     date_of_birth,
     loyalty_points,
     is_admin,
-    setFirstName,
-    setLastName,
-    setEmail,
-    setPhoneNumber,
-    setDateOfBirth,
-    setLoyaltyPoints,
     setAll,
   } = useGlobalStore();
-
+  const [new_first_name, setFirstName] = useState(first_name);
+  const [new_last_name, setLastName] = useState(last_name);
+  const [new_email, setEmail] = useState(email);
+  const [new_phone_number, setPhoneNumber] = useState(phone_number);
+  const [new_date_of_birth, setDateOfBirth] = useState(date_of_birth);
   const handleFieldChange = (field: string, value: string | number): void => {
     const updateFunctions: Record<string, (value: any) => void> = {
       first_name: (value) => setFirstName(value as string | null),
       last_name: (value) => setLastName(value as string | null),
       email: (value) => setEmail(value as string | null),
       phoneNumber: (value) => setPhoneNumber(value as string | null),
-      dateOfBirth: (value) => setDateOfBirth(value as string | null),
-      loyalty_points: (value) => setLoyaltyPoints(Number(value)),
+      dateOfBirth: (value) => setDateOfBirth(value as Date | null),
     };
     updateFunctions[field]?.(value);
   };
@@ -62,7 +63,40 @@ export function Update(): JSX.Element {
     });
   };
 
-  if (!email) {
+  const handleUpdate = async () => {
+    try {
+      const payload = {
+        first_name: new_first_name,
+        last_name: new_last_name,
+        email: new_email,
+        phone_number: new_phone_number,
+        date_of_birth: new_date_of_birth,
+      };
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_API_URL}/user/update`,
+        payload,
+        { withCredentials: true }
+      );
+
+      if (response.status === 200) {
+        alert("User information updated successfully!");
+        setAll(payload);
+      } else {
+        alert(`Failed to update user information. Status: ${response.status}`);
+      }
+    } catch (error: any) {
+      if (error.response) {
+        alert(`Error: ${error.response.data.message || "Update failed"}`);
+      } else if (error.request) {
+        alert("No response received from the server. Please try again later.");
+      } else {
+        alert(`Error: ${error.message}`);
+      }
+    }
+  };
+
+  if (!new_email) {
     return (
       <div className="min-h-screen flex justify-center items-center bg-gradient-to-br text-foreground p-8">
         <h2 className="text-2xl font-bold">User account deleted.</h2>
@@ -89,14 +123,18 @@ export function Update(): JSX.Element {
               </p>
               <p>
                 <strong>Date of Birth:</strong>{" "}
-                {date_of_birth || "Not provided"}
+                {date_of_birth?.toLocaleDateString() || "Not provided"}
               </p>
               <p>
                 <strong>Loyalty Points:</strong> {loyalty_points || 0}
               </p>
-              <p>
-                <strong>Role:</strong> {is_admin ? "Admin" : "User"}
-              </p>
+              {is_admin ? (
+                <p>
+                  <strong>Role:</strong> Admin
+                </p>
+              ) : (
+                ""
+              )}
             </div>
           </div>
         </div>
@@ -108,33 +146,32 @@ export function Update(): JSX.Element {
               {
                 label: "First Name",
                 field: "first_name",
-                value: first_name,
+                value: new_first_name,
                 type: "text",
               },
               {
                 label: "Last Name",
                 field: "last_name",
-                value: last_name,
+                value: new_last_name,
                 type: "text",
               },
-              { label: "Email", field: "email", value: email, type: "email" },
+              {
+                label: "Email",
+                field: "email",
+                value: new_email,
+                type: "email",
+              },
               {
                 label: "Phone Number",
                 field: "phoneNumber",
-                value: phone_number,
+                value: new_phone_number,
                 type: "tel",
               },
               {
                 label: "Date of Birth",
                 field: "dateOfBirth",
-                value: date_of_birth,
+                value: new_date_of_birth,
                 type: "date",
-              },
-              {
-                label: "Loyalty Points",
-                field: "loyaltyPoints",
-                value: loyalty_points,
-                type: "number",
               },
             ].map(({ label, field, value, type }) => (
               <div
@@ -147,7 +184,9 @@ export function Update(): JSX.Element {
                 <Input
                   type={type}
                   id={field}
-                  value={value || ""}
+                  value={
+                    value instanceof Date ? value.toISOString() : value || ""
+                  }
                   onChange={(e) =>
                     handleFieldChange(
                       field,
@@ -158,6 +197,18 @@ export function Update(): JSX.Element {
                 />
               </div>
             ))}
+            <div className="p-6 bg-white/10 rounded-xl shadow-lg backdrop-blur-md border border-white/20 flex items-center justify-center">
+              <Button onClick={handleUpdate}>
+                {loading ? (
+                  <>
+                    <FaSpinner className="text-theme-primary animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  "Save Changes"
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       </div>

@@ -1,31 +1,67 @@
+import { useEffect, useState } from "react";
 import planeImage from "@/assets/Plane.png";
 import { LuInfo } from "react-icons/lu";
+import { FaSpinner } from "react-icons/fa";
+import axios from "axios";
+import { useGlobalStore } from "@/context/GlobalStore";
+import { Label } from "../ui/label";
 
 interface SelectorProps {
   selectedSeat: string | null;
   setSelectedSeat: (s: string) => void;
 }
 
-let seatsFromDb = [true, false, true];
-seatsFromDb = Array.from({ length: 30 * 8 }, (_, i) => i % 15 == 0 || i % 13 == 0);
-
 const Selector = (props: SelectorProps) => {
+  const { selectedSeat, setSelectedSeat } = props;
+  const [seatsFromDb, setSeatsFromDb] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const {
+    selected_flight,
+    passengers,
+    selectedSeat: mainSeat,
+  } = useGlobalStore();
+  const seatArray = passengers.map(({ seat }) => seat);
+  const [error, setError] = useState<string | null>(null);
+  if (!selected_flight) {
+    return (
+      <div className="flex items-center justify-center h-28">
+        <Label>No flight selected</Label>
+      </div>
+    );
+  }
+  mainSeat && seatArray.push(mainSeat);
+  useEffect(() => {
+    const fetchSeats = async (flightId: number) => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_API_URL}/api/flight/seats/${flightId}`
+        );
+        setSeatsFromDb(response.data);
+        setError(null); // Clear any previous errors
+      } catch (err) {
+        console.error("Error fetching seats", err);
+        setError("Failed to load seats. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSeats(selected_flight.flight_id); // Use the selected flight ID
+  }, [selected_flight]);
+
   const rowLength = 24;
   const colLength = 8;
-  let index = 0;
+
   const columns = Array.from({ length: colLength }, (_, i) =>
     String.fromCharCode("A".charCodeAt(0) + i)
   );
   const rows = Array.from({ length: rowLength }, (_, i) => i + 1);
-  const { selectedSeat, setSelectedSeat } = props;
 
-  const handleSeatClick = (seat: string, row: number, col: string) => {
-    if (seatsFromDb[(row - 1) * colLength + col.charCodeAt(0) - "A".charCodeAt(0)] === false)
-      setSelectedSeat(seat);
-    console.log((row - 1) * colLength + col.charCodeAt(0) - "A".charCodeAt(0));
-    console.log(seatsFromDb);
-  };
-  return (
+  return loading ? (
+    <FaSpinner className="text-xl animate-spin w-full mx-auto my-auto h-14 text-theme-primary" />
+  ) : error ? (
+    <div className="text-red-500 text-center">{error}</div>
+  ) : (
     <div
       className="bg-no-repeat w-full flex justify-center"
       style={{
@@ -51,6 +87,7 @@ const Selector = (props: SelectorProps) => {
             <>
               {columns.map((col) => {
                 const seatId = `${col}${row}`;
+                const taken = seatsFromDb.includes(seatId);
                 return (
                   <>
                     <button
@@ -59,17 +96,21 @@ const Selector = (props: SelectorProps) => {
                         "text-center flex items-center justify-center text-sm font-semibold rounded bg-violet-100 hover:bg-violet-200"
                       }
                       style={{
-                        backgroundColor: `${selectedSeat === seatId ? "violet" : ""}`,
+                        backgroundColor: `${
+                          selectedSeat === seatId || seatArray.includes(seatId)
+                            ? "var(--theme-primary-darker)"
+                            : ""
+                        }`,
                         height: 32,
                         width: 22,
                         margin: "6px 2px",
                         backgroundImage: `${
-                          seatsFromDb[index++]
+                          taken
                             ? "linear-gradient(to bottom, #605DEC, #2A26D9)"
                             : null
                         }`,
                       }}
-                      onClick={() => handleSeatClick(seatId, row, col)}
+                      onClick={taken ? () => {} : () => setSelectedSeat(seatId)}
                     ></button>
 
                     {col == "D" ? (
@@ -85,9 +126,11 @@ const Selector = (props: SelectorProps) => {
                         {row}
                       </p>
                     ) : null}
-                    {col == "H" && row % 6 == 0 ? (  <div className="col-span-full h-7 flex items-center gap-2 text-slate-400 pl-1">
-    <LuInfo strokeWidth={3}/> Exit row
-  </div>) : null}
+                    {col == "H" && row % 6 == 0 ? (
+                      <div className="col-span-full h-7 flex items-center gap-2 text-slate-400 pl-1">
+                        <LuInfo strokeWidth={3} /> Exit row
+                      </div>
+                    ) : null}
                   </>
                 );
               })}
