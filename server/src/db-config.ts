@@ -13,6 +13,7 @@ const config = {
     rejectUnauthorized: true,
     ca: process.env.DB_CA,
   },
+  timezone: "UTC",
 };
 
 let client: Client | null = null;
@@ -29,6 +30,7 @@ async function connectDB() {
     console.log("Connected to the database!");
     const result = await client.query("SELECT VERSION()");
     console.log("PostgreSQL version:", result.rows[0].version);
+
   } catch (err) {
     console.error("Connection error:", err);
     process.exit(1);

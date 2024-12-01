@@ -27,7 +27,7 @@ SELECT * FROM users;
 ###
 
 ### Fetch Airports
-GET http://localhost:5000/flight
+PUT http://localhost:5000/api/flights/1
 
 ### 
 GET http://localhost:5000/api/flight/seats/1

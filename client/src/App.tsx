@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
-import Search from "./pages/Search";
 import ManageDatabase from "./pages/admin/ManageDatabase";
 import { Update } from "./pages/user/Update";
 import Layout from "./components/Layout";
@@ -16,11 +15,11 @@ import { ModifyFlight } from "./pages/user/ModifyFlight";
 import { AddUser } from "./pages/admin/AddUser";
 import { useGlobalStore } from "./context/GlobalStore";
 import ErrorPage from "./pages/ErrorPage";
-import BookingHistoryPage from "./pages/user/BookingHistoryPage"
+import BookingHistory from "./pages/user/BookingHistory";
 import { UpdateUser } from "./pages/admin/UpdateUser";
-import UpdateBooking from "./pages/admin/UpdateBooking"
+import UpdateBooking from "./pages/admin/UpdateBooking";
 import CreateFlight from "./pages/admin/CreateFlight";
-import EditFlight from "./pages/admin/Editflight";
+import EditFlight from "./pages/admin/EditFlight";
 import Report from "./pages/admin/Report";
 
 const App = () => {
@@ -43,15 +42,6 @@ const App = () => {
             element={
               <Layout>
                 <PassengerInfo />
-              </Layout>
-            }
-          />
-
-          <Route
-            path="/search"
-            element={
-              <Layout>
-                <Search />
               </Layout>
             }
           />
@@ -82,7 +72,7 @@ const App = () => {
               <Route path="/user" element={<SDLayout />}>
                 <Route path="" element={<Update />} />
                 <Route path="modify" element={<ModifyFlight />} />
-                <Route path="history" element={<BookingHistoryPage />} />
+                <Route path="history" element={<BookingHistory />} />
               </Route>
               {is_admin ? (
                 <Route path="/admin" element={<SDALayout />}>
@@ -93,7 +83,6 @@ const App = () => {
                   <Route path="createflight" element={<CreateFlight />} />
                   <Route path="editflight" element={<EditFlight />} />
                   <Route path="report" element={<Report />} />
-
                 </Route>
               ) : (
                 <>

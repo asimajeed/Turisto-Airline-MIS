@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axios, { Axios, AxiosError } from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,13 +8,16 @@ const EditFlight: React.FC = () => {
   const [flightId, setFlightId] = useState<string>("");
   const [flight, setFlight] = useState<any | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | JSX.Element | null>(null);
 
   const [departureAirport, setDepartureAirport] = useState<string>("");
   const [arrivalAirport, setArrivalAirport] = useState<string>("");
   const [price, setPrice] = useState<number | string>("");
   const [departureTime, setDepartureTime] = useState<string>("");
   const [arrivalTime, setArrivalTime] = useState<string>("");
+  const [totalSeats, setTotalSeats] = useState<number | string>("200");
+  const [status, setStatus] = useState<string>("");
+  const [customStatus, setCustomStatus] = useState<string>("");
 
   const handleFetchFlight = async () => {
     if (!flightId.trim()) return alert("Please enter a flight ID");
@@ -22,32 +25,33 @@ const EditFlight: React.FC = () => {
     setError(null);
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_API_URL}/api/flight`,
-        {
-          params: {
-            searchId: flightId,
-          },
-        }
+        `${import.meta.env.VITE_BACKEND_API_URL}/api/flights/${flightId}`
       );
-      console.log(response);
       if (response.data) {
         setFlight(response.data);
         setDepartureAirport(response.data.departure_airport_id);
         setArrivalAirport(response.data.arrival_airport_id);
         setPrice(response.data.base_price);
         setDepartureTime(
-          new Date(response.data.departure_date).toISOString().slice(0, -1)
-        ); // ISO format
-        setArrivalTime(
-          new Date(response.data.arrival_date).toISOString().slice(0, -1)
+          new Date(response.data.departure_date).toISOString()
         );
+        setArrivalTime(
+          new Date(response.data.arrival_date).toISOString()
+        );
+        setTotalSeats(response.data.total_seats);
+        setStatus("Other");
+        setCustomStatus(response.data.status);
       } else {
         setFlight(null);
         setError("No flight corresponds to the provided flight ID.");
       }
-    } catch (err) {
+    } catch (err: any) {
       setFlight(null);
-      setError("Error fetching flight details. Please try again.");
+      if (err instanceof AxiosError)
+        setError(
+          `${err.message}. Server message: ${err.response?.data.message}`
+        );
+      else setError(`Error fetching flight details. Error: ${err}`);
     } finally {
       setLoading(false);
     }
@@ -55,22 +59,39 @@ const EditFlight: React.FC = () => {
 
   const handleSave = async () => {
     if (!flight) return alert("No flight to update.");
+    // const userTimezoneOffset = new Date().getTimezoneOffset(); // Get the user's time zone offset in minutes
+    // const formatToISOWithOffset = (date: string) => {
+    //   const adjustedDate = new Date(date);
+    //   adjustedDate.setMinutes(adjustedDate.getMinutes() + userTimezoneOffset);
+    //   return adjustedDate.toISOString();
+    // };
+    // console.log( formatToISOWithOffset(arrivalTime))
     const updatedFlight = {
       ...flight,
-      flight_number: 1,
       departure_airport_id: departureAirport,
       arrival_airport_id: arrivalAirport,
       base_price: price,
       departure_date: new Date(departureTime).toISOString(),
       arrival_date: new Date(arrivalTime).toISOString(),
+      total_seats: totalSeats,
+      status: status == "Other" ? customStatus : status,
     };
 
     try {
-      await axios.put(`/api/flight/${flightId}`, updatedFlight);
-      alert("Flight updated successfully!");
+      await axios.put(
+        `${import.meta.env.VITE_BACKEND_API_URL}/api/flights/${flightId}`,
+        updatedFlight,
+        {
+          withCredentials: true,
+        }
+      );
+      setError(<p className="text-green-500">Flight updated successfully!</p>);
     } catch (err) {
-      console.log(err);
-      alert("Failed to update the flight. Please try again.");
+      if (err instanceof AxiosError)
+        setError(
+          `Failed to update the flight. ${err}. Response: ${err.response?.data.message}`
+        );
+      else setError("Failed to update the flight. Please try again.");
     }
   };
 
@@ -79,11 +100,10 @@ const EditFlight: React.FC = () => {
       <h1 className="text-2xl font-bold mb-6">Edit Flight</h1>
 
       <div className="space-y-4">
-        {/* Flight ID Input */}
         <div>
           <Label className="block font-semibold mb-1">Flight ID</Label>
           <Input
-            type="text"
+            type="number"
             value={flightId}
             onChange={(e) => setFlightId(e.target.value)}
             className="w-full border rounded-md px-3 py-2"
@@ -96,9 +116,6 @@ const EditFlight: React.FC = () => {
           </Button>
         </div>
 
-        {error && <div className="text-red-500">{error}</div>}
-
-        {/* Flight Details */}
         {flight && (
           <>
             <div>
@@ -113,7 +130,7 @@ const EditFlight: React.FC = () => {
 
             <div>
               <Label className="block font-semibold mb-1">
-                Departure Airport
+                Departure Airport ID
               </Label>
               <Input
                 type="text"
@@ -125,7 +142,7 @@ const EditFlight: React.FC = () => {
 
             <div>
               <Label className="block font-semibold mb-1">
-                Arrival Airport
+                Arrival Airport ID
               </Label>
               <Input
                 type="text"
@@ -136,7 +153,7 @@ const EditFlight: React.FC = () => {
             </div>
 
             <div>
-              <Label className="block font-semibold mb-1">Price</Label>
+              <Label className="block font-semibold mb-1">Base Price</Label>
               <Input
                 type="number"
                 value={price}
@@ -148,7 +165,7 @@ const EditFlight: React.FC = () => {
             <div>
               <Label className="block font-semibold mb-1">Departure Time</Label>
               <Input
-                type="datetime-local"
+                type="datetime"
                 value={departureTime}
                 onChange={(e) => setDepartureTime(e.target.value)}
                 className="w-full border rounded-md px-3 py-2"
@@ -158,11 +175,47 @@ const EditFlight: React.FC = () => {
             <div>
               <Label className="block font-semibold mb-1">Arrival Time</Label>
               <Input
-                type="datetime-local"
+                type="datetime"
                 value={arrivalTime}
                 onChange={(e) => setArrivalTime(e.target.value)}
                 className="w-full border rounded-md px-3 py-2"
               />
+            </div>
+
+            <div>
+              <Label className="block font-semibold mb-1">Total Seats</Label>
+              <Input
+                type="number"
+                value={totalSeats}
+                onChange={(e) => setTotalSeats(e.target.value)}
+                className="w-full border rounded-md px-3 py-2"
+              />
+            </div>
+
+            <div>
+              <Label className="block font-semibold mb-1">Status</Label>
+              <select
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                className="w-full border bg-card rounded-md px-3 py-2"
+              >
+                <option value="Scheduled">Scheduled</option>
+                <option value="Cancelled">Cancelled</option>
+                <option value="Completed">Completed</option>
+                <option value="Other">Other</option>
+              </select>
+
+              {status === "Other" && (
+                <Input
+                  type="text"
+                  value={customStatus}
+                  onChange={(e) => {
+                    setCustomStatus(e.target.value);
+                  }}
+                  placeholder="Enter custom status"
+                  className="mt-2 w-full border rounded-md px-3 py-2"
+                />
+              )}
             </div>
 
             <div className="mt-4">
@@ -175,6 +228,7 @@ const EditFlight: React.FC = () => {
             </div>
           </>
         )}
+        {error && <div className="text-red-500">{error}</div>}
       </div>
     </div>
   );

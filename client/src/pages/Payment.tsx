@@ -151,171 +151,167 @@ const PaymentPage = () => {
       };
 
   return (
-    <FullscreenSection>
-      <div className="bg-card min-h-screen p-8 md:p-16">
-        <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-          {!showSummary ? (
-            <>
-              {/* Payment Form */}
-              <div className="col-span-2 bg-card p-6 rounded-lg shadow-lg border border-gray-200">
-                <h2 className="text-2xl font-semibold text-theme-primary-darker">
-                  Payment Method
-                </h2>
-                <p className="text-sm text-foreground mt-1">
-                  Select a payment method below. Tripma processes your payment
-                  securely with end-to-end encryption.
-                </p>
-
-                {/* Payment Method Buttons */}
-                <div className="flex space-x-4 mt-6">
-                  {["Credit card", "Google Pay", "Apple Pay", "Paypal"].map(
-                    (method) => (
-                      <Button
-                        key={method}
-                        className={`${
-                          paymentMethod === method
-                            ? "bg-theme-primary hover:bg-theme-primary-highlight text-white"
-                            : "bg-theme-primary hover:bg-theme-primary-highlight text-white"
-                        }`}
-                        onClick={() => setPaymentMethod(method)}
-                      >
-                        {method}
-                      </Button>
-                    )
-                  )}
-                </div>
-
-                {/* Credit Card Details */}
-                <div className="mt-8">
-                  <h3 className="text-lg font-semibold text-theme-primary-darker">
-                    Credit Card Details
-                  </h3>
-                  <div className="space-y-4 mt-6">
-                    <Input placeholder="Name on card" />
-                    <Input placeholder="Card number" />
-                    <div className="grid grid-cols-2 gap-6">
-                      <Input placeholder="Expiration date (MM/YY)" />
-                      <Input placeholder="CCV" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Discount Section */}
-                <div className="mt-6">
-                  <h3 className="text-lg font-semibold text-theme-primary-darker">
-                    Discount Code
-                  </h3>
-                  <Input
-                    placeholder="Enter Discount Code"
-                    value={discountCode}
-                    onChange={(e) => setDiscountCode(e.target.value)}
-                  />
-                  <Button className="mt-3" onClick={applyDiscount}>
-                    Apply Discount
-                  </Button>
-                </div>
-              </div>
-
-              {/* Order Summary */}
-              <div className="bg-card p-6 rounded-lg shadow-lg border border-gray-200">
-                <h3 className="text-lg font-semibold text-theme-primary-darker">
-                  Order Summary
-                </h3>
-                <div className="mt-6 space-y-6">
-                  <div className="bg-card p-4 rounded-lg border border-gray-200 flex justify-between items-center">
-                    <div>
-                      <p className="font-medium text-theme-primary-darker">
-                        {flightDetails.flight_number}
-                      </p>
-                      <p className="text-sm text-foreground">
-                        {flightDetails.duration} -{" "}
-                        {flightDetails.departure_time} to{" "}
-                        {flightDetails.arrival_time}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between text-sm">
-                    <span>Base Price</span>
-                    <span>${flightDetails.base_price}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span>Taxes and Fees</span>
-                    <span>
-                      ${(Number(flightDetails.base_price) * 0.16).toFixed(2)}
-                    </span>
-                  </div>
-                  <div className="flex justify-between font-semibold text-lg mt-4">
-                    <span>Total</span>
-                    <span>${totalPrice.toFixed(2)}</span>
-                  </div>
-
-                  <Button
-                    className="w-full bg-theme-primary hover:bg-theme-primary-highlight text-white mt-8 shadow-md"
-                    onClick={handlePayment}
-                  >
-                    Confirm and Pay
-                  </Button>
-                </div>
-              </div>
-
-              {/* Payment Success Drawer */}
-              <Drawer open={paymentSuccess}>
-                <DrawerContent>
-                  <DrawerHeader>
-                    <motion.div
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.5, ease: "easeInOut" }}
-                      className="text-center mt-4"
-                    >
-                      <DrawerTitle className="text-green-600 text-4xl font-bold">
-                        Payment Successful!
-                      </DrawerTitle>
-                      <DrawerDescription className="text-foreground mt-2">
-                        Thank you for your purchase. Your payment was processed
-                        successfully.
-                      </DrawerDescription>
-                    </motion.div>
-                  </DrawerHeader>
-                  <DrawerClose asChild>
-                    <Button variant="outline">Close</Button>
-                  </DrawerClose>
-                </DrawerContent>
-              </Drawer>
-            </>
-          ) : (
-            // Summary Screen Content
-            <div className="col-span-3 bg-card p-6 rounded-lg shadow-lg border border-gray-200">
-              <h2 className="text-2xl font-semibold text-theme-primary-darker">
-                Your Trip Summary
+    <div className="bg-card min-h-screen p-4 md:p-8 pt-20">
+      <div className="container mx-auto grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+        {!showSummary ? (
+          <>
+            <div className="col-span-1 md:col-span-2 bg-card p-6 rounded-lg shadow-lg border border-gray-200">
+              <h2 className="text-xl md:text-2xl font-semibold text-theme-primary-darker">
+                Payment Method
               </h2>
-              <div className="bg-card p-6 mt-6 rounded-lg border border-gray-200">
-                <h3 className="text-lg font-semibold text-theme-primary-darker">
-                  Flight Details
-                </h3>
-                <p className="text-foreground mt-2">
-                  Departure: {flightDetails.departure_time}
-                </p>
-                <p className="text-foreground">
-                  Arrival: {flightDetails.arrival_time}
-                </p>
-                <p className="text-foreground mt-4 font-bold">
-                  Total Paid: ${totalPrice.toFixed(2)}
-                </p>
-              </div>
-              <Button className="bg-theme-primary hover:bg-theme-primary-highlight text-white m-4 shadow-md">
-                <Link to="/boardingpass">Boarding Pass</Link>
-              </Button>
+              <p className="text-sm md:text-base text-foreground mt-1">
+                Select a payment method below. Tripma processes your payment
+                securely with end-to-end encryption.
+              </p>
 
-              <Button className="bg-theme-primary hover:bg-theme-primary-highlight text-white m-4 shadow-md">
-                <Link to="/passengerticket">Ticket</Link>
-              </Button>
+              <div className="flex flex-wrap justify-evenly xl:max-w-64 mt-4justify-center">
+                {["Credit card", "Google Pay", "Apple Pay", "Paypal"].map(
+                  (method) => (
+                    <Button
+                      key={method}
+                      className={`${
+                        paymentMethod === method
+                          ? "bg-theme-secondary hover:bg-theme-primary-highlight text-white"
+                          : "bg-theme-primary hover:bg-theme-primary-highlight text-white"
+                      } w-full sm:w-auto mx-4 mt-2`}
+                      onClick={() => setPaymentMethod(method)}
+                    >
+                      {method}
+                    </Button>
+                  )
+                )}
+              </div>
+
+              <div className="mt-8">
+                <h3 className="text-lg font-semibold text-theme-primary-darker">
+                  Credit Card Details
+                </h3>
+                <div className="space-y-4 mt-6">
+                  <Input placeholder="Name on card" />
+                  <Input placeholder="Card number" />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <Input placeholder="Expiration date (MM/YY)" />
+                    <Input placeholder="CCV" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Discount Section */}
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold text-theme-primary-darker">
+                  Discount Code
+                </h3>
+                <Input
+                  placeholder="Enter Discount Code"
+                  value={discountCode}
+                  onChange={(e) => setDiscountCode(e.target.value)}
+                />
+                <Button
+                  className="mt-3 w-full sm:w-auto"
+                  onClick={applyDiscount}
+                >
+                  Apply Discount
+                </Button>
+              </div>
             </div>
-          )}
-        </div>
+
+            {/* Order Summary */}
+            <div className="col-span-1 md:col-span-2 lg:col-span-1 bg-card p-6 rounded-lg shadow-lg border border-gray-200">
+              <h3 className="text-lg font-semibold text-theme-primary-darker">
+                Order Summary
+              </h3>
+              <div className="mt-6 space-y-6">
+                <div className="bg-card p-4 rounded-lg border border-gray-200 flex justify-between items-center">
+                  <div>
+                    <p className="font-medium text-theme-primary-darker">
+                      {flightDetails.flight_number}
+                    </p>
+                    <p className="text-sm text-foreground">
+                      {flightDetails.duration} - {flightDetails.departure_time}{" "}
+                      to {flightDetails.arrival_time}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex justify-between text-sm">
+                  <span>Base Price</span>
+                  <span>${flightDetails.base_price}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span>Taxes and Fees</span>
+                  <span>
+                    ${(Number(flightDetails.base_price) * 0.16).toFixed(2)}
+                  </span>
+                </div>
+                <div className="flex justify-between font-semibold text-lg mt-4">
+                  <span>Total</span>
+                  <span>${totalPrice.toFixed(2)}</span>
+                </div>
+
+                <Button
+                  className="w-full bg-theme-primary hover:bg-theme-primary-highlight text-white mt-8 shadow-md"
+                  onClick={handlePayment}
+                >
+                  Confirm and Pay
+                </Button>
+              </div>
+            </div>
+
+            <Drawer open={paymentSuccess}>
+              <DrawerContent>
+                <DrawerHeader>
+                  <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                    className="text-center mt-4"
+                  >
+                    <DrawerTitle className="text-green-600 text-4xl font-bold">
+                      Payment Successful!
+                    </DrawerTitle>
+                    <DrawerDescription className="text-foreground mt-2">
+                      Thank you for your purchase. Your payment was processed
+                      successfully.
+                    </DrawerDescription>
+                  </motion.div>
+                </DrawerHeader>
+                <DrawerClose asChild>
+                  <Button variant="outline">Close</Button>
+                </DrawerClose>
+              </DrawerContent>
+            </Drawer>
+          </>
+        ) : (
+          // Summary Screen Content
+          <div className="col-span-1 md:col-span-2 lg:col-span-3 bg-card p-6 rounded-lg shadow-lg border border-gray-200">
+            <h2 className="text-2xl font-semibold text-theme-primary-darker">
+              Your Trip Summary
+            </h2>
+            <div className="bg-card p-6 mt-6 rounded-lg border border-gray-200">
+              <h3 className="text-lg font-semibold text-theme-primary-darker">
+                Flight Details
+              </h3>
+              <p className="text-foreground mt-2">
+                Departure: {flightDetails.departure_time}
+              </p>
+              <p className="text-foreground">
+                Arrival: {flightDetails.arrival_time}
+              </p>
+              <p className="text-foreground mt-4 font-bold">
+                Total Paid: ${totalPrice.toFixed(2)}
+              </p>
+            </div>
+            <Button className="bg-theme-primary hover:bg-theme-primary-highlight text-white m-4 shadow-md">
+              <Link to="/boardingpass">Boarding Pass</Link>
+            </Button>
+
+            <Button className="bg-theme-primary hover:bg-theme-primary-highlight text-white m-4 shadow-md">
+              <Link to="/passengerticket">Ticket</Link>
+            </Button>
+          </div>
+        )}
       </div>
-    </FullscreenSection>
+    </div>
   );
 };
 

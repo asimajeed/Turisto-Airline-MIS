@@ -22,6 +22,7 @@ export interface GlobalState {
   airport_list: string[] | null;
 
   selected_flight: Flight | null;
+  returning_flight: Flight | null;
   selectedSeat: string | null;
 
   passengers: Passenger[];
@@ -41,6 +42,7 @@ export interface GlobalState {
   setIsOneWay: (isOneWay: boolean) => void;
   setAirportList: (airportList: string[] | null) => void;
   setSelectedFlight: (flight: Flight) => void;
+  setReturningFlight: (flight: Flight) => void;
   setSelectedSeat: (s: string) => void;
   setAll: (newState: Partial<GlobalState>) => void;
   resetUserFields: () => void;
@@ -65,6 +67,7 @@ const defaultUserState: GlobalState = {
   is_guest: false,
   isOneWay: false,
   selected_flight: null,
+  returning_flight: null,
   selectedSeat: null,
   passengers: [],
   setIsLoggedIn: () => {},
@@ -107,6 +110,7 @@ export const useGlobalStore = create<GlobalState>((set) => ({
   setSelectedSeat: (s) => set({ selectedSeat: s }),
   setAll: (newState) => set(newState),
   setSelectedFlight: (flight) => set({ selected_flight: flight }),
+  setReturningFlight: (flight) => set({ returning_flight: flight }),
   resetUserFields: () => {
     set({
       first_name: null,
