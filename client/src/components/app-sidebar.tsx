@@ -32,7 +32,9 @@ import { Link } from "react-router-dom";
 type SubItem =
   | { title: string; url: string }
   | { title: string; isDialog: boolean }
-  | { title: string; isCancel: boolean };
+  | { title: string; isCancel: boolean }
+  | { title: string; isCheck: boolean };
+
 
 type MenuItem = {
   title: string;
@@ -59,7 +61,7 @@ const items: MenuItem[] = [
     title: "Tickets",
     icon: Inbox,
     subItems: [
-      { title: "Boarding Pass", url: "/boardingpass" },
+      { title: "Check In", isCheck : true  },
       { title: "Ticket", url: "/passengerticket" },
     ],
   },
@@ -203,7 +205,48 @@ export function AppSidebar({ onSelectionChange }: AppSidebarProps) {
                                   </div>
                                 </DialogContent>
                               </Dialog>
-                            ) : (
+                              ) : "isCheck" in subItem ? (
+                                  <Dialog>
+                                    <DialogTrigger asChild>
+                                      <SidebarMenuButton>
+                                        {subItem.title}
+                                      </SidebarMenuButton>
+                                    </DialogTrigger>
+                                    <DialogContent>
+                                      <DialogHeader>
+                                        <DialogTitle>Flight Check-In</DialogTitle>
+                                        <DialogDescription>
+                                          Please provide the details below to check in for your flight.
+                                        </DialogDescription>
+                                      </DialogHeader>
+                                      <div className="space-y-4 mt-4">
+                                        <div>
+                                          <label
+                                            htmlFor="checkin-booking-reference"
+                                            className="block text-sm font-medium text-gray-200"
+                                          >
+                                            Booking Reference
+                                          </label>
+                                          <Input
+                                            id="checkin-booking-reference"
+                                            type="text"
+                                            placeholder="Enter your booking reference"
+                                          />
+                                        </div>
+                                      </div>
+                                      <div className="flex justify-end mt-4 gap-2">
+                                        <Link to= "/boardingpass">
+                                        <Button className="bg-theme-primary-darker text-white hover:bg-theme-primary-highlight">
+                                          Boarding Pass
+                                          </Button>
+                                        </Link>
+                                        <Button variant="default">
+                                          Check In
+                                        </Button>
+                                      </div>
+                                    </DialogContent>
+                                  </Dialog>
+                              ) : (
                               <Link to={subItem.url!}>
                                 <SidebarMenuButton
                                   onClick={() =>

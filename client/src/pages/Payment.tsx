@@ -11,7 +11,6 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { Link } from "react-router-dom";
-import FullscreenSection from "@/components/FullscreenSection";
 import { useGlobalStore } from "@/context/GlobalStore";
 import axios from "axios";
 import { Passenger } from "@/utils/types";
