@@ -49,6 +49,7 @@ const FlightsTable = () => {
   const [isLoadingR, setLoadingR] = useState(true);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [currentPageR, setCurrentPageR] = useState<number>(0);
+  const [sorting, setSorting] = useState<number>(0);
   const {
     isOneWay,
     setIsOneWay,
@@ -72,10 +73,11 @@ const FlightsTable = () => {
           `${import.meta.env.VITE_BACKEND_API_URL}/api/flights`,
           {
             params: {
-              departure_date: start_date.toUTCString(),
+              departure_date: start_date.toISOString(),
               departure_airport_id: departure_airport.airport_id,
               arrival_airport_id: arrival_airport.airport_id,
               page: currentPage,
+              sorting: sorting,
             },
           }
         );
@@ -110,10 +112,11 @@ const FlightsTable = () => {
           `${import.meta.env.VITE_BACKEND_API_URL}/api/flights`,
           {
             params: {
-              departure_date: end_date.toUTCString(),
+              departure_date: end_date.toISOString(),
               departure_airport_id: arrival_airport.airport_id,
               arrival_airport_id: departure_airport.airport_id,
               page: currentPageR,
+              sorting: sorting,
             },
           }
         );
@@ -134,25 +137,29 @@ const FlightsTable = () => {
   };
   useEffect(() => {
     fetchFlights();
-  }, [start_date, departure_airport, arrival_airport, currentPage]);
+  }, [start_date, departure_airport, arrival_airport, currentPage, isOneWay]);
   useEffect(() => {
     fetchFlightsR();
-  },  [end_date, departure_airport, arrival_airport, currentPageR]);
+  }, [end_date, departure_airport, arrival_airport, currentPageR, isOneWay]);
   const handleOneWayChange = () => {
     setIsOneWay(!isOneWay);
   };
 
-  const handleFlightSelect = (flight: Flight) => {
-    setSelectedFlight({
-      ...flight,
-      base_price: Number(flight.base_price),
-    });
+  const handleFlightSelect = (flight: Flight | null) => {
+    if (flight)
+      setSelectedFlight({
+        ...flight,
+        base_price: Number(flight.base_price),
+      });
+    else setSelectedFlight(null);
   };
-  const handleFlightSelectR = (flight: Flight) => {
-    setReturningFlight({
-      ...flight,
-      base_price: Number(flight.base_price),
-    });
+  const handleFlightSelectR = (flight: Flight | null) => {
+    if (flight)
+      setReturningFlight({
+        ...flight,
+        base_price: Number(flight.base_price),
+      });
+    else setReturningFlight(null);
   };
   const handlePageChange = (page: number) => {
     if (flights.length === 0 && page >= 0) setCurrentPage(page - 1);
@@ -189,24 +196,46 @@ const FlightsTable = () => {
               <SelectItem value="2 adults">2 adults</SelectItem>
             </SelectContent>
           </Select>
-          <Link to="/flights" className="mt-2 md:mt-0">
-            <Button
-              className="bg-theme-primary hover:bg-theme-primary-highlight text-white"
-              onClick={() => {
-                fetchFlights();
-                fetchFlightsR();
-              }}
-            >
-              Search
-            </Button>
-          </Link>
+          <Button
+            className="bg-theme-primary hover:bg-theme-primary-highlight text-white"
+            onClick={() => {
+              fetchFlights();
+              fetchFlightsR();
+            }}
+          >
+            Search
+          </Button>
         </div>
 
         {/* Filters */}
         <div className="flex flex-wrap gap-2 mt-4">
-          <Button variant="outline">Sort price</Button>
-          <Button variant="outline">Sort time</Button>
-          <Button variant="outline">Sort Status</Button>
+          <Button
+            className={`${
+              sorting == 1 ? "bg-accent" : sorting == 4 ? "bg-accent/50" : ""
+            }`}
+            variant="outline"
+            onClick={() => setSorting(sorting == 1 ? 4 : 1)}
+          >
+            Sort price
+          </Button>
+          <Button
+            className={`${
+              sorting == 2 ? "bg-accent" : sorting == 5 ? "bg-accent/50" : ""
+            }`}
+            variant="outline"
+            onClick={() => setSorting(sorting == 2 ? 5 : 2)}
+          >
+            Sort time
+          </Button>
+          <Button
+            className={`${
+              sorting == 3 ? "bg-accent" : sorting == 6 ? "bg-accent/50" : ""
+            }`}
+            variant="outline"
+            onClick={() => setSorting(sorting == 3 ? 6 : 3)}
+          >
+            Sort Status
+          </Button>
         </div>
 
         {/* Flights Table */}
@@ -226,8 +255,8 @@ const FlightsTable = () => {
             ""
           )}
           <div className="p-2 rounded-lg mt-4 hover:bg-inherit overflow-x-auto">
-            {isLoading ? (
-              <div className="my-22 flex justify-center items-center">
+            {!(departure_airport && arrival_airport) ? <p>Selection incomplete.</p> :  isLoading ? (
+              <div className="my-24 flex justify-center items-center">
                 <FaSpinner className="animate-spin text-theme-primary-darker size-10" />
               </div>
             ) : (
@@ -241,8 +270,11 @@ const FlightsTable = () => {
                       "Duration",
                       "Price",
                       "Status",
-                    ].map((val) => (
-                      <TableHead className="text-theme-primary-darker">
+                    ].map((val, index) => (
+                      <TableHead
+                        className="text-theme-primary-darker"
+                        key={index}
+                      >
                         {val}
                       </TableHead>
                     ))}
@@ -258,7 +290,11 @@ const FlightsTable = () => {
                           ? "bg-theme-primary-light text-theme-primary"
                           : ""
                       }`}
-                      onClick={() => handleFlightSelect(flight)}
+                      onClick={
+                        selected_flight?.flight_number === flight.flight_number
+                          ? () => handleFlightSelect(null)
+                          : () => handleFlightSelect(flight)
+                      }
                     >
                       <TableCell className="font-medium">
                         {flight.flight_number}
@@ -287,21 +323,13 @@ const FlightsTable = () => {
                         )}
                       </TableCell>
                       <TableCell className="text-right">
-                        {flight.base_price}
+                        ${flight.base_price}
                       </TableCell>
                       <TableCell>{flight.status}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
               </Table>
-            )}
-            {/* Conditionally render Confirm Flight Button */}
-            {returning_flight && (
-              <Link to="/passenger">
-                <Button className="mt-4 bg-theme-primary hover:bg-theme-primary-highlight text-white">
-                  Confirm Flight
-                </Button>
-              </Link>
             )}
           </div>
           {/* Pagination */}
@@ -339,7 +367,7 @@ const FlightsTable = () => {
               <div className="bg-red-500 bg-opacity-60 text-center text-foreground p-2 m-2 rounded">
                 {errorMsg}
               </div>
-            ) : !isLoading && flights.length === 0 ? (
+            ) : !isLoadingR && returningFlights.length === 0 ? (
               <div className="text-foreground mt-5 text-lg">
                 Flights unavailable for this selection.
               </div>
@@ -347,8 +375,10 @@ const FlightsTable = () => {
               ""
             )}
             <div className="p-2 rounded-lg mt-4 hover:bg-inherit overflow-x-auto">
-              {isLoading ? (
-                <div className="py-32 flex justify-center items-center">
+              {!end_date ? (
+                <p>Select a returning date first!</p>
+              ) : isLoadingR ? (
+                <div className="py-24 flex justify-center items-center">
                   <FaSpinner className="animate-spin text-theme-primary-darker size-10" />
                 </div>
               ) : (
@@ -362,8 +392,11 @@ const FlightsTable = () => {
                         "Duration",
                         "Price",
                         "Status",
-                      ].map((val) => (
-                        <TableHead className="text-theme-primary-darker">
+                      ].map((val, index) => (
+                        <TableHead
+                          className="text-theme-primary-darker"
+                          key={index}
+                        >
                           {val}
                         </TableHead>
                       ))}
@@ -375,12 +408,17 @@ const FlightsTable = () => {
                       <TableRow
                         key={index}
                         className={`cursor-pointer ${
-                          selected_flight?.flight_number ===
+                          returning_flight?.flight_number ===
                           flight.flight_number
                             ? "bg-theme-primary-light text-theme-primary"
                             : ""
                         }`}
-                        onClick={() => handleFlightSelectR(flight)}
+                        onClick={
+                          returning_flight?.flight_number ===
+                          flight.flight_number
+                            ? () => handleFlightSelectR(null)
+                            : () => handleFlightSelectR(flight)
+                        }
                       >
                         <TableCell className="font-medium">
                           {flight.flight_number}
@@ -409,21 +447,13 @@ const FlightsTable = () => {
                           )}
                         </TableCell>
                         <TableCell className="text-right">
-                          {flight.base_price}
+                          ${flight.base_price}
                         </TableCell>
                         <TableCell>{flight.status}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
-              )}
-              {/* Conditionally render Confirm Flight Button */}
-              {selected_flight && (
-                <Link to="/passenger">
-                  <Button className="mt-4 bg-theme-primary hover:bg-theme-primary-highlight text-white">
-                    Confirm Flight
-                  </Button>
-                </Link>
               )}
             </div>
             {/* Pagination */}
@@ -453,6 +483,16 @@ const FlightsTable = () => {
             </Pagination>
           </div>
         ) : null}
+        {(isOneWay && selected_flight) ||
+        (!isOneWay && selected_flight && returning_flight) ? (
+          <Link to="/passenger">
+            <Button className="mt-4 bg-theme-primary hover:bg-theme-primary-highlight text-white">
+              Confirm Flight{isOneWay ? "" : "s"}
+            </Button>
+          </Link>
+        ) : (
+          ""
+        )}
       </div>
     </MapComponent>
   );

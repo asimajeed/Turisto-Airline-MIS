@@ -57,9 +57,13 @@ flightRouter.post("/create", async (req, res) => {
 
 flightRouter.get("/", async (req: Request, res: Response) => {
   try {
-    const { departure_date, departure_airport_id, arrival_airport_id, page } =
-      req.query;
-
+    const {
+      departure_date,
+      departure_airport_id,
+      arrival_airport_id,
+      page,
+      sorting,
+    } = req.query;
     if (!departure_date || !departure_airport_id || !arrival_airport_id) {
       res.status(400).json({
         message:
@@ -67,25 +71,43 @@ flightRouter.get("/", async (req: Request, res: Response) => {
       });
       return;
     }
-
+    const sortingStr = (sortOption: any): string | null => {
+      switch (sortOption) {
+        case 1:
+          return "ORDER BY base_price ASC";
+        case 2:
+          return "ORDER BY departure_time ASC";
+        case 3:
+          return "ORDER BY status ASC";
+        case 4:
+          return "ORDER BY base_price DESC";
+        case 5:
+          return "ORDER BY departure_time DESC";
+        case 6:
+          return "ORDER BY status DESC";
+        default:
+          return "";
+      }
+    };
     const queryStr = `
-      SELECT 
-        flight_id, 
-        flight_number, 
-        departure_airport_id, 
-        arrival_airport_id, 
-        departure_date, 
-        arrival_date, 
-        total_seats, 
-        status, 
-        base_price
-      FROM flights
-      WHERE departure_date::date = $1::date
-        AND departure_airport_id = $2
-        AND arrival_airport_id = $3
-      LIMIT 10
-      OFFSET $4
-    `;
+SELECT 
+  flight_id, 
+  flight_number, 
+  departure_airport_id, 
+  arrival_airport_id, 
+  departure_date, 
+  arrival_date, 
+  total_seats, 
+  status, 
+  base_price
+FROM flights
+WHERE departure_date >= $1::timestamp
+  AND departure_date < ($1::timestamp + INTERVAL '1 day')
+  AND departure_airport_id = $2
+  AND arrival_airport_id = $3
+LIMIT 10
+OFFSET $4
+${sortingStr(sorting)};`;
     const values = [
       departure_date,
       departure_airport_id,
@@ -213,11 +235,11 @@ flightRouter.get("/seats/:flight_id", async (req, res) => {
       `
       SELECT seat_number 
       FROM seat_list 
-      WHERE seat_id NOT IN (
+      WHERE seat_id IN (
           SELECT seat_id 
           FROM seat_allocation 
           WHERE flight_id = $1
-      );
+      )
       `,
       [flightId]
     );

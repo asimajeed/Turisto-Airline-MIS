@@ -1,7 +1,6 @@
 import { useGlobalStore } from "@/context/GlobalStore";
-import { Link } from "react-router-dom";
-import { Button } from "./ui/button";
 import { FC } from "react";
+import { Flight, Pricing } from "@/utils/types";
 
 const Summary: FC = () => {
   const {
@@ -10,6 +9,7 @@ const Summary: FC = () => {
     arrival_airport,
     passengers,
     isOneWay,
+    returning_flight,
   } = useGlobalStore();
   const numberOfPassengers = passengers.length + 1;
 
@@ -20,58 +20,81 @@ const Summary: FC = () => {
     return `${hours}h ${minutes}m`;
   };
 
-  const flightDetails = selected_flight
-    ? {
-        flight_number: `${selected_flight.flight_number} ${
-          departure_airport?.airport_code
-        } to ${arrival_airport?.airport_code} ${
-          isOneWay ? "-> One-way" : "<-> Round-trip"
-        }`,
-        duration: calculateDuration(
-          selected_flight.departure_date,
-          selected_flight.arrival_date
-        ),
-        departure_time: selected_flight.departure_date,
-        arrival_time: selected_flight.arrival_date,
-      }
-    : {
+  const formatTime = (date: Date) =>
+    date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const formatDate = (date: Date) =>
+    date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+
+  const flightDetails = (flight: Flight | null, label: string) => {
+    if (!flight) {
+      return {
+        label,
         flight_number: "Not Selected",
         duration: "N/A",
         departure_time: null,
         arrival_time: null,
       };
+    }
+    return {
+      label,
+      flight_number:
+        label != "Return"
+          ? `${flight.flight_number} ${departure_airport?.airport_code} to ${arrival_airport?.airport_code}`
+          : `${flight.flight_number} ${arrival_airport?.airport_code} to ${departure_airport?.airport_code}`,
+      duration: calculateDuration(flight.departure_date, flight.arrival_date),
+      departure_time: flight.departure_date,
+      arrival_time: flight.arrival_date,
+    };
+  };
 
-  const basePrice = selected_flight?.base_price ?? 0;
-  const subtotal = basePrice * numberOfPassengers;
-  const taxesAndFees = subtotal * 0.16; // Assuming 16% tax
-  const total = subtotal + taxesAndFees;
+  const outboundFlight = flightDetails(
+    selected_flight,
+    isOneWay ? "One-way" : "Outbound"
+  );
+  const returnFlight = !isOneWay
+    ? flightDetails(returning_flight, "Return")
+    : null;
+
+  const outboundBasePrice = selected_flight?.base_price ?? 0;
+  const returnBasePrice = returning_flight?.base_price ?? 0;
+  const pricing = new Pricing({
+    base_price: outboundBasePrice + returnBasePrice,
+    taxes: 0.16,
+  });
+  const subtotal = pricing.subtotal;
+  const taxesAndFees = pricing.taxed_ammount; // Assuming 16% tax
+  const total = pricing.final_total;
 
   return (
     <div className="mt-4 space-y-4">
+      <h3 className="font-semibold text-lg">Flight Details</h3>
       <div className="bg-card p-4 border rounded-lg">
-        <p>{flightDetails.flight_number}</p>
+        <p>{outboundFlight.label}</p>
+        <p className="font-medium">{outboundFlight.flight_number}</p>
         <p>
-          {flightDetails.duration} (
-          {flightDetails.departure_time &&
-            new Date(flightDetails.departure_time).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}{" "}
-          -{" "}
-          {flightDetails.arrival_time &&
-            new Date(flightDetails.arrival_time).toLocaleTimeString([], {
-              hour: "2-digit",
-              minute: "2-digit",
-            })}{" "}
-          on{" "}
-          {flightDetails.arrival_time &&
-            new Date(flightDetails.arrival_time).toLocaleDateString("en-US", {
-              month: "short",
-              day: "numeric",
-            })}
+          {outboundFlight.duration} (
+          {outboundFlight.departure_time &&
+            `${formatTime(new Date(outboundFlight.departure_time))} - 
+            ${formatTime(new Date(outboundFlight.arrival_time))} on 
+            ${formatDate(new Date(outboundFlight.arrival_time))}`}
           )
         </p>
       </div>
+
+      {returnFlight && (
+        <div className="bg-card p-4 border rounded-lg">
+          <p>{returnFlight.label}</p>
+          <p className="font-medium">{returnFlight.flight_number}</p>
+          <p>
+            {returnFlight.duration} (
+            {returnFlight.departure_time &&
+              `${formatTime(new Date(returnFlight.departure_time))} - 
+              ${formatTime(new Date(returnFlight.arrival_time))} on 
+              ${formatDate(new Date(returnFlight.arrival_time))}`}
+            )
+          </p>
+        </div>
+      )}
 
       {selected_flight ? (
         <>

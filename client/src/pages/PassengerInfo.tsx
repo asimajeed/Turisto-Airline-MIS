@@ -27,14 +27,21 @@ const PassengerInfo = () => {
     setPhoneNumber,
     selectedSeat,
     setSelectedSeat,
+    returningSeat,
+    setReturningSeat,
+    date_of_birth,
+    setDateOfBirth,
     passengers: groupPassengers,
     setPassengers: setGroupPassengers,
+    isOneWay,
+    selected_flight,
+    returning_flight,
   } = useGlobalStore();
 
   const addPassenger = () => {
     setGroupPassengers([
       ...groupPassengers,
-      { first_name: "", last_name: "", date_of_birth: "", email: "", seat: "" },
+      { first_name: "", last_name: "", date_of_birth: "", email: "", seat: "", returningSeat: "" },
     ]);
   };
 
@@ -45,7 +52,6 @@ const PassengerInfo = () => {
       setGroupPassengers(groupPassengers);
     }
   };
-
   const updatePassenger = (
     index: number,
     key: keyof Passenger,
@@ -77,23 +83,37 @@ const PassengerInfo = () => {
                   placeholder="First name*"
                   value={first_name || ""}
                   type="text"
+                  required
                   onChange={(e) => setFirstName(e.target.value)}
                 />
                 <Input
                   placeholder="Last name*"
                   value={last_name || ""}
+                  required
                   type="text"
                   onChange={(e) => setLastName(e.target.value)}
                 />
               </div>
               <div className="grid grid-cols-3 gap-4">
-                <Input placeholder="Date of birth*" type="date" />
+                <Input
+                  placeholder="Date of birth*"
+                  type="date"
+                  value={
+                    date_of_birth
+                      ? date_of_birth.toISOString().split("T")[0]
+                      : ""
+                  }
+                  onChange={(e) => {
+                    setDateOfBirth(new Date(e.target.value + "T00:00:00Z"));
+                  }}
+                />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <Input
                   placeholder="Email address*"
                   value={email || ""}
                   type="email"
+                  required
                   onChange={(e) => setEmail(e.target.value)}
                 />
                 <Input
@@ -106,8 +126,19 @@ const PassengerInfo = () => {
               <SeatSelection
                 selectedSeat={selectedSeat}
                 setSelectedSeat={setSelectedSeat}
+                selectedFlight={selected_flight}
               />
               <p>Seat: {selectedSeat}</p>
+              {!isOneWay && (
+                <>
+                  <SeatSelection
+                    selectedSeat={returningSeat}
+                    setSelectedSeat={setReturningSeat}
+                    selectedFlight={returning_flight}
+                  />
+                  <p>Returning Seat: {returningSeat}</p>
+                </>
+              )}
             </div>
           </div>
 
@@ -126,6 +157,7 @@ const PassengerInfo = () => {
                   <Input
                     placeholder="First name*"
                     value={passenger.first_name}
+                    required
                     onChange={(e) =>
                       updatePassenger(index, "first_name", e.target.value)
                     }
@@ -133,6 +165,7 @@ const PassengerInfo = () => {
                   <Input
                     placeholder="Last name*"
                     value={passenger.last_name}
+                    required
                     onChange={(e) =>
                       updatePassenger(index, "last_name", e.target.value)
                     }
@@ -152,6 +185,7 @@ const PassengerInfo = () => {
                   <Input
                     placeholder="Email address*"
                     value={passenger.email}
+                    required
                     onChange={(e) =>
                       updatePassenger(index, "email", e.target.value)
                     }
@@ -163,8 +197,22 @@ const PassengerInfo = () => {
                     groupPassengers[index].seat = s;
                     setGroupPassengers(groupPassengers);
                   }}
+                  selectedFlight={selected_flight}
                 />
                 <p>Seat: {passenger.seat}</p>
+                {!isOneWay && (
+                  <>
+                    <SeatSelection
+                      selectedSeat={passenger.returningSeat}
+                      setSelectedSeat={(s: string) => {
+                        groupPassengers[index].returningSeat = s;
+                        setGroupPassengers(groupPassengers);
+                      }}
+                      selectedFlight={returning_flight}
+                    />
+                    <p>Seat: {passenger.returningSeat}</p>
+                  </>
+                )}
               </div>
             ))}
             <div className="mt-4">
@@ -197,7 +245,7 @@ const PassengerInfo = () => {
 
             <div className="flex space-x-4 mt-6">
               <Sheet>
-                <SheetTrigger>
+                <SheetTrigger asChild>
                   <Button className="bg-theme-primary hover:bg-theme-primary-highlight text-white">
                     View Summary
                   </Button>

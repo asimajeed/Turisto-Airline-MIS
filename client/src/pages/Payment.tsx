@@ -12,8 +12,9 @@ import {
 } from "@/components/ui/drawer";
 import { Link } from "react-router-dom";
 import { useGlobalStore } from "@/context/GlobalStore";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { Passenger } from "@/utils/types";
+import Summary from "@/components/Summary";
 
 const PaymentPage = () => {
   const [paymentSuccess, setPaymentSuccess] = useState(false);
@@ -71,7 +72,7 @@ const PaymentPage = () => {
     }
   };
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
     if (!selected_flight || !selectedSeat)
       return alert("Incomplete information");
     let data: {
@@ -100,14 +101,25 @@ const PaymentPage = () => {
       };
     }
     if (passengers.length > 0) data.passengers = passengers;
-    axios.post(`${import.meta.env.VITE_BACKEND_API_URL}/booking/create`, data, {
-      withCredentials: true,
-    });
-    setPaymentSuccess(true);
-    setTimeout(() => {
-      setPaymentSuccess(false);
-      setShowSummary(true);
-    }, 5000); // 5 seconds delay before showing summary
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_API_URL}/booking/create`,
+        data,
+        {
+          withCredentials: true,
+        }
+      );
+      setPaymentSuccess(true);
+      setTimeout(() => {
+        setPaymentSuccess(false);
+        setShowSummary(true);
+      }, 5000); // 5 seconds delay before showing summary
+    } catch (error) {
+      if (error instanceof AxiosError)
+        alert(`${error} ${error.response?.data.message}`);
+      else
+        alert(`Error ${error}`)
+    }
   };
 
   const flightDetails = selected_flight
@@ -170,7 +182,7 @@ const PaymentPage = () => {
                       key={method}
                       className={`${
                         paymentMethod === method
-                          ? "bg-theme-secondary hover:bg-theme-primary-highlight text-white"
+                          ? "bg-theme-primary opacity-70 hover:bg-theme-primary-highlight text-white"
                           : "bg-theme-primary hover:bg-theme-primary-highlight text-white"
                       } w-full sm:w-auto mx-4 mt-2`}
                       onClick={() => setPaymentMethod(method)}
@@ -219,41 +231,13 @@ const PaymentPage = () => {
               <h3 className="text-lg font-semibold text-theme-primary-darker">
                 Order Summary
               </h3>
-              <div className="mt-6 space-y-6">
-                <div className="bg-card p-4 rounded-lg border border-gray-200 flex justify-between items-center">
-                  <div>
-                    <p className="font-medium text-theme-primary-darker">
-                      {flightDetails.flight_number}
-                    </p>
-                    <p className="text-sm text-foreground">
-                      {flightDetails.duration} - {flightDetails.departure_time}{" "}
-                      to {flightDetails.arrival_time}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex justify-between text-sm">
-                  <span>Base Price</span>
-                  <span>${flightDetails.base_price}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span>Taxes and Fees</span>
-                  <span>
-                    ${(Number(flightDetails.base_price) * 0.16).toFixed(2)}
-                  </span>
-                </div>
-                <div className="flex justify-between font-semibold text-lg mt-4">
-                  <span>Total</span>
-                  <span>${totalPrice.toFixed(2)}</span>
-                </div>
-
-                <Button
-                  className="w-full bg-theme-primary hover:bg-theme-primary-highlight text-white mt-8 shadow-md"
-                  onClick={handlePayment}
-                >
-                  Confirm and Pay
-                </Button>
-              </div>
+              <Summary />
+              <Button
+                className="w-full bg-theme-primary hover:bg-theme-primary-highlight text-white mt-8 shadow-md"
+                onClick={handlePayment}
+              >
+                Confirm and Pay
+              </Button>
             </div>
 
             <Drawer open={paymentSuccess}>

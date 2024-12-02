@@ -45,7 +45,7 @@ router.post("/create", async (req, res) => {
   } = req.body;
 
   if (!flight_id || !seat_number) {
-    res.status(400).json({ error: "Incomplete information" });
+    res.status(400).json({ message: "Incomplete information" });
     return;
   }
 
@@ -55,7 +55,7 @@ router.post("/create", async (req, res) => {
     user_id = req.user.user_id; 
   } else {
     if (!first_name || !last_name || !email) {
-      res.status(400).json({ error: "Missing guest user information" });
+      res.status(400).json({ message: "Missing guest user information" });
       return;
     }
 
@@ -76,14 +76,14 @@ router.post("/create", async (req, res) => {
   const flightCheckQuery = "SELECT * FROM flights WHERE flight_id = $1";
   const flightResult = await query(flightCheckQuery, [flight_id]);
   if (flightResult.rows.length === 0) {
-    res.status(404).json({ error: "Flight not found" });
+    res.status(404).json({ message: "Flight not found" });
     return;
   }
 
   const seatCheckQuery = "SELECT * FROM seat_list WHERE seat_number = $1";
   const seatResult = await query(seatCheckQuery, [seat_number]);
   if (seatResult.rows.length === 0) {
-    res.status(404).json({ error: "Seat not found" });
+    res.status(404).json({ message: "Seat not found" });
     return;
   }
 

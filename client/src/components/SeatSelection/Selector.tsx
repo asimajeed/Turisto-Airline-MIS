@@ -1,43 +1,57 @@
-import { useEffect, useState } from "react";
+import { FC, Fragment, useEffect, useState } from "react";
 import planeImage from "@/assets/Plane.png";
 import { LuInfo } from "react-icons/lu";
 import { FaSpinner } from "react-icons/fa";
 import axios from "axios";
 import { useGlobalStore } from "@/context/GlobalStore";
 import { Label } from "../ui/label";
+import { Flight } from "@/utils/types";
 
 interface SelectorProps {
   selectedSeat: string | null;
   setSelectedSeat: (s: string) => void;
+  selected_flight: Flight | null;
 }
 
-const Selector = (props: SelectorProps) => {
-  const { selectedSeat, setSelectedSeat } = props;
+const Selector: FC<SelectorProps> = (props) => {
+  const { selectedSeat, setSelectedSeat, selected_flight } = props;
   const [seatsFromDb, setSeatsFromDb] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const {
-    selected_flight,
     passengers,
     selectedSeat: mainSeat,
+    returningSeat,
+    selected_flight: goingFlight,
+    returning_flight,
   } = useGlobalStore();
-  const seatArray = passengers.map(({ seat }) => seat);
+  let seatArray: string[] = [];
   const [error, setError] = useState<string | null>(null);
-  if (!selected_flight) {
+  if (!selected_flight || !goingFlight) {
     return (
       <div className="flex items-center justify-center h-28">
         <Label>No flight selected</Label>
       </div>
     );
   }
-  mainSeat && seatArray.push(mainSeat);
+  console.log({ mainSeat, returningSeat });
+  if (selected_flight.flight_id == goingFlight.flight_id) {
+    seatArray = passengers.map(({ seat }) => seat);
+    mainSeat && seatArray.push(mainSeat);
+  } else if (selected_flight.flight_id == returning_flight?.flight_id) {
+    seatArray = passengers.map(({ returningSeat }) => returningSeat);
+    returningSeat && seatArray.push(returningSeat);
+  } else return <p>Invalid flight selection</p>;
   useEffect(() => {
     const fetchSeats = async (flightId: number) => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_BACKEND_API_URL}/api/flight/seats/${flightId}`
+          `${
+            import.meta.env.VITE_BACKEND_API_URL
+          }/api/flights/seats/${flightId}`
         );
         setSeatsFromDb(response.data);
-        setError(null); // Clear any previous errors
+        console.log(response.data)
+        setError(null);
       } catch (err) {
         console.error("Error fetching seats", err);
         setError("Failed to load seats. Please try again later.");
@@ -74,24 +88,23 @@ const Selector = (props: SelectorProps) => {
       <div className="mt-52 flex flex-col justify-center items-center w-80">
         <div className="grid grid-cols-[repeat(9,26px)]">
           {columns.map((col) => (
-            <>
+            <div key={col}>
               <div className="flex justify-center items-center">
                 <p className="text-sm font-semibold text-blue-800">{col}</p>
               </div>
               {col == "D" ? <p /> : null}
-            </>
+            </div>
           ))}
         </div>
         <div className="grid grid-cols-9 bg-white rounded-md px-1">
           {rows.map((row) => (
-            <>
+            <Fragment key={row}>
               {columns.map((col) => {
-                const seatId = `${col}${row}`;
+                const seatId = `${row}${col}`;
                 const taken = seatsFromDb.includes(seatId);
                 return (
-                  <>
+                  <Fragment key={seatId}>
                     <button
-                      key={seatId}
                       className={
                         "text-center flex items-center justify-center text-sm font-semibold rounded bg-violet-100 hover:bg-violet-200"
                       }
@@ -131,10 +144,10 @@ const Selector = (props: SelectorProps) => {
                         <LuInfo strokeWidth={3} /> Exit row
                       </div>
                     ) : null}
-                  </>
+                  </Fragment>
                 );
               })}
-            </>
+            </Fragment>
           ))}
         </div>
       </div>

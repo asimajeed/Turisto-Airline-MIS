@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios, { Axios, AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,7 +18,6 @@ const EditFlight: React.FC = () => {
   const [totalSeats, setTotalSeats] = useState<number | string>("200");
   const [status, setStatus] = useState<string>("");
   const [customStatus, setCustomStatus] = useState<string>("");
-
   const handleFetchFlight = async () => {
     if (!flightId.trim()) return alert("Please enter a flight ID");
     setLoading(true);

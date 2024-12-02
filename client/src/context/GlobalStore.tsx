@@ -24,6 +24,7 @@ export interface GlobalState {
   selected_flight: Flight | null;
   returning_flight: Flight | null;
   selectedSeat: string | null;
+  returningSeat: string | null;
 
   passengers: Passenger[];
 
@@ -41,9 +42,10 @@ export interface GlobalState {
   setEndDate: (endDate: Date | null) => void;
   setIsOneWay: (isOneWay: boolean) => void;
   setAirportList: (airportList: string[] | null) => void;
-  setSelectedFlight: (flight: Flight) => void;
-  setReturningFlight: (flight: Flight) => void;
+  setSelectedFlight: (flight: Flight | null) => void;
+  setReturningFlight: (flight: Flight | null) => void;
   setSelectedSeat: (s: string) => void;
+  setReturningSeat: (s: string) => void;
   setAll: (newState: Partial<GlobalState>) => void;
   resetUserFields: () => void;
   setPassengers: (p: Passenger[] | []) => void;
@@ -69,6 +71,7 @@ const defaultUserState: GlobalState = {
   selected_flight: null,
   returning_flight: null,
   selectedSeat: null,
+  returningSeat: null,
   passengers: [],
   setIsLoggedIn: () => {},
   setFirstName: () => {},
@@ -85,7 +88,9 @@ const defaultUserState: GlobalState = {
   setIsOneWay: () => {},
   setAirportList: () => {},
   setSelectedFlight: () => {},
+  setReturningFlight: () => {},
   setSelectedSeat: () => {},
+  setReturningSeat: () => {},
   setAll: () => {},
   resetUserFields: () => {},
   setPassengers: () => {},
@@ -108,6 +113,7 @@ export const useGlobalStore = create<GlobalState>((set) => ({
   setAdminAccess: (access) => set({ is_admin: access }),
   setIsOneWay: (isOneWay) => set({ isOneWay }),
   setSelectedSeat: (s) => set({ selectedSeat: s }),
+  setReturningSeat: (s) => set({ returningSeat: s }),
   setAll: (newState) => set(newState),
   setSelectedFlight: (flight) => set({ selected_flight: flight }),
   setReturningFlight: (flight) => set({ returning_flight: flight }),

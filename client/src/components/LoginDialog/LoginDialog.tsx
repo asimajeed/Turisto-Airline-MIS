@@ -89,7 +89,10 @@ const LoginDialog = ({
         { withCredentials: true }
       );
       showFeedback("Login successful!");
-      setAll(response.data);
+      setAll({
+        ...response.data,
+        date_of_birth: new Date(response.data.date_of_birth),
+      });
       console.log(response.data);
       setIsLoggedIn(true);
       setIsOpen(false);
