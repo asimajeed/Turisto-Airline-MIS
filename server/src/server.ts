@@ -3,15 +3,15 @@ dotenv.config();
 
 import express, { Request, Response } from "express";
 import cors from "cors";
-import { query } from "./db-config";
 import passport from "passport";
 import session from "express-session";
 import "./passport-config";
 import { fetchAirports } from "./queryFunctions/publicQueries";
-import { userLogout, userRegister, userUpdate } from "./routes/user";
+import userRouter from "./routes/user";
 import { sql } from "./routes/admin";
 import booking from "./routes/booking";
 import flightRouter from "./routes/flights";
+
 const app = express();
 
 // Middleware
@@ -35,15 +35,6 @@ app.use(passport.session());
 
 app.use(express.json());
 
-// Register user
-app.post("/register", userRegister);
-
-// Login user
-app.post("/login", passport.authenticate("local"), (req, res) => {
-  res.status(200).json(req.user);
-});
-
-app.delete("/logout", userLogout);
 
 app.get("/profile", (req: Request, res: Response) => {
   if (!req.isAuthenticated()) {
@@ -52,6 +43,11 @@ app.get("/profile", (req: Request, res: Response) => {
     res.send(req.user);
   }
 });
+
+// Use the booking routes
+app.use('/booking', booking);
+
+app.use('/api/user', userRouter)
 
 app.post("/admin/sql", sql);
 
@@ -69,9 +65,7 @@ app.get("/api/airports", async (req, res) => {
 
 app.use('/api/flights', flightRouter);
 
-app.post("/user/update", userUpdate);
 
-app.use('/booking',booking);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

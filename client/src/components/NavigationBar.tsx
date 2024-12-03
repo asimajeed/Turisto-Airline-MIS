@@ -25,7 +25,7 @@ const NavBar = forwardRef<
   };
   const handleLogout = () => {
     try {
-      axios.delete(`${import.meta.env.VITE_BACKEND_API_URL}/logout`, {
+      axios.delete(`${import.meta.env.VITE_BACKEND_API_URL}/api/user/logout`, {
         withCredentials: true,
       });
       setIsLoggedIn(false);

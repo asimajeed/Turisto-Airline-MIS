@@ -6,6 +6,10 @@ const flightRouter = Router();
 
 // Create a flight
 flightRouter.post("/create", async (req, res) => {
+  if (!(req.isAuthenticated() && req.user.is_admin)) {
+    res.status(401).json({ message: "Unauthorized request" });
+    return;
+  }
   const {
     flight_number,
     departure_airport_id,

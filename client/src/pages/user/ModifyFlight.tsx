@@ -40,12 +40,12 @@ export function ModifyFlight() {
               className="block text-sm font-medium text-foreground
         /70"
             >
-              Passenger Name
+              Passenger Email
             </Label>
             <Input
               id="passenger-name"
-              type="text"
-              placeholder="Enter passenger name"
+              type="email"
+              placeholder="Enter passenger email"
               className=" text-foreground
          placeholder-white/70 border border-white/20"
             />

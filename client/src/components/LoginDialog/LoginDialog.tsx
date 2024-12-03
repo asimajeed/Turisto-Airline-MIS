@@ -53,7 +53,7 @@ const LoginDialog = ({
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_API_URL}/register`,
+        `${import.meta.env.VITE_BACKEND_API_URL}/api/user/register`,
         { firstName, lastName, email, password }
       );
 
@@ -84,7 +84,7 @@ const LoginDialog = ({
   const handleSignIn = async () => {
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_API_URL}/login`,
+        `${import.meta.env.VITE_BACKEND_API_URL}/api/user/login`,
         { email, password },
         { withCredentials: true }
       );
@@ -95,14 +95,19 @@ const LoginDialog = ({
       });
       console.log(response.data);
       setIsLoggedIn(true);
-      setIsOpen(false);
+      // setIsOpen(false);
     } catch (error) {
       if (error instanceof AxiosError) {
         if (error.response) {
           if (error.response.status === 401) {
             showFeedback("Invalid email or password.", "err");
           } else {
-            showFeedback("Login failed.", "err");
+            if (error instanceof AxiosError)
+              showFeedback(
+                "Login failed. " + error.message + ' ' + error.response.data.message,
+                "err"
+              );
+            else showFeedback("Login failed. ", "err");
           }
         } else if (error.request) {
           showFeedback("Network error. Please try again.", "err");

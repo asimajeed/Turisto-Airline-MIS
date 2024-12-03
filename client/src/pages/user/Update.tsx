@@ -39,14 +39,17 @@ export function Update(): JSX.Element {
   const [new_last_name, setLastName] = useState(last_name);
   const [new_email, setEmail] = useState(email);
   const [new_phone_number, setPhoneNumber] = useState(phone_number);
-  const [new_date_of_birth, setDateOfBirth] = useState(date_of_birth);
+  const [new_date_of_birth, setDateOfBirth] = useState(
+    date_of_birth?.toISOString().split("T")[0] || null
+  );
+  console.log(date_of_birth?.toISOString());
   const handleFieldChange = (field: string, value: string | number): void => {
     const updateFunctions: Record<string, (value: any) => void> = {
       first_name: (value) => setFirstName(value as string | null),
       last_name: (value) => setLastName(value as string | null),
       email: (value) => setEmail(value as string | null),
       phoneNumber: (value) => setPhoneNumber(value as string | null),
-      dateOfBirth: (value) => setDateOfBirth(value as Date | null),
+      dateOfBirth: (value) => setDateOfBirth(value),
     };
     updateFunctions[field]?.(value);
   };
@@ -70,11 +73,11 @@ export function Update(): JSX.Element {
         last_name: new_last_name,
         email: new_email,
         phone_number: new_phone_number,
-        date_of_birth: new_date_of_birth,
+        date_of_birth: new_date_of_birth ? new Date(new_date_of_birth) : null,
       };
 
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_API_URL}/user/update`,
+        `${import.meta.env.VITE_BACKEND_API_URL}/api/user/update`,
         payload,
         { withCredentials: true }
       );
@@ -184,9 +187,7 @@ export function Update(): JSX.Element {
                 <Input
                   type={type}
                   id={field}
-                  value={
-                    value instanceof Date ? value.toISOString() : value || ""
-                  }
+                  value={value || ''}
                   onChange={(e) =>
                     handleFieldChange(
                       field,
