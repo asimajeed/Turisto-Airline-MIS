@@ -5,69 +5,16 @@ import { Router, Request, Response } from "express";
 const flightRouter = Router();
 
 // Create a flight
-flightRouter.post("/create", async (req, res) => {
-  if (!(req.isAuthenticated() && req.user.is_admin)) {
-    res.status(401).json({ message: "Unauthorized request" });
-    return;
-  }
-  const {
-    flight_number,
-    departure_airport_id,
-    arrival_airport_id,
-    departure_date,
-    arrival_date,
-    total_seats,
-    status,
-    base_price,
-  } = req.body;
-
-  if (
-    !flight_number ||
-    !departure_airport_id ||
-    !arrival_airport_id ||
-    !departure_date ||
-    !arrival_date ||
-    !total_seats ||
-    !status ||
-    !base_price
-  ) {
-    res.status(400).json({ message: "All fields are required" });
-    return;
-  }
-
-  try {
-    const newFlight = await query(
-      `INSERT INTO flights (flight_number, departure_airport_id, arrival_airport_id, departure_date, arrival_date, total_seats, status, base_price)
-             VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-             RETURNING *`,
-      [
-        flight_number,
-        departure_airport_id,
-        arrival_airport_id,
-        departure_date,
-        arrival_date,
-        total_seats,
-        status,
-        base_price,
-      ]
-    );
-
-    res.status(201).json(newFlight.rows[0]);
-  } catch (err: any) {
-    console.error(err.message);
-    res.status(500).json({ message: "Server error" });
-  }
-});
-
 flightRouter.get("/", async (req: Request, res: Response) => {
   try {
     const {
       departure_date,
       departure_airport_id,
       arrival_airport_id,
-      page,
+      page = 0,
       sorting,
     } = req.query;
+
     if (!departure_date || !departure_airport_id || !arrival_airport_id) {
       res.status(400).json({
         message:
@@ -75,24 +22,30 @@ flightRouter.get("/", async (req: Request, res: Response) => {
       });
       return;
     }
+
     const sortingStr = (sortOption: any): string | null => {
-      switch (sortOption) {
+      switch (parseInt(sortOption)) {
         case 1:
           return "ORDER BY base_price ASC";
         case 2:
-          return "ORDER BY departure_time ASC";
+          return "ORDER BY departure_date ASC";
         case 3:
           return "ORDER BY status ASC";
         case 4:
           return "ORDER BY base_price DESC";
         case 5:
-          return "ORDER BY departure_time DESC";
+          return "ORDER BY departure_date DESC";
         case 6:
           return "ORDER BY status DESC";
         default:
           return "";
       }
     };
+
+    const limit = 6; // Items per page
+    const offset = parseInt(page as string) * limit;
+
+    // Query for paginated results
     const queryStr = `
 SELECT 
   flight_id, 
@@ -109,24 +62,50 @@ WHERE departure_date >= $1::timestamp
   AND departure_date < ($1::timestamp + INTERVAL '1 day')
   AND departure_airport_id = $2
   AND arrival_airport_id = $3
-LIMIT 10
-OFFSET $4
-${sortingStr(sorting)};`;
-    const values = [
+${sortingStr(sorting)}
+LIMIT $4 OFFSET $5;`;
+
+    const countQueryStr = `
+SELECT COUNT(*) as total
+FROM flights
+WHERE departure_date >= $1::timestamp
+  AND departure_date < ($1::timestamp + INTERVAL '1 day')
+  AND departure_airport_id = $2
+  AND arrival_airport_id = $3;`;
+
+    const queryValues = [
       departure_date,
       departure_airport_id,
       arrival_airport_id,
-      parseInt(page as string) * 10,
+      limit,
+      offset,
     ];
 
-    const result = await query(queryStr, values);
+    const countValues = [
+      departure_date,
+      departure_airport_id,
+      arrival_airport_id,
+    ];
 
-    res.json(result.rows);
+    const result = await query(queryStr, queryValues);
+    const countResult = await query(countQueryStr, countValues);
+
+    const totalResults = parseInt(countResult.rows[0].total, 10);
+    const totalPages = Math.ceil(totalResults / limit);
+    const currentPage = parseInt(page as string);
+
+    res.json({
+      flights: result.rows,
+      totalPages,
+      currentPage,
+      totalResults,
+    });
   } catch (error) {
     console.error("Error fetching flights:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
 
 flightRouter.get("/:searchId", async (req, res) => {
   const searchId = req.params.searchId;

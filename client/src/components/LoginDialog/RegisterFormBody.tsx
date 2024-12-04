@@ -21,7 +21,7 @@ const RegisterForm = ({
   setPassword: (password: string) => void;
   handleSignUp: () => void;
 }) => (
-  <>
+  <form>
     <FormInput
       label="First name"
       type="text"
@@ -55,11 +55,11 @@ const RegisterForm = ({
     </label>
     <button
       className="w-full py-2 text-white bg-theme-primary-darker rounded font-semibold"
-      onClick={handleSignUp}
+      onSubmit={handleSignUp}
     >
       Sign up
     </button>
-  </>
+  </form>
 );
 
 export default RegisterForm;

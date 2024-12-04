@@ -50,7 +50,7 @@ const Selector: FC<SelectorProps> = (props) => {
           }/api/flights/seats/${flightId}`
         );
         setSeatsFromDb(response.data);
-        console.log(response.data)
+        console.log(response.data);
         setError(null);
       } catch (err) {
         console.error("Error fetching seats", err);
@@ -88,12 +88,12 @@ const Selector: FC<SelectorProps> = (props) => {
       <div className="mt-52 flex flex-col justify-center items-center w-80">
         <div className="grid grid-cols-[repeat(9,26px)]">
           {columns.map((col) => (
-            <div key={col}>
+            <Fragment key={col}>
               <div className="flex justify-center items-center">
                 <p className="text-sm font-semibold text-blue-800">{col}</p>
               </div>
-              {col == "D" ? <p /> : null}
-            </div>
+              {col == "D" ? <p></p> : null}
+            </Fragment>
           ))}
         </div>
         <div className="grid grid-cols-9 bg-white rounded-md px-1">

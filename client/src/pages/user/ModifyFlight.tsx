@@ -9,8 +9,7 @@ export function ModifyFlight() {
       <div className="p-6 bg-white/10 backdrop-blur-md shadow-lg rounded-xl border border-white/20">
         <h1 className="text-2xl font-semibold text-foreground
   ">Modify Booking</h1>
-        <p className="text-sm text-foreground
-  /70">
+        <p className="text-sm text-foreground/70">
           Update your flight booking details here.
         </p>
       </div>

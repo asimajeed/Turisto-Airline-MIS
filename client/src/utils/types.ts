@@ -70,9 +70,9 @@ export class Pricing {
 
     // Initialize derived values
     this.discount_amount = (this.base_price * this.discount_percentage) / 100;
-    this.subtotal = this.base_price - this.discount_amount;
-    this.taxed_ammount = this.subtotal * this.taxes;
-    this.final_total = this.subtotal + this.taxed_ammount;
+    this.subtotal = this.base_price;
+    this.taxed_ammount = (this.subtotal - this.discount_amount) * this.taxes;
+    this.final_total = this.subtotal + this.taxed_ammount - this.discount_amount;
   }
 
   // Optional method to update fields dynamically

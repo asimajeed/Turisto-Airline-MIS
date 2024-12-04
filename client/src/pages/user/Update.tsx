@@ -251,7 +251,7 @@ export function Update(): JSX.Element {
 
       {/* Delete User Section */}
       <div className="mt-8">
-        <AlertDialog>
+        {/* <AlertDialog>
           <AlertDialogTrigger>
             <Button variant="destructive" className="w-full">
               Delete Account
@@ -272,7 +272,7 @@ export function Update(): JSX.Element {
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
-        </AlertDialog>
+        </AlertDialog> */}
       </div>
     </div>
   );

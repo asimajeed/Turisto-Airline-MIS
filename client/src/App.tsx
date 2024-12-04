@@ -55,9 +55,9 @@ const App = () => {
             }
           />
 
-          <Route path="/boardingpass" element={<BoardingPass />} />
+          <Route path="/boardingpass/:bookingId" element={<BoardingPass />} />
 
-          <Route path="/passengerticket" element={<PassengerTicket />} />
+          <Route path="/passengerticket/:bookingId" element={<PassengerTicket />} />
 
           <Route
             path="/payment"

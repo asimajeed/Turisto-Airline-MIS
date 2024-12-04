@@ -230,7 +230,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ className, children }) => {
     return pathD;
   };
   return (
-    <div className={cn("relative overflow-hidden", className)}>
+    <div className={cn("relative overflow-hidden min-h-screen", className)}>
       {/* <motion.div
         initial={{ scale: 1, x: 0, y: 0 }}
         animate={{
@@ -298,7 +298,7 @@ const MapComponent: React.FC<MapComponentProps> = ({ className, children }) => {
         </svg>
       )}
       {/* </motion.div> */}
-      <div className="w-full h-full relative">{children}</div>
+      <div className={cn("w-full relative", className)}>{children}</div>
     </div>
   );
 };

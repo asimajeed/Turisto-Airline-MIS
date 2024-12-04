@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -9,6 +9,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 type BookingHistory = {
   user_id: number;
@@ -18,37 +20,32 @@ type BookingHistory = {
 };
 
 const BookingHistory: React.FC = () => {
-  const [bookingHistories, setBookingHistories] = useState<BookingHistory[]>([
-    { user_id: 12, booking_id: 123, action_date: "123", action_type: "123" },
-  ]);
+  const [bookingHistories, setBookingHistories] = useState<BookingHistory[]>(
+    []
+  );
   const [selectedBooking, setSelectedBooking] = useState<BookingHistory | null>(
     null
   );
+  const navigate = useNavigate();
+  useEffect(() => {
+    axios
+      .get(`${import.meta.env.VITE_BACKEND_API_URL}/booking/history`, {
+        withCredentials: true,
+      })
+      .then((response) => setBookingHistories(response.data))
+      .catch((error: any) => {
+        console.error("Error fetching booking history:", error);
+        alert(error + error.response.data.message);
+      });
+  }, []);
 
-  // Fetch Booking History from API
-  // useEffect(() => {
-  //     const fetchBookingHistories = async () => {
-  //         try {
-  //             const response = await axios.get<BookingHistory[]>("/api/bookings-history");
-  //             setBookingHistories(response.data);
-  //         } catch (error) {
-  //             console.error("Error fetching booking histories", error);
-  //         }
-  //     };
-
-  //     fetchBookingHistories();
-  // }, []);
-
-  // Handle selecting a booking
   const handleSelectBooking = (booking: BookingHistory) => {
     setSelectedBooking(booking);
   };
 
-  // Handle "Print Ticket" button click
   const handlePrintTicket = () => {
     if (selectedBooking) {
-      alert(`Printing ticket for Booking ID: ${selectedBooking.booking_id}`);
-      // You can replace this alert with actual print logic or redirect to a print page.
+      navigate(`/passengerticket/${selectedBooking.booking_id}`)
     }
   };
 

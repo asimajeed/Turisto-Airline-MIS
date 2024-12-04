@@ -61,7 +61,7 @@ CREATE TABLE bookings (
     user_id INT NOT NULL,
     flight_id INT NOT NULL,
     seat_id INT NOT NULL,
-    booking_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMPTZ,
+    booking_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     total_price NUMERIC(10, 2) NOT NULL,
     discount_code VARCHAR(50),
     booking_status VARCHAR(50) NOT NULL,
@@ -76,7 +76,7 @@ CREATE TABLE payments (
     payment_id SERIAL PRIMARY KEY,
     booking_id INT NOT NULL,
     payment_amount DECIMAL(10, 2) NOT NULL,
-    payment_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMPTZ,
+    payment_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     payment_status VARCHAR(50) NOT NULL,
     payment_method VARCHAR(50) NOT NULL,
     FOREIGN KEY (booking_id) REFERENCES bookings(booking_id) ON DELETE CASCADE
@@ -85,13 +85,13 @@ CREATE TABLE payments (
 CREATE TABLE tickets (
     ticket_id SERIAL PRIMARY KEY,
     booking_id INT NOT NULL,
-    ticket_issued_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMPT
+    ticket_issued_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     ticket_status VARCHAR(50) NOT NULL,
     FOREIGN KEY (booking_id) REFERENCES bookings(booking_id) ON DELETE CASCADE
 );
 
 CREATE TABLE cancellations (
-    cancellation_id INT PRIMARY KEY AUTO_INCREMENT,
+    cancellation_id SERIAL PRIMARY KEY,
     booking_id INT NOT NULL,
     cancellation_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMPTZ,
     refund_amount DECIMAL(10, 2),
@@ -103,14 +103,14 @@ CREATE TABLE cancellations (
 CREATE TABLE discounts (
     discount_code VARCHAR(50) PRIMARY KEY,
     description VARCHAR(255),
-    discount_value DECIMAL(5, 2),
+    discount_percentage DECIMAL(5, 2),
     valid_from TIMESTAMPTZ,
     valid_to TIMESTAMPTZ,
     status VARCHAR(50)
 );
 
 CREATE TABLE group_bookings (
-    group_booking_id INT PRIMARY KEY AUTO_INCREMENT,
+    group_booking_id SERIAL PRIMARY KEY,
     main_booking_id INT NOT NULL,
     group_size INT NOT NULL,
     group_discount DECIMAL(5, 2),
@@ -118,7 +118,7 @@ CREATE TABLE group_bookings (
 );
 
 CREATE TABLE check_ins (
-    checkin_id INT PRIMARY KEY AUTO_INCREMENT,
+    checkin_id SERIAL PRIMARY KEY,
     booking_id INT NOT NULL,
     checkin_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMPTZ,
     boarding_pass_url VARCHAR(255),
@@ -126,7 +126,7 @@ CREATE TABLE check_ins (
 );
 
 CREATE TABLE reports (
-    report_id INT PRIMARY KEY AUTO_INCREMENT,
+    report_id SERIAL PRIMARY KEY,
     report_type VARCHAR(50) NOT NULL,
     generated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMPTZ,
     report_data TEXT NOT NULL

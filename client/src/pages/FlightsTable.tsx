@@ -12,13 +12,6 @@ import {
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { DatePickerWithRange } from "@/components/ui/DatePickerWithRange";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import SelectAirports from "@/components/AirportSelector/SelectAirports";
 import axios from "axios";
 import { useGlobalStore } from "@/context/GlobalStore";
@@ -48,7 +41,9 @@ const FlightsTable = () => {
   const [isLoading, setLoading] = useState(true);
   const [isLoadingR, setLoadingR] = useState(true);
   const [currentPage, setCurrentPage] = useState<number>(0);
+  const [totalPages, setTotalPages] = useState<number>(0);
   const [currentPageR, setCurrentPageR] = useState<number>(0);
+  const [totalPagesR, setTotalPagesR] = useState<number>(0);
   const [sorting, setSorting] = useState<number>(0);
   const {
     isOneWay,
@@ -81,8 +76,10 @@ const FlightsTable = () => {
             },
           }
         );
+        const { flights, totalPages } = response.data;
+        setTotalPages(totalPages);
         const data: Flight[] = [];
-        (response.data as Flight[]).forEach((value) => {
+        (flights as Flight[]).forEach((value) => {
           data.push({
             ...value,
             departure_date: new Date(value.departure_date),
@@ -120,8 +117,10 @@ const FlightsTable = () => {
             },
           }
         );
+        const { flights, totalPages} = response.data;
+        setTotalPagesR(totalPages);
         const data: Flight[] = [];
-        (response.data as Flight[]).forEach((value) => {
+        (flights as Flight[]).forEach((value) => {
           data.push({
             ...value,
             departure_date: new Date(value.departure_date),
@@ -137,10 +136,24 @@ const FlightsTable = () => {
   };
   useEffect(() => {
     fetchFlights();
-  }, [start_date, departure_airport, arrival_airport, currentPage, isOneWay]);
+  }, [
+    start_date,
+    departure_airport,
+    arrival_airport,
+    currentPage,
+    isOneWay,
+    sorting,
+  ]);
   useEffect(() => {
     fetchFlightsR();
-  }, [end_date, departure_airport, arrival_airport, currentPageR, isOneWay]);
+  }, [
+    end_date,
+    departure_airport,
+    arrival_airport,
+    currentPageR,
+    isOneWay,
+    sorting,
+  ]);
   const handleOneWayChange = () => {
     setIsOneWay(!isOneWay);
   };
@@ -161,16 +174,9 @@ const FlightsTable = () => {
       });
     else setReturningFlight(null);
   };
-  const handlePageChange = (page: number) => {
-    if (flights.length === 0 && page >= 0) setCurrentPage(page - 1);
-    else alert("No additional flights match your current selection.");
-  };
-  const handlePageChangeR = (page: number) => {
-    if (returningFlights.length === 0 && page >= 0) setCurrentPageR(page - 1);
-    else alert("No additional flights match your current selection.");
-  };
+
   return (
-    <MapComponent className="h-screen">
+    <MapComponent className="h-fit">
       <div className="h-full mt-16 p-2 md:p-8 lg:p-16">
         {/* Flight Search Header */}
         <div className="flex flex-wrap items-center gap-4">
@@ -187,15 +193,6 @@ const FlightsTable = () => {
             <span className="min-w-fit">One-Way</span>
           </div>
           {isOneWay ? <DatePicker /> : <DatePickerWithRange />}
-          <Select>
-            <SelectTrigger className="w-[100px]">
-              <SelectValue placeholder="1 adult" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1 adult">1 adult</SelectItem>
-              <SelectItem value="2 adults">2 adults</SelectItem>
-            </SelectContent>
-          </Select>
           <Button
             className="bg-theme-primary hover:bg-theme-primary-highlight text-white"
             onClick={() => {
@@ -255,7 +252,9 @@ const FlightsTable = () => {
             ""
           )}
           <div className="p-2 rounded-lg mt-4 hover:bg-inherit overflow-x-auto">
-            {!(departure_airport && arrival_airport) ? <p>Selection incomplete.</p> :  isLoading ? (
+            {!(departure_airport && arrival_airport) ? (
+              <p>Selection incomplete.</p>
+            ) : isLoading ? (
               <div className="my-24 flex justify-center items-center">
                 <FaSpinner className="animate-spin text-theme-primary-darker size-10" />
               </div>
@@ -337,22 +336,30 @@ const FlightsTable = () => {
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
-                  onClick={() => {
-                    if (currentPage > 0) handlePageChange(currentPage - 1);
-                  }}
+                  onClick={
+                    currentPage > 0
+                      ? () => setCurrentPage(currentPage - 1)
+                      : () => {}
+                  }
+                  isActive={currentPage > 1}
                 />
               </PaginationItem>
               <PaginationItem>
                 <PaginationLink
-                  isActive={currentPage === 0}
-                  onClick={() => handlePageChange(0)}
+                  isActive={currentPage !== 0}
+                  onClick={() => setCurrentPage(0)}
                 >
                   {currentPage + 1}
                 </PaginationLink>
               </PaginationItem>
               <PaginationItem>
                 <PaginationNext
-                  onClick={() => handlePageChange(currentPage + 1)}
+                  onClick={
+                    currentPage <= totalPages - 2
+                      ? () => setCurrentPage(currentPage + 1)
+                      : () => {}
+                  }
+                  isActive={currentPage <= totalPages - 2}
                 />
               </PaginationItem>
             </PaginationContent>
@@ -459,26 +466,34 @@ const FlightsTable = () => {
             {/* Pagination */}
             <Pagination className="select-none">
               <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
-                    onClick={() => {
-                      if (currentPageR > 0) handlePageChangeR(currentPageR - 1);
-                    }}
-                  />
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationLink
-                    isActive={currentPageR === 0}
-                    onClick={() => handlePageChangeR(0)}
-                  >
-                    {currentPageR + 1}
-                  </PaginationLink>
-                </PaginationItem>
-                <PaginationItem>
-                  <PaginationNext
-                    onClick={() => handlePageChangeR(currentPageR + 1)}
-                  />
-                </PaginationItem>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={
+                    currentPageR > 0
+                      ? () => setCurrentPageR(currentPageR - 1)
+                      : () => {}
+                  }
+                  isActive={currentPageR > 1}
+                />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationLink
+                  isActive={currentPageR !== 0}
+                  onClick={() => setCurrentPageR(0)}
+                >
+                  {currentPageR + 1}
+                </PaginationLink>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext
+                  onClick={
+                    currentPageR <= totalPagesR - 2
+                      ? () => setCurrentPageR(currentPageR + 1)
+                      : () => {}
+                  }
+                  isActive={currentPageR <= totalPagesR - 2}
+                />
+              </PaginationItem>
               </PaginationContent>
             </Pagination>
           </div>

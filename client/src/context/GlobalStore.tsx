@@ -28,6 +28,10 @@ export interface GlobalState {
 
   passengers: Passenger[];
 
+  discount_code: string | null;
+  total_amount: number | null;
+  bookingId:  number | null;
+
   setIsLoggedIn: (isLoggedIn: boolean) => void;
   setFirstName: (firstName: string | null) => void;
   setLastName: (lastName: string | null) => void;
@@ -49,6 +53,9 @@ export interface GlobalState {
   setAll: (newState: Partial<GlobalState>) => void;
   resetUserFields: () => void;
   setPassengers: (p: Passenger[] | []) => void;
+  setDiscountCode: (s: string | null) => void;
+  setTotalAmount: (n: number | null) => void;
+  setBookingId: (n: number | null) => void;
 }
 
 const defaultUserState: GlobalState = {
@@ -73,6 +80,9 @@ const defaultUserState: GlobalState = {
   selectedSeat: null,
   returningSeat: null,
   passengers: [],
+  discount_code: null,
+  total_amount: null,
+  bookingId: null,
   setIsLoggedIn: () => {},
   setFirstName: () => {},
   setLastName: () => {},
@@ -94,6 +104,9 @@ const defaultUserState: GlobalState = {
   setAll: () => {},
   resetUserFields: () => {},
   setPassengers: () => {},
+  setDiscountCode: () => {},
+  setTotalAmount: () => { },
+  setBookingId: () => {}
 };
 
 export const useGlobalStore = create<GlobalState>((set) => ({
@@ -133,4 +146,7 @@ export const useGlobalStore = create<GlobalState>((set) => ({
   setPassengers: (passengers: Passenger[] | []) => {
     set({ passengers });
   },
+  setDiscountCode: (s) => set({ discount_code: s }),
+  setTotalAmount: (n) => set({ total_amount: n }),
+  setBookingId: (n) => set({bookingId: n})
 }));

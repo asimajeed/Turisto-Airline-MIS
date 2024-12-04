@@ -20,33 +20,25 @@ const PaymentPage = () => {
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("Credit card");
-  const [discountCode, setDiscountCode] = useState("");
-  const [discountApplied, setDiscountApplied] = useState(false);
+  const { discount_code: discountCode, setDiscountCode } = useGlobalStore();
   const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [bookingId, setBookingId] = useState<number>();
 
   // Access GlobalStore
   const {
     selected_flight,
-    isLoggedIn,
+    returning_flight,
+    isOneWay,
+    returningSeat,
     first_name,
     last_name,
     email,
     phone_number,
     selectedSeat,
     passengers,
+    total_amount,
   } = useGlobalStore();
   // Update totalPrice whenever the discount is applied
-  useEffect(() => {
-    if (selected_flight) {
-      const basePrice = selected_flight.base_price;
-      const taxes = basePrice * 0.16;
-      const discountedPrice = discountApplied
-        ? basePrice * (1 - getDiscountPercentage(discountCode))
-        : basePrice;
-
-      setTotalPrice(parseFloat((discountedPrice + taxes).toFixed(2)));
-    }
-  }, [discountApplied, selected_flight]);
 
   // Helper function to get discount percentage
   const getDiscountPercentage = (code: string): number => {
@@ -62,45 +54,60 @@ const PaymentPage = () => {
     }
   };
 
-  const applyDiscount = () => {
-    const discountPercentage = getDiscountPercentage(discountCode);
-    if (discountPercentage > 0) {
-      setDiscountApplied(true);
-    } else {
-      alert("Invalid discount code.");
-      setDiscountApplied(false);
-    }
-  };
-
   const handlePayment = async () => {
-    if (!selected_flight || !selectedSeat)
+    if (
+      !selected_flight ||
+      !selectedSeat ||
+      passengers
+        .map((p) => (p.email && p.seat ? p.email + p.seat : undefined))
+        .includes(undefined) ||
+      (!isOneWay &&
+        (!returningSeat ||
+          !returning_flight ||
+          passengers
+            .map((p) => p.returningSeat || undefined)
+            .includes(undefined)))
+    )
       return alert("Incomplete information");
-    let data: {
-      flight_id: number;
-      seat_number: string;
-      total_price: number;
-      discountCode: string;
-      first_name?: string;
-      last_name?: string;
-      email?: string;
-      phone_number?: string;
-      passengers?: Array<Passenger>;
-    } = {
+    let data: any = {
       flight_id: selected_flight.flight_id,
       seat_number: selectedSeat,
       total_price: totalPrice,
       discountCode,
     };
-    if (!isLoggedIn && first_name && last_name && email) {
-      data = {
+    data = {
+      ...data,
+      first_name,
+      last_name,
+      email,
+      payment_amount: total_amount || 0,
+      phone_number: phone_number || undefined,
+      payment_method: paymentMethod,
+    };
+    if (passengers.length > 0) data.passengers = passengers;
+    let dataR: any;
+    if (!isOneWay && returning_flight) {
+      dataR = {
+        flight_id: returning_flight.flight_id,
+        seat_number: returningSeat,
+        total_price: totalPrice,
+        discountCode,
+      };
+      dataR = {
         ...data,
         first_name,
         last_name,
         email,
+        payment_amount: total_amount || 0,
         phone_number: phone_number || undefined,
+        payment_method: paymentMethod,
       };
+      if (passengers.length > 0) {
+        dataR.passengers = passengers.map((p) => {
+          return { ...p, seat: p.returningSeat };
+        });
+      }
     }
-    if (passengers.length > 0) data.passengers = passengers;
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_API_URL}/booking/create`,
@@ -109,6 +116,16 @@ const PaymentPage = () => {
           withCredentials: true,
         }
       );
+      setBookingId(response.data.booking_id);
+      let Rresponse: any;
+      if (!isOneWay)
+        Rresponse = await axios.post(
+          `${import.meta.env.VITE_BACKEND_API_URL}/booking/create`,
+          dataR,
+          {
+            withCredentials: true,
+          }
+        );
       setPaymentSuccess(true);
       setTimeout(() => {
         setPaymentSuccess(false);
@@ -117,8 +134,7 @@ const PaymentPage = () => {
     } catch (error) {
       if (error instanceof AxiosError)
         alert(`${error} ${error.response?.data.message}`);
-      else
-        alert(`Error ${error}`)
+      else alert(`Error ${error}`);
     }
   };
 
@@ -214,13 +230,10 @@ const PaymentPage = () => {
                 </h3>
                 <Input
                   placeholder="Enter Discount Code"
-                  value={discountCode}
+                  value={discountCode || ""}
                   onChange={(e) => setDiscountCode(e.target.value)}
                 />
-                <Button
-                  className="mt-3 w-full sm:w-auto"
-                  onClick={applyDiscount}
-                >
+                <Button className="mt-3 w-full sm:w-auto">
                   Apply Discount
                 </Button>
               </div>
@@ -281,16 +294,18 @@ const PaymentPage = () => {
                 Arrival: {flightDetails.arrival_time}
               </p>
               <p className="text-foreground mt-4 font-bold">
-                Total Paid: ${totalPrice.toFixed(2)}
+                Total Paid: ${total_amount?.toFixed(2) || 0}
               </p>
             </div>
             <Button className="bg-theme-primary hover:bg-theme-primary-highlight text-white m-4 shadow-md">
               <Link to="/boardingpass">Boarding Pass</Link>
             </Button>
 
-            <Button className="bg-theme-primary hover:bg-theme-primary-highlight text-white m-4 shadow-md">
-              <Link to="/passengerticket">Ticket</Link>
-            </Button>
+            <Link to={`/passengerticket/${bookingId}`}>
+              <Button className="bg-theme-primary hover:bg-theme-primary-highlight text-white m-4 shadow-md">
+                Ticket
+              </Button>
+            </Link>
           </div>
         )}
       </div>

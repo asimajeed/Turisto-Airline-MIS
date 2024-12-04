@@ -1,5 +1,6 @@
 import { useGlobalStore } from "@/context/GlobalStore";
-import { FC } from "react";
+import { FC, useEffect, useState } from "react";
+import axios from "axios";
 import { Flight, Pricing } from "@/utils/types";
 
 const Summary: FC = () => {
@@ -10,7 +11,13 @@ const Summary: FC = () => {
     passengers,
     isOneWay,
     returning_flight,
+    discount_code,
+    setTotalAmount
   } = useGlobalStore();
+  const [pricing, setPricing] = useState<Pricing | null>(null);
+  const [discount, setDiscount] = useState(0);
+  const [discountReason, setDiscountReason] = useState<string | null>(null);
+
   const numberOfPassengers = passengers.length + 1;
 
   const calculateDuration = (departure: Date, arrival: Date) => {
@@ -38,7 +45,7 @@ const Summary: FC = () => {
     return {
       label,
       flight_number:
-        label != "Return"
+        label !== "Return"
           ? `${flight.flight_number} ${departure_airport?.airport_code} to ${arrival_airport?.airport_code}`
           : `${flight.flight_number} ${arrival_airport?.airport_code} to ${departure_airport?.airport_code}`,
       duration: calculateDuration(flight.departure_date, flight.arrival_date),
@@ -57,13 +64,56 @@ const Summary: FC = () => {
 
   const outboundBasePrice = selected_flight?.base_price ?? 0;
   const returnBasePrice = returning_flight?.base_price ?? 0;
-  const pricing = new Pricing({
-    base_price: outboundBasePrice + returnBasePrice,
-    taxes: 0.16,
-  });
-  const subtotal = pricing.subtotal;
-  const taxesAndFees = pricing.taxed_ammount; // Assuming 16% tax
-  const total = pricing.final_total;
+
+  useEffect(() => {
+    const fetchDiscount = async () => {
+      try {
+        let discountValue = 0;
+        let discountDetails = null;
+
+        // Fetch discount details if a discount code is provided
+        if (discount_code) {
+          const response = await axios.get(
+            `${import.meta.env.VITE_BACKEND_API_URL}/api/discount`,
+            {
+              params: { discount_code },
+            }
+          );
+          discountValue = response.data?.discount_percentage || 0;
+          discountDetails = `Code: ${discount_code}`;
+        }
+
+        // Add 10% group discount if passengers > 1
+        if (passengers.length > 0) {
+          discountValue += 10;
+          discountDetails = discountDetails
+            ? `${discountDetails}, +10% Group Discount`
+            : "+10% Group Discount";
+        }
+
+        setDiscount(discountValue);
+        setDiscountReason(discountDetails);
+
+        // Update pricing
+        const pricing = new Pricing({
+          base_price: outboundBasePrice + returnBasePrice,
+          discount_percentage: discountValue,
+          taxes: 0.16,
+          discount_code,
+        });
+        setPricing(pricing);
+        setTotalAmount(pricing.final_total);
+      } catch (error) {
+        console.error("Error fetching discount:", error);
+      }
+    };
+
+    fetchDiscount();
+  }, [discount_code, passengers, outboundBasePrice, returnBasePrice]);
+
+  if (!pricing) {
+    return <p>Loading pricing...</p>;
+  }
 
   return (
     <div className="mt-4 space-y-4">
@@ -100,15 +150,21 @@ const Summary: FC = () => {
         <>
           <div className="flex justify-between text-sm mt-6">
             <span>Subtotal ({numberOfPassengers} passengers)</span>
-            <span>${subtotal.toFixed(2)}</span>
+            <span>${pricing.subtotal.toFixed(2)}</span>
           </div>
+          {discount > 0 && (
+            <div className="flex justify-between text-sm">
+              <span>Discount ({discountReason})</span>
+              <span>-${pricing.discount_amount.toFixed(2)}</span>
+            </div>
+          )}
           <div className="flex justify-between text-sm">
-            <span>Taxes and Fees</span>
-            <span>${taxesAndFees.toFixed(2)}</span>
+            <span>Taxes and Fees (16%)</span>
+            <span>${pricing.taxed_ammount.toFixed(2)}</span>
           </div>
           <div className="flex justify-between font-semibold text-lg">
             <span>Total</span>
-            <span>${total.toFixed(2)}</span>
+            <span>${pricing.final_total.toFixed(2)}</span>
           </div>
         </>
       ) : (

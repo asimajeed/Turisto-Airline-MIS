@@ -8,6 +8,7 @@ import session from "express-session";
 import "./passport-config";
 import { fetchAirports } from "./queryFunctions/publicQueries";
 import userRouter from "./routes/user";
+import { query } from "./db-config";
 import { sql } from "./routes/admin";
 import booking from "./routes/booking";
 import flightRouter from "./routes/flights";
@@ -35,7 +36,6 @@ app.use(passport.session());
 
 app.use(express.json());
 
-
 app.get("/profile", (req: Request, res: Response) => {
   if (!req.isAuthenticated()) {
     res.status(401).send("You need to log in first");
@@ -45,9 +45,11 @@ app.get("/profile", (req: Request, res: Response) => {
 });
 
 // Use the booking routes
-app.use('/booking', booking);
+app.use("/booking", booking);
 
-app.use('/api/user', userRouter)
+app.use("/api/user", userRouter);
+
+app.use("/api/flights", flightRouter);
 
 app.post("/admin/sql", sql);
 
@@ -63,9 +65,41 @@ app.get("/api/airports", async (req, res) => {
   }
 });
 
-app.use('/api/flights', flightRouter);
+app.get("/api/discount", async (req: Request, res: Response) => {
+  try {
+    const { discount_code } = req.query;
 
+    if (!discount_code) {
+      res.status(400).json({
+        message: "Missing required query parameter: discount_code",
+      });
+      return;
+    }
 
+    const queryStr = `
+      SELECT discount_value 
+      FROM discounts 
+      WHERE discount_code = $1;
+    `;
+    const values = [discount_code];
+
+    const result = await query(queryStr, values);
+
+    if (result.rows.length === 0) {
+      res.status(404).json({
+        message: "Invalid discount code",
+      });
+      return;
+    }
+
+    const discountPercentage = result.rows[0].discount_value / 2;
+
+    res.json({ discount_percentage: discountPercentage });
+  } catch (error) {
+    console.error("Error fetching discount:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
