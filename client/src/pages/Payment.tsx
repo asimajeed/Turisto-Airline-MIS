@@ -94,7 +94,7 @@ const PaymentPage = () => {
         discountCode,
       };
       dataR = {
-        ...data,
+        ...dataR,
         first_name,
         last_name,
         email,
@@ -182,7 +182,7 @@ const PaymentPage = () => {
       <div className="container mx-auto grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
         {!showSummary ? (
           <>
-            <div className="col-span-1 md:col-span-2 bg-card p-6 rounded-lg shadow-lg border border-gray-200">
+            <div className="mt-12 col-span-1 md:col-span-2 bg-card p-6 rounded-lg shadow-lg border border-gray-200">
               <h2 className="text-xl md:text-2xl font-semibold text-theme-primary-darker">
                 Payment Method
               </h2>
@@ -191,7 +191,7 @@ const PaymentPage = () => {
                 securely with end-to-end encryption.
               </p>
 
-              <div className="flex flex-wrap justify-evenly xl:max-w-64 mt-4justify-center">
+              <div className="flex flex-wrap justify-evenly max-w-fit mt-4justify-center">
                 {["Credit card", "Google Pay", "Apple Pay", "Paypal"].map(
                   (method) => (
                     <Button
@@ -298,7 +298,7 @@ const PaymentPage = () => {
               </p>
             </div>
             <Button className="bg-theme-primary hover:bg-theme-primary-highlight text-white m-4 shadow-md">
-              <Link to="/boardingpass">Boarding Pass</Link>
+              <Link to={`/passengerticket/${bookingId}`}>Boarding Pass</Link>
             </Button>
 
             <Link to={`/passengerticket/${bookingId}`}>

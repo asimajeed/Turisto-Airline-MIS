@@ -93,7 +93,7 @@ CREATE TABLE tickets (
 CREATE TABLE cancellations (
     cancellation_id SERIAL PRIMARY KEY,
     booking_id INT NOT NULL,
-    cancellation_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMPTZ,
+    cancellation_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     refund_amount DECIMAL(10, 2),
     cancellation_reason VARCHAR(255),
     refund_status VARCHAR(50),

@@ -51,9 +51,8 @@ router.post("/create", async (req, res) => {
     phone_number,
     passengers,
     payment_method,
-    payment_amount,
   } = req.body;
-
+  let { payment_amount } = req.body;
   if (!flight_id || !seat_number || !payment_method || !payment_amount) {
     res.status(400).json({ message: "Incomplete information" });
     console.log(flight_id, seat_number, payment_method, payment_amount);
@@ -123,7 +122,7 @@ router.post("/create", async (req, res) => {
       await query("ROLLBACK");
       res.status(400).json({ message: "Payment amount is insufficient" });
       return;
-    }
+    } else payment_amount = final_price;
 
     // Mock payment verification
     const paymentVerified = true; // Replace this with actual payment gateway logic
@@ -192,7 +191,7 @@ router.post("/create", async (req, res) => {
     `;
       const groupBookingResult = await query(groupBookingQuery, [
         booking_id,
-        passengers.length,
+        passengers.length + 1,
         0.1,
       ]);
       const group_booking_id = groupBookingResult.rows[0].group_booking_id;
@@ -239,6 +238,10 @@ router.post("/create", async (req, res) => {
         ]);
         const passengerTicketId = passengerTicketResult.rows[0].ticket_id;
       }
+      query(
+        "UPDATE users set loyalty_points=loyalty_points+$1 where user_id = $2",
+        [total_price, req.user?.user_id]
+      );
     }
     await query("COMMIT");
     res
@@ -329,7 +332,12 @@ router.get("/ticket/:bookingId", async (req: Request, res: Response) => {
 });
 
 router.get("/history", async (req, res) => {
-  if (!(req.isAuthenticated() && req.user)) return;
+  // Check authentication
+  if (!(req.isAuthenticated() && req.user)) {
+    res.status(401).json({ message: "Unauthorized" });
+    return;
+  }
+
   const userId = req.user.user_id;
 
   if (!userId) {
@@ -339,31 +347,38 @@ router.get("/history", async (req, res) => {
 
   try {
     const bookingHistoryQuery = `
-      SELECT 
+      SELECT
+          u.email, 
           b.user_id,
           b.booking_id,
           b.booking_date AS action_date,
           'Booking Created' AS action_type
       FROM 
           bookings b
+      JOIN 
+          users u ON b.user_id = u.user_id
       WHERE 
           b.user_id = $1
 
       UNION ALL
 
-      SELECT 
+      SELECT
+          u.email,
           gb_main.user_id AS user_id,
-          gb.group_booking_id AS booking_id,
+          b.booking_id AS booking_id,  -- Individual booking ID, not group_booking_id
           b.booking_date AS action_date,
           'Group Booking Created' AS action_type
       FROM 
-          group_bookings gb
-      JOIN 
+          bookings b
+      JOIN
+          users u ON b.user_id = u.user_id
+      JOIN
+          group_bookings gb ON gb.group_booking_id = b.group_booking_id
+      JOIN
           bookings gb_main ON gb.main_booking_id = gb_main.booking_id
-      JOIN 
-          bookings b ON gb.group_booking_id = b.booking_id
       WHERE 
           gb_main.user_id = $1
+
 
       ORDER BY action_date DESC;
     `;
@@ -377,5 +392,113 @@ router.get("/history", async (req, res) => {
   }
 });
 
+router.delete("/:booking_id", async (req, res) => {
+  if (!(req.isAuthenticated() && req.user)) {
+    res.status(401).json({ message: "Unauthorized request" });
+    return;
+  }
+  const booking_id = Number(req.params.booking_id);
+  const user_id = req.user.user_id;
+  if (!booking_id) {
+    res.status(400).json({ message: "Missing booking_id" });
+    return;
+  }
+
+  // Begin transaction
+  await query("BEGIN");
+
+  try {
+    const bookingQuery = `
+      SELECT b.booking_id, b.flight_id, b.seat_id, b.total_price, b.booking_status
+      FROM bookings b
+      WHERE b.booking_id = $1 AND b.user_id = $2
+    `;
+    const bookingResult = await query(bookingQuery, [booking_id, user_id]);
+
+    if (bookingResult.rows.length === 0) {
+      await query("ROLLBACK");
+      res.status(404).json({ message: "Booking not found or unauthorized" });
+      return;
+    }
+
+    const booking = bookingResult.rows[0];
+    if (booking.booking_status === "canceled") {
+      await query("ROLLBACK");
+      res.status(400).json({ message: "Booking is already canceled" });
+      return;
+    }
+    console.log("Cancelling booking_id:", booking_id);
+
+    const removeSeatQuery = `
+      DELETE FROM seat_allocation
+      WHERE flight_id = $1 AND seat_id = $2
+    `;
+    await query(removeSeatQuery, [booking.flight_id, booking.seat_id]);
+    console.log("ts");
+    const updateBookingQuery = `
+      UPDATE bookings
+      SET booking_status = 'canceled'
+      WHERE booking_id = $1
+    `;
+    await query(updateBookingQuery, [booking_id]);
+
+    const refundAmount = booking.total_price; // Full refund
+    const refundStatus = "completed";
+    console.error("test");
+    const insertCancellationQuery = `
+      INSERT INTO cancellations (booking_id, cancellation_date, refund_amount, cancellation_reason, refund_status)
+      VALUES ($1, CURRENT_TIMESTAMP, $2, $3, $4)
+    `;
+    await query(insertCancellationQuery, [
+      booking_id,
+      refundAmount,
+      "",
+      refundStatus,
+    ]);
+    console.error("testTWO");
+
+    await query("COMMIT");
+
+    res.status(200).json({
+      message: "Booking canceled successfully",
+      refund_amount: refundAmount,
+    });
+  } catch (error: any) {
+    await query("ROLLBACK");
+    console.error("Error during booking cancellation:", error);
+    res
+      .status(500)
+      .json({ message: "Booking cancellation failed", error: error.message });
+  }
+});
+
+router.get("/:booking_id", async (req, res) => {
+  const booking_id = req.params.booking_id;
+
+  if (!booking_id) {
+    res.status(400).json({ message: "Missing booking_id" });
+    return;
+  }
+
+  try {
+    const queryText = `
+      SELECT b.flight_id, b.seat_id, f.flight_number
+      FROM bookings b
+      JOIN flights f ON b.flight_id = f.flight_id
+      WHERE b.booking_id = $1
+    `;
+    const result = await query(queryText, [booking_id]);
+
+    if (result.rows.length === 0) {
+      res.status(404).json({ message: "Booking not found" });
+      return;
+    }
+
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error("Error fetching flight details:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
 
 export default router;

@@ -12,7 +12,7 @@ const Summary: FC = () => {
     isOneWay,
     returning_flight,
     discount_code,
-    setTotalAmount
+    setTotalAmount,
   } = useGlobalStore();
   const [pricing, setPricing] = useState<Pricing | null>(null);
   const [discount, setDiscount] = useState(0);
@@ -64,6 +64,19 @@ const Summary: FC = () => {
 
   const outboundBasePrice = selected_flight?.base_price ?? 0;
   const returnBasePrice = returning_flight?.base_price ?? 0;
+  const { loyalty_points } = useGlobalStore();
+  const getDiscountPercentage = (code: string): number => {
+    switch (code.toUpperCase()) {
+      case "TUR25":
+        return (loyalty_points || 0) >= 250 ? 0.25 : 0;
+      case "TUR50":
+        return (loyalty_points || 0) >= 500 ? 0.5 : 0;
+      case "TUR75":
+        return (loyalty_points || 0) >= 750 ? 0.75 : 0;
+      default:
+        return 0;
+    }
+  };
 
   useEffect(() => {
     const fetchDiscount = async () => {
@@ -71,16 +84,13 @@ const Summary: FC = () => {
         let discountValue = 0;
         let discountDetails = null;
 
-        // Fetch discount details if a discount code is provided
+        // Apply the discount code if provided
         if (discount_code) {
-          const response = await axios.get(
-            `${import.meta.env.VITE_BACKEND_API_URL}/api/discount`,
-            {
-              params: { discount_code },
-            }
-          );
-          discountValue = response.data?.discount_percentage || 0;
-          discountDetails = `Code: ${discount_code}`;
+          const percentage = getDiscountPercentage(discount_code);
+          if (percentage > 0) {
+            discountValue += percentage * 100;
+            discountDetails = `Code: ${discount_code}`;
+          }
         }
 
         // Add 10% group discount if passengers > 1
@@ -96,7 +106,8 @@ const Summary: FC = () => {
 
         // Update pricing
         const pricing = new Pricing({
-          base_price: outboundBasePrice + returnBasePrice,
+          base_price:
+            (outboundBasePrice + returnBasePrice) * numberOfPassengers,
           discount_percentage: discountValue,
           taxes: 0.16,
           discount_code,
@@ -104,7 +115,7 @@ const Summary: FC = () => {
         setPricing(pricing);
         setTotalAmount(pricing.final_total);
       } catch (error) {
-        console.error("Error fetching discount:", error);
+        console.error("Error calculating discount:", error);
       }
     };
 

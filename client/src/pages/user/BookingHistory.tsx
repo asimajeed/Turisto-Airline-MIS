@@ -17,6 +17,7 @@ type BookingHistory = {
   booking_id: number;
   action_date: string;
   action_type: string;
+  email: string;
 };
 
 const BookingHistory: React.FC = () => {
@@ -58,7 +59,7 @@ const BookingHistory: React.FC = () => {
           <TableHeader>
             <TableRow>
               <TableHead className="w-[100px]">Booking ID</TableHead>
-              <TableHead>User ID</TableHead>
+              <TableHead>User Email</TableHead>
               <TableHead>Action Date</TableHead>
               <TableHead>Action Type</TableHead>
             </TableRow>
@@ -77,7 +78,7 @@ const BookingHistory: React.FC = () => {
                 <TableCell className="font-medium">
                   {booking.booking_id}
                 </TableCell>
-                <TableCell>{booking.user_id}</TableCell>
+                <TableCell>{booking.email}</TableCell>
                 <TableCell>
                   {new Date(booking.action_date).toLocaleString()}
                 </TableCell>

@@ -9,7 +9,7 @@ import "./passport-config";
 import { fetchAirports } from "./queryFunctions/publicQueries";
 import userRouter from "./routes/user";
 import { query } from "./db-config";
-import { sql } from "./routes/admin";
+import adminRouter from "./routes/admin";
 import booking from "./routes/booking";
 import flightRouter from "./routes/flights";
 
@@ -44,14 +44,13 @@ app.get("/profile", (req: Request, res: Response) => {
   }
 });
 
-// Use the booking routes
 app.use("/booking", booking);
 
 app.use("/api/user", userRouter);
 
 app.use("/api/flights", flightRouter);
 
-app.post("/admin/sql", sql);
+app.use("/admin", adminRouter);
 
 app.get("/api/airports", async (req, res) => {
   const search = req.query.search as string;

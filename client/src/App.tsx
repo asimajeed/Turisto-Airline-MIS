@@ -55,7 +55,7 @@ const App = () => {
             }
           />
 
-          <Route path="/boardingpass/:bookingId" element={<BoardingPass />} />
+          <Route path="/boardingpass" element={<BoardingPass />} />
 
           <Route path="/passengerticket/:bookingId" element={<PassengerTicket />} />
 

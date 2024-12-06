@@ -26,7 +26,7 @@ const Selector: FC<SelectorProps> = (props) => {
   } = useGlobalStore();
   let seatArray: string[] = [];
   const [error, setError] = useState<string | null>(null);
-  if (!selected_flight || !goingFlight) {
+  if ((!selected_flight || !goingFlight)) {
     return (
       <div className="flex items-center justify-center h-28">
         <Label>No flight selected</Label>
@@ -40,7 +40,7 @@ const Selector: FC<SelectorProps> = (props) => {
   } else if (selected_flight.flight_id == returning_flight?.flight_id) {
     seatArray = passengers.map(({ returningSeat }) => returningSeat);
     returningSeat && seatArray.push(returningSeat);
-  } else return <p>Invalid flight selection</p>;
+  } else seatArray = [];
   useEffect(() => {
     const fetchSeats = async (flightId: number) => {
       try {
