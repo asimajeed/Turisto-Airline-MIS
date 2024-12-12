@@ -36,6 +36,37 @@ An administrative interface for managing user profiles, bookings, and system act
 15. **Report Generation**  
 Generates reports on bookings, cancellations, revenue, and other key metrics to assist in business analysis and decision-making.
 
+## Screenshots
+### 1. Home Screen
+*Description*: The initial landing page where users can select options to proceed with registration, login, or explore available flights. The UI adapts to the light or dark theme based on user preference.
+
+![Home Screen](UI-Screenshots/Light-mode.png)
+
+### 2. Theme Toggle Feature
+*Description*: Demonstrates the application's support for light and dark modes, ensuring accessibility and better user experience in varying lighting conditions.
+
+![Theme Toggle](UI-Screenshots/Dark-mode.png)
+
+### 3. User Authentication Screen
+*Description*: The login and registration form that enables users to sign up or sign in to their accounts. Fields for email, password, and user credentials validation are included.
+
+![Authentication Form](UI-Screenshots/Login-Form.png)
+
+### 4. Flight Connections Overview
+*Description*: A visual representation of airport connections, allowing users to explore available flight routes. It also serves as a planning tool for selecting connecting flights.
+
+![Connections](UI-Screenshots/Airport-Connection.png)
+
+### 5. User DashBoard
+*Description*:  A personalized dashboard for regular users. It features booking history, loyalty points, active bookings, and quick access to flight tracking or new ticket purchases.
+
+![User Dashboard](UI-Screenshots/User-dashboard.png)
+
+### 6. Admin DashBoard
+*Description*: A comprehensive administrative panel for managing users, bookings, flights, and generating system-wide reports. Includes role-based access and data visualization features.
+
+![Admin DashBoard](UI-Screenshots/Admin-dashboard.png)
+
 ## Getting Started
 
 ### Frontend Client (Vite + React)
