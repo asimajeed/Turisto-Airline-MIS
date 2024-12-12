@@ -53,7 +53,7 @@ Generates reports on bookings, cancellations, revenue, and other key metrics to 
 ![Authentication Form](UI-Screenshots/Login-Form.png)
 
 ### 4. Flight Connections Overview
-*Description*: A visual representation of airport connections, allowing users to explore available flight routes. It also serves as a planning tool for selecting connecting flights.
+*Description*: A dynamic map-based visualization showcasing the connection between the selected departure and arrival airports. The background map highlights the geographical locations and the direct connection line, enhancing the user's planning experience.
 
 ![Connections](UI-Screenshots/Airport-Connection.png)
 
