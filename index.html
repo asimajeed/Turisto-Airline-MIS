@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="icon" href="/github-actions-testing/plane-takeoff.svg" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Turisto Airlines</title>
+    <script>
+      (function() {
+        const savedTheme = localStorage.getItem('theme');
+        const userPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = savedTheme || (userPrefersDark ? 'dark' : 'light');
+        document.documentElement.classList.add(theme);
+      })();
+    </script>
+    <script type="module" crossorigin src="/github-actions-testing/assets/index-D3Mkb8CL.js"></script>
+    <link rel="stylesheet" crossorigin href="/github-actions-testing/assets/index-Dcrortem.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
