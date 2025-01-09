@@ -28,7 +28,7 @@ const App = () => {
     <BrowserRouter>
       <ThemeProvider>
         <Routes>
-          <Route path="/github-actions-testing">
+          <Route path="/Turisto-Airline-MIS/">
             <Route
               path=""
               element={

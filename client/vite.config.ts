@@ -10,5 +10,5 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  base: "/github-actions-testing/",
+  base: "/Turisto-Airline-MIS/",
 })
