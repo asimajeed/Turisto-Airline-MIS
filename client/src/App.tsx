@@ -28,85 +28,90 @@ const App = () => {
     <BrowserRouter>
       <ThemeProvider>
         <Routes>
-          <Route
-            path="/"
-            element={
-              <Layout>
-                <Home />
-              </Layout>
-            }
-          />
+          <Route path="/github-actions-testing">
+            <Route
+              path=""
+              element={
+                <Layout>
+                  <Home />
+                </Layout>
+              }
+            />
 
-          <Route
-            path="/passenger"
-            element={
-              <Layout>
-                <PassengerInfo />
-              </Layout>
-            }
-          />
+            <Route
+              path="passenger"
+              element={
+                <Layout>
+                  <PassengerInfo />
+                </Layout>
+              }
+            />
 
-          <Route
-            path="/flights"
-            element={
-              <Layout>
-                <FlightsTable />
-              </Layout>
-            }
-          />
+            <Route
+              path="flights"
+              element={
+                <Layout>
+                  <FlightsTable />
+                </Layout>
+              }
+            />
 
-          <Route path="/boardingpass" element={<BoardingPass />} />
+            <Route path="boardingpass" element={<BoardingPass />} />
 
-          <Route path="/passengerticket/:bookingId" element={<PassengerTicket />} />
+            <Route
+              path="passengerticket/:bookingId"
+              element={<PassengerTicket />}
+            />
 
-          <Route
-            path="/payment"
-            element={
-              <Layout>
-                <PaymentPage />
-              </Layout>
-            }
-          />
-          {isLoggedIn ? (
-            <>
-              <Route path="/user" element={<SDLayout />}>
-                <Route path="" element={<Update />} />
-                <Route path="modify" element={<ModifyFlight />} />
-                <Route path="history" element={<BookingHistory />} />
-              </Route>
-              {is_admin ? (
-                <Route path="/admin" element={<SDALayout />}>
-                  <Route path="sql" element={<ManageDatabase />} />
-                  <Route path="" element={<AddUser />} />
-                  <Route path="update" element={<UpdateUser />} />
-                  <Route path="updateBook" element={<UpdateBooking />} />
-                  <Route path="createflight" element={<CreateFlight />} />
-                  <Route path="editflight" element={<EditFlight />} />
-                  <Route path="report" element={<Report />} />
+            <Route
+              path="payment"
+              element={
+                <Layout>
+                  <PaymentPage />
+                </Layout>
+              }
+            />
+            {isLoggedIn ? (
+              <>
+                <Route path="./user" element={<SDLayout />}>
+                  <Route path="" element={<Update />} />
+                  <Route path="modify" element={<ModifyFlight />} />
+                  <Route path="history" element={<BookingHistory />} />
                 </Route>
-              ) : (
-                <>
-                  <Route
-                    path="/admin"
-                    element={<ErrorPage message="401 Unauthorized" />}
-                  />
-                </>
-              )}
-            </>
-          ) : (
-            <>
-              <Route
-                path="/user"
-                element={<ErrorPage message="401 Unauthorized" />}
-              />
-              <Route
-                path="/admin"
-                element={<ErrorPage message="401 Unauthorized" />}
-              />
-            </>
-          )}
+                {is_admin ? (
+                  <Route path="admin" element={<SDALayout />}>
+                    <Route path="sql" element={<ManageDatabase />} />
+                    <Route path="" element={<AddUser />} />
+                    <Route path="update" element={<UpdateUser />} />
+                    <Route path="updateBook" element={<UpdateBooking />} />
+                    <Route path="createflight" element={<CreateFlight />} />
+                    <Route path="editflight" element={<EditFlight />} />
+                    <Route path="report" element={<Report />} />
+                  </Route>
+                ) : (
+                  <>
+                    <Route
+                      path="admin"
+                      element={<ErrorPage message="401 Unauthorized" />}
+                    />
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                <Route
+                  path="user"
+                  element={<ErrorPage message="401 Unauthorized" />}
+                />
+                <Route
+                  path="admin"
+                  element={<ErrorPage message="401 Unauthorized" />}
+                />
+              </>
+            )}
 
-          <Route path="*" element={<ErrorPage message="404 Not Found" />} />
+            <Route path="*" element={<ErrorPage message="404 Not Found" />} />
+          </Route>
         </Routes>
       </ThemeProvider>
     </BrowserRouter>

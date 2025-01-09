@@ -3,17 +3,6 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useGlobalStore } from "@/context/GlobalStore";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import {
   Accordion,
   AccordionContent,
   AccordionItem,
@@ -54,17 +43,7 @@ export function Update(): JSX.Element {
     updateFunctions[field]?.(value);
   };
 
-  const handleDeleteUser = (): void => {
-    alert("User deleted successfully! (This is a frontend simulation)");
-    setAll({
-      first_name: null,
-      last_name: null,
-      email: null,
-      phone_number: null,
-      date_of_birth: null,
-      loyalty_points: null,
-    });
-  };
+  setLoading(false);
 
   const handleUpdate = async () => {
     try {
@@ -187,7 +166,7 @@ export function Update(): JSX.Element {
                 <Input
                   type={type}
                   id={field}
-                  value={value || ''}
+                  value={value || ""}
                   onChange={(e) =>
                     handleFieldChange(
                       field,

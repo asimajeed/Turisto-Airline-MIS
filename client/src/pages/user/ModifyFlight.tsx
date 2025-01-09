@@ -1,4 +1,3 @@
-import SeatSelection from "@/components/SeatSelection/SeatSelection";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -40,7 +39,7 @@ export function ModifyFlight() {
 
     try {
       setLoading(true);
-      const response = await axios.post("/bookings/modify", {
+      await axios.post("/bookings/modify", {
         booking_id: bookingId,
         flight_id: flight.flight_id,
         new_seat: seatNum,

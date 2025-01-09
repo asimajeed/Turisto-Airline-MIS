@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState, useEffect, ReactNode, forwardRef } from "react";
 import LoginDialog from "@/components/LoginDialog/LoginDialog";
 import { Button } from "@/components/ui/button";

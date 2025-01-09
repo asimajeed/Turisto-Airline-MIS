@@ -1,7 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Drawer,
   DrawerClose,
@@ -13,7 +13,6 @@ import {
 import { Link } from "react-router-dom";
 import { useGlobalStore } from "@/context/GlobalStore";
 import axios, { AxiosError } from "axios";
-import { Passenger } from "@/utils/types";
 import Summary from "@/components/Summary";
 
 const PaymentPage = () => {
@@ -21,7 +20,7 @@ const PaymentPage = () => {
   const [showSummary, setShowSummary] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("Credit card");
   const { discount_code: discountCode, setDiscountCode } = useGlobalStore();
-  const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [totalPrice] = useState<number>(0);
   const [bookingId, setBookingId] = useState<number>();
 
   // Access GlobalStore
@@ -41,18 +40,18 @@ const PaymentPage = () => {
   // Update totalPrice whenever the discount is applied
 
   // Helper function to get discount percentage
-  const getDiscountPercentage = (code: string): number => {
-    switch (code.toUpperCase()) {
-      case "TUR25":
-        return 0.25;
-      case "TUR50":
-        return 0.5;
-      case "TUR75":
-        return 0.75;
-      default:
-        return 0;
-    }
-  };
+  // const getDiscountPercentage = (code: string): number => {
+  //   switch (code.toUpperCase()) {
+  //     case "TUR25":
+  //       return 0.25;
+  //     case "TUR50":
+  //       return 0.5;
+  //     case "TUR75":
+  //       return 0.75;
+  //     default:
+  //       return 0;
+  //   }
+  // };
 
   const handlePayment = async () => {
     if (
@@ -117,9 +116,8 @@ const PaymentPage = () => {
         }
       );
       setBookingId(response.data.booking_id);
-      let Rresponse: any;
       if (!isOneWay)
-        Rresponse = await axios.post(
+        await axios.post(
           `${import.meta.env.VITE_BACKEND_API_URL}/booking/create`,
           dataR,
           {

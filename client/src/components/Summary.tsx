@@ -1,6 +1,5 @@
 import { useGlobalStore } from "@/context/GlobalStore";
 import { FC, useEffect, useState } from "react";
-import axios from "axios";
 import { Flight, Pricing } from "@/utils/types";
 
 const Summary: FC = () => {

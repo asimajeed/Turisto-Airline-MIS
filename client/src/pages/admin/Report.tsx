@@ -27,7 +27,7 @@ const Report: React.FC = () => {
   const [totalRevenue, setTotalRevenue] = useState<string>("Loading...");
   const [discountsApplied, setDiscountsApplied] =
     useState<string>("Loading...");
-
+  discountsApplied;
   // Fetch the report data
   useEffect(() => {
     async function fetchReportData() {

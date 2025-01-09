@@ -1,13 +1,15 @@
 {
-  "name": "client-typescript",
+  "name": "github-actions-testing",
   "private": true,
-  "version": "0.0.0",
+  "homepage": "https://asimajeed.github.io/github-actions-testing",
+  "version": "1.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.1",
