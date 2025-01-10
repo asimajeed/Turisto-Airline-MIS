@@ -10,7 +10,13 @@ import MapComponent from "@/components/Map";
 import { useGlobalStore } from "@/context/GlobalStore";
 
 function Home() {
-  const { isOneWay, setIsOneWay, departure_airport, arrival_airport, start_date } = useGlobalStore();
+  const {
+    isOneWay,
+    setIsOneWay,
+    departure_airport,
+    arrival_airport,
+    start_date,
+  } = useGlobalStore();
   const [isSearchEnabled, setIsSearchEnabled] = useState(false);
 
   useEffect(() => {
@@ -46,7 +52,10 @@ function Home() {
                 <span className="text-foreground select-none">One-Way</span>
               </div>
               {isOneWay ? <DatePicker /> : <DatePickerWithRange />}
-              <Link to={isSearchEnabled ? "/flights" : "#"} onClick={(e) => !isSearchEnabled && e.preventDefault()}>
+              <Link
+                to={isSearchEnabled ? "/flights" : "#"}
+                onClick={(e) => !isSearchEnabled && e.preventDefault()}
+              >
                 <Button
                   className="bg-theme-primary hover:bg-theme-primary-highlight text-white"
                   disabled={!isSearchEnabled}

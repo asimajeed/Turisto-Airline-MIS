@@ -41,7 +41,14 @@ const PassengerInfo = () => {
   const addPassenger = () => {
     setGroupPassengers([
       ...groupPassengers,
-      { first_name: "", last_name: "", date_of_birth: "", email: "", seat: "", returningSeat: "" },
+      {
+        first_name: "",
+        last_name: "",
+        date_of_birth: "",
+        email: "",
+        seat: "",
+        returningSeat: "",
+      },
     ]);
   };
 

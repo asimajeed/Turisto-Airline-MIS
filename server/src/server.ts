@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express, { Request, Response } from "express";
-import cors from "cors";
+import path from "path";
 import passport from "passport";
 import session from "express-session";
 import "./passport-config";
@@ -16,13 +16,14 @@ import flightRouter from "./routes/flights";
 const app = express();
 
 // Middleware
-app.use(
-  cors({
-    origin:
-      process.env.NODE_ENV === "development" ? "http://localhost:5173" : process.env.CLIENT_URL ,
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin:
+//       process.env.NODE_ENV === "development" ? "http://localhost:5173" : process.env.CLIENT_URL ,
+//     credentials: true,
+//   })
+// );
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "secret",
@@ -35,6 +36,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(express.json());
+
+// Serve static files from the ./app directory
+app.use(express.static(path.join(__dirname, "../public")));
 
 app.get("/profile", (req: Request, res: Response) => {
   if (!req.isAuthenticated()) {
@@ -50,7 +54,7 @@ app.use("/api/user", userRouter);
 
 app.use("/api/flights", flightRouter);
 
-app.use("/admin", adminRouter);
+app.use("/api/admin", adminRouter);
 
 app.get("/api/airports", async (req, res) => {
   const search = req.query.search as string;

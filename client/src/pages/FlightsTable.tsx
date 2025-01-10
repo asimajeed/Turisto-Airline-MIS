@@ -117,7 +117,7 @@ const FlightsTable = () => {
             },
           }
         );
-        const { flights, totalPages} = response.data;
+        const { flights, totalPages } = response.data;
         setTotalPagesR(totalPages);
         const data: Flight[] = [];
         (flights as Flight[]).forEach((value) => {
@@ -466,34 +466,34 @@ const FlightsTable = () => {
             {/* Pagination */}
             <Pagination className="select-none">
               <PaginationContent>
-              <PaginationItem>
-                <PaginationPrevious
-                  onClick={
-                    currentPageR > 0
-                      ? () => setCurrentPageR(currentPageR - 1)
-                      : () => {}
-                  }
-                  isActive={currentPageR > 1}
-                />
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationLink
-                  isActive={currentPageR !== 0}
-                  onClick={() => setCurrentPageR(0)}
-                >
-                  {currentPageR + 1}
-                </PaginationLink>
-              </PaginationItem>
-              <PaginationItem>
-                <PaginationNext
-                  onClick={
-                    currentPageR <= totalPagesR - 2
-                      ? () => setCurrentPageR(currentPageR + 1)
-                      : () => {}
-                  }
-                  isActive={currentPageR <= totalPagesR - 2}
-                />
-              </PaginationItem>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={
+                      currentPageR > 0
+                        ? () => setCurrentPageR(currentPageR - 1)
+                        : () => {}
+                    }
+                    isActive={currentPageR > 1}
+                  />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationLink
+                    isActive={currentPageR !== 0}
+                    onClick={() => setCurrentPageR(0)}
+                  >
+                    {currentPageR + 1}
+                  </PaginationLink>
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={
+                      currentPageR <= totalPagesR - 2
+                        ? () => setCurrentPageR(currentPageR + 1)
+                        : () => {}
+                    }
+                    isActive={currentPageR <= totalPagesR - 2}
+                  />
+                </PaginationItem>
               </PaginationContent>
             </Pagination>
           </div>

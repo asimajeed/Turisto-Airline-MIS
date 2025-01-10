@@ -49,7 +49,7 @@ const ManageDatabase = () => {
 
     try {
       const responseJSON = await axios.post(
-        `${import.meta.env.VITE_BACKEND_API_URL}/admin/sql`,
+        `${import.meta.env.VITE_BACKEND_API_URL}/api/admin/sql`,
         { query },
         { withCredentials: true }
       );

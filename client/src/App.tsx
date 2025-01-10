@@ -28,9 +28,8 @@ const App = () => {
     <BrowserRouter>
       <ThemeProvider>
         <Routes>
-          <Route path="/Turisto-Airline-MIS/">
             <Route
-              path=""
+              path="/"
               element={
                 <Layout>
                   <Home />
@@ -111,7 +110,6 @@ const App = () => {
             )}
 
             <Route path="*" element={<ErrorPage message="404 Not Found" />} />
-          </Route>
         </Routes>
       </ThemeProvider>
     </BrowserRouter>

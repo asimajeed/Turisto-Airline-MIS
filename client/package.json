@@ -1,8 +1,7 @@
 {
-  "name": "github-actions-testing",
+  "name": "turisto-airline-mis",
   "private": true,
-  "homepage": "https://asimajeed.github.io/Turisto-Airline-MIS/",
-  "version": "1.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",

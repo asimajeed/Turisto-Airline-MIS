@@ -12,6 +12,13 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.7",
     "@types/node": "^22.7.4",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/express-session": "^1.18.0",
+    "@types/jsonwebtoken": "^9.0.7",
+    "@types/passport": "^1.0.17",
+    "@types/passport-local": "^1.0.38",
+    "@types/pg": "^8.11.10",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
@@ -26,13 +33,6 @@
     "typescript": "^5.6.2"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
-    "@types/express-session": "^1.18.0",
-    "@types/jsonwebtoken": "^9.0.7",
-    "@types/passport": "^1.0.17",
-    "@types/passport-local": "^1.0.38",
-    "@types/pg": "^8.11.10",
     "nodemon": "^3.1.4"
   },
   "keywords": [],

@@ -33,7 +33,7 @@ const Report: React.FC = () => {
     async function fetchReportData() {
       try {
         const response = await fetch(
-          `${import.meta.env.VITE_BACKEND_API_URL}/admin/report`
+          `${import.meta.env.VITE_BACKEND_API_URL}/api/admin/report`
         ); // Adjust endpoint if necessary
         const data = await response.json();
 
