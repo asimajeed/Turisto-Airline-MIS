@@ -42,9 +42,13 @@ const SelectBox: FC<ComboBoxProps> = ({
   const fetchMoreAirports = async (search?: string) => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_API_URL}/api/airports?search=${search || ""
+        `${import.meta.env.VITE_BACKEND_API_URL}/api/airports?search=${
+          search || ""
         }`
       );
+      console.log(`${import.meta.env.VITE_BACKEND_API_URL}/api/airports?search=${
+          search || ""
+        }`, response.data);
       setOptions(response.data);
     } catch (error) {
       console.error(error);

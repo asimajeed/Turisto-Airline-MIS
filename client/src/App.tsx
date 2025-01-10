@@ -72,7 +72,7 @@ const App = () => {
             />
             {isLoggedIn ? (
               <>
-                <Route path="./user" element={<SDLayout />}>
+                <Route path="user" element={<SDLayout />}>
                   <Route path="" element={<Update />} />
                   <Route path="modify" element={<ModifyFlight />} />
                   <Route path="history" element={<BookingHistory />} />

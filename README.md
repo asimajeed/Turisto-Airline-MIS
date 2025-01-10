@@ -2,7 +2,7 @@
 
 ## Overview
 
-A Management Information System for managing airline ticket bookings. Click [here](https://asimajeed.github.io/Turisto-Airline-MIS/) to view the working project.
+A Management Information System for managing airline ticket bookings. Click [here](https://turisto-airline-mis.onrender.com/) to view the working project.
 
 ## Screenshots
 ### 1. Home Screen

@@ -188,7 +188,7 @@ const Footer: React.FC = () => {
         {/* Bottom section */}
         <div className="mt-8 border-t border-gray-300 pt-4 flex flex-col sm:flex-row sm:justify-between items-center">
           <p className="text-sm text-gray-500 order-2 sm:order-1 mt-4 sm:mt-0">
-            © 2024 Turisto Incorporated
+            © 2025 Turisto Incorporated
           </p>
           <div className="flex space-x-4 order-1 sm:order-2">
             <a href="#" className="hover:text-blue-600">

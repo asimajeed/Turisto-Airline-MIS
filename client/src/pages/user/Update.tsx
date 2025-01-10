@@ -31,7 +31,7 @@ export function Update(): JSX.Element {
   const [new_date_of_birth, setDateOfBirth] = useState(
     date_of_birth?.toISOString().split("T")[0] || null
   );
-  console.log(date_of_birth?.toISOString());
+  // console.log(date_of_birth?.toISOString());
   const handleFieldChange = (field: string, value: string | number): void => {
     const updateFunctions: Record<string, (value: any) => void> = {
       first_name: (value) => setFirstName(value as string | null),
@@ -43,9 +43,9 @@ export function Update(): JSX.Element {
     updateFunctions[field]?.(value);
   };
 
-  setLoading(false);
 
   const handleUpdate = async () => {
+    setLoading(true);
     try {
       const payload = {
         first_name: new_first_name,
@@ -76,6 +76,7 @@ export function Update(): JSX.Element {
         alert(`Error: ${error.message}`);
       }
     }
+    setLoading(false);
   };
 
   if (!new_email) {

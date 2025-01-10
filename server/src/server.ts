@@ -3,6 +3,7 @@ dotenv.config();
 
 import express, { Request, Response } from "express";
 import path from "path";
+// import cors from "cors";
 import passport from "passport";
 import session from "express-session";
 import "./passport-config";
@@ -16,10 +17,11 @@ import flightRouter from "./routes/flights";
 const app = express();
 
 // Middleware
+
+// use for local development
 // app.use(
 //   cors({
-//     origin:
-//       process.env.NODE_ENV === "development" ? "http://localhost:5173" : process.env.CLIENT_URL ,
+//     origin: "http://localhost:5173", 
 //     credentials: true,
 //   })
 // );
@@ -102,6 +104,11 @@ app.get("/api/discount", async (req: Request, res: Response) => {
     console.error("Error fetching discount:", error);
     res.status(500).json({ message: "Internal server error" });
   }
+});
+
+// Serve React's 404 page for non-API routes
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/index.html"));
 });
 
 const PORT = process.env.PORT || 5000;
