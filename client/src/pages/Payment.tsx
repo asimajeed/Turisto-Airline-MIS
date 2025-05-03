@@ -40,18 +40,18 @@ const PaymentPage = () => {
   // Update totalPrice whenever the discount is applied
 
   // Helper function to get discount percentage
-  // const getDiscountPercentage = (code: string): number => {
-  //   switch (code.toUpperCase()) {
-  //     case "TUR25":
-  //       return 0.25;
-  //     case "TUR50":
-  //       return 0.5;
-  //     case "TUR75":
-  //       return 0.75;
-  //     default:
-  //       return 0;
-  //   }
-  // };
+  const getDiscountPercentage = (code: string): number => {
+    switch (code.toUpperCase()) {
+      case "TUR25":
+        return 0.25;
+      case "TUR50":
+        return 0.5;
+      case "TUR75":
+        return 0.75;
+      default:
+        return 0;
+    }
+  };
 
   const handlePayment = async () => {
     if (

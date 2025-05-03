@@ -3,7 +3,7 @@ dotenv.config();
 
 import express, { Request, Response } from "express";
 import path from "path";
-// import cors from "cors";
+import cors from "cors";
 import passport from "passport";
 import session from "express-session";
 import "./passport-config";
@@ -19,12 +19,12 @@ const app = express();
 // Middleware
 
 // use for local development
-// app.use(
-//   cors({
-//     origin: "http://localhost:5173", 
-//     credentials: true,
-//   })
-// );
+app.use(
+  cors({
+    origin: "http://localhost:5173", 
+    credentials: true,
+  })
+);
 
 app.use(
   session({
@@ -38,9 +38,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(express.json());
-
-// Serve static files from the ./app directory
-app.use(express.static(path.join(__dirname, "../public")));
 
 app.get("/profile", (req: Request, res: Response) => {
   if (!req.isAuthenticated()) {
@@ -106,12 +103,7 @@ app.get("/api/discount", async (req: Request, res: Response) => {
   }
 });
 
-// Serve React's 404 page for non-API routes
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../public/index.html"));
-});
-
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
