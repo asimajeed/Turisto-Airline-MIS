@@ -3,9 +3,8 @@ dotenv.config();
 
 import express, { Request, Response } from "express";
 import path from "path";
+import cookieParser from "cookie-parser";
 import cors from "cors";
-import passport from "passport";
-import session from "express-session";
 import "./passport-config";
 import { fetchAirports } from "./queryFunctions/publicQueries";
 import userRouter from "./routes/user";
@@ -13,34 +12,24 @@ import { query } from "./db-config";
 import adminRouter from "./routes/admin";
 import booking from "./routes/booking";
 import flightRouter from "./routes/flights";
+import { authMiddleware } from "./middleware/authMiddleware";
 
 const app = express();
 
 // Middleware
 
-// use for local development
 app.use(
   cors({
-    origin: "http://localhost:5173", 
+    origin: process.env.CLIENT_URL, 
     credentials: true,
   })
 );
 
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET || "secret",
-    resave: false,
-    saveUninitialized: false,
-  })
-);
-
-app.use(passport.initialize());
-app.use(passport.session());
-
+app.use(cookieParser())
 app.use(express.json());
 
-app.get("/profile", (req: Request, res: Response) => {
-  if (!req.isAuthenticated()) {
+app.get("/profile", authMiddleware, (req: Request, res: Response) => {
+  if (!(req.user)) {
     res.status(401).send("You need to log in first");
   } else {
     res.send(req.user);
@@ -107,3 +96,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+
+export default app

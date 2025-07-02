@@ -1,8 +1,10 @@
 import { Request, Response, Router } from "express";
 import { query } from "../db-config";
 import bcrypt from "bcryptjs";
-import passport from "passport";
 import { DatabaseError } from "pg";
+import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../utils/jwt";
+import { authMiddleware } from "../middleware/authMiddleware";
+import { User } from "../utils/types";
 
 const router = Router();
 
@@ -14,10 +16,12 @@ router.post("/register", async (req: Request, res: Response) => {
       res.status(400).send("User already exists");
     else {
       const hashedPassword = await bcrypt.hash(password, 10);
-      await query(
-        "INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4)",
-        [firstName, lastName, email, hashedPassword]
-      );
+      await query("INSERT INTO users (first_name, last_name, email, password) VALUES ($1, $2, $3, $4)", [
+        firstName,
+        lastName,
+        email,
+        hashedPassword,
+      ]);
       res.status(201).send("User registered");
     }
   } catch (err) {
@@ -27,32 +31,83 @@ router.post("/register", async (req: Request, res: Response) => {
 });
 
 // Login user
-router.post("/login", passport.authenticate("local"), (req, res) => {
-  res.status(200).json(req.user);
+router.post("/login", async (req, res) => {
+  try {
+    const { email, password, remember } = req.body;
+
+    const result = await query("SELECT * FROM users WHERE email = $1", [email]);
+    const user = result.rows[0];
+
+    if (!user) {
+      res.status(401).send("No user with that email");
+      return;
+    }
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      res.status(401).json({ message: "Invalid credentials" });
+      return;
+    }
+
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      maxAge: remember ? 30 * 24 * 60 * 60 * 1000 : 7 * 24 * 60 * 60 * 1000,
+    });
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+      maxAge: 15 * 60 * 1000
+    })
+    res.json(user);
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 
 router.delete("/logout", (req: Request, res: Response) => {
-  req.logout((err) => {
-    if (err) {
-      return res.status(500).send({ message: "Logout failed" });
-    }
-    res.clearCookie("connect.sid").send({ message: "Logged out successfully" });
-  });
+  res.clearCookie("refreshToken");
+  res.sendStatus(204);
 });
 
-router.post("/update", async (req: Request, res: Response) => {
-  if (!(req.isAuthenticated() && req.user)) {
+router.post("/refresh", async (req: Request, res: Response) => {
+  const token = req.cookies.refreshToken;
+  if (!token) {
+    res.sendStatus(401);
+    return;
+  }
+
+  try {
+    const payload = verifyRefreshToken(token);
+    const user = (await query("SELECT * FROM users WHERE user_id = $1", [
+      payload.user_id,
+    ])) as unknown as User;
+    if (!user) {
+      res.sendStatus(403);
+      return;
+    }
+
+    const accessToken = generateAccessToken(user);
+    res.json({ accessToken });
+  } catch {
+    res.sendStatus(403);
+  }
+});
+
+router.post("/update", authMiddleware, async (req: Request, res: Response) => {
+  if (!req.user) {
     res.status(401).json({ message: "Unauthorized request" });
     return;
   }
-  const { first_name, last_name, email, phone_number, date_of_birth } =
-    req.body;
+  const { first_name, last_name, email, phone_number, date_of_birth } = req.body;
   const userId = req.user.user_id;
 
   if (!first_name || !last_name || !email) {
-    res
-      .status(400)
-      .json({ message: "First name, last name, and email are required." });
+    res.status(400).json({ message: "First name, last name, and email are required." });
     return;
   }
 
@@ -69,14 +124,7 @@ router.post("/update", async (req: Request, res: Response) => {
       WHERE user_id = $6
       RETURNING *;
     `;
-    const values = [
-      first_name,
-      last_name,
-      email,
-      phone_number,
-      date_of_birth,
-      userId,
-    ];
+    const values = [first_name, last_name, email, phone_number, date_of_birth, userId];
 
     const result = await query(queryStr, values);
 
@@ -101,9 +149,7 @@ router.post("/update", async (req: Request, res: Response) => {
     }
   } catch (err) {
     console.error("Error updating user:", err);
-    res
-      .status(500)
-      .json({ message: "An error occurred while updating the user." });
+    res.status(500).json({ message: "An error occurred while updating the user." });
     return;
   }
 });
@@ -124,9 +170,7 @@ router.post("/", async (req: Request, res: Response) => {
 
     // Validate required fields
     if (!first_name || !last_name || !email) {
-      res
-        .status(400)
-        .json({ message: "First name, last name, and email are required." });
+      res.status(400).json({ message: "First name, last name, and email are required." });
       return;
     }
 
@@ -202,16 +246,8 @@ router.get("/:userId", async (req: Request, res: Response) => {
 
 router.put("/:userId", async (req: Request, res: Response) => {
   const { userId } = req.params;
-  const {
-    first_name,
-    last_name,
-    email,
-    phone_number,
-    date_of_birth,
-    is_admin,
-    is_guest,
-    password,
-  } = req.body;
+  const { first_name, last_name, email, phone_number, date_of_birth, is_admin, is_guest, password } =
+    req.body;
 
   if (!first_name || !last_name || !email || !userId) {
     res.status(400).json({
@@ -227,15 +263,7 @@ router.put("/:userId", async (req: Request, res: Response) => {
       SET first_name = $1, last_name = $2, email = $3, phone_number = $4, 
           date_of_birth = $5, is_admin = $6, is_guest = $7, updated_at = CURRENT_TIMESTAMP
     `;
-    const queryValues = [
-      first_name,
-      last_name,
-      email,
-      phone_number,
-      date_of_birth,
-      is_admin,
-      is_guest,
-    ];
+    const queryValues = [first_name, last_name, email, phone_number, date_of_birth, is_admin, is_guest];
 
     // If a password is provided, hash it and include it in the update query
     if (password) {

@@ -11,13 +11,10 @@
   "dependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.7",
-    "@types/node": "^22.7.4",
     "@types/cors": "^2.8.17",
-    "@types/express": "^5.0.0",
     "@types/express-session": "^1.18.0",
     "@types/jsonwebtoken": "^9.0.7",
-    "@types/passport": "^1.0.17",
-    "@types/passport-local": "^1.0.38",
+    "@types/node": "^22.7.4",
     "@types/pg": "^8.11.10",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
@@ -26,13 +23,12 @@
     "express": "^4.19.2",
     "express-session": "^1.18.1",
     "jsonwebtoken": "^9.0.2",
-    "passport": "^0.7.0",
-    "passport-local": "^1.0.0",
     "pg": "^8.13.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.2"
   },
   "devDependencies": {
+    "@types/express": "^5.0.3",
     "nodemon": "^3.1.4"
   },
   "keywords": [],

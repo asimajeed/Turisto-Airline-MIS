@@ -1,5 +1,6 @@
 import { query } from "../db-config";
 import { Router, Request, Response } from "express";
+import { authMiddleware } from "../middleware/authMiddleware";
 
 const router: Router = Router();
 
@@ -38,6 +39,8 @@ async function getUserByEmail(email: string) {
   const result = await query(queryStr, [email]);
   return result.rows[0];
 }
+
+router.use(authMiddleware);
 
 router.post("/create", async (req, res) => {
   const {
@@ -331,9 +334,9 @@ router.get("/ticket/:bookingId", async (req: Request, res: Response) => {
   }
 });
 
-router.get("/history", async (req, res) => {
+router.get("/history", authMiddleware, async (req, res) => {
   // Check authentication
-  if (!(req.isAuthenticated() && req.user)) {
+  if (!(req.user)) {
     res.status(401).json({ message: "Unauthorized" });
     return;
   }
@@ -393,7 +396,7 @@ router.get("/history", async (req, res) => {
 });
 
 router.delete("/:booking_id", async (req, res) => {
-  if (!(req.isAuthenticated() && req.user)) {
+  if (!req.user) {
     res.status(401).json({ message: "Unauthorized request" });
     return;
   }

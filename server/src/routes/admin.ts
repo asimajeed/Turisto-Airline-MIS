@@ -4,7 +4,7 @@ import { Request, Response, Router } from "express";
 const adminRouter = Router();
 
 adminRouter.post('/sql' ,async (req: Request, res: Response) => {
-  if (req.isAuthenticated() && req.user.is_admin) {
+  if (!req.user?.is_admin) {
     try {
       res.json(await query(req.body.query));
     } catch (err) {

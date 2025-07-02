@@ -1,8 +1,10 @@
 import { query } from "../db-config";
 import { DatabaseError } from "pg";
 import { Router, Request, Response } from "express";
+import { authMiddleware } from "../middleware/authMiddleware";
 
 const flightRouter = Router();
+
 
 // Create a flight
 flightRouter.get("/", async (req: Request, res: Response) => {
@@ -140,8 +142,8 @@ flightRouter.get("/:searchId", async (req, res) => {
   }
 });
 
-flightRouter.put("/:flightId", async (req, res) => {
-  if (!(req.isAuthenticated() && req.user.is_admin)) {
+flightRouter.put("/:flightId", authMiddleware, async (req, res) => {
+  if (!(req.user?.is_admin)) {
     res.status(401).json({ message: "Unauthorized request" });
     return;
   }
@@ -236,10 +238,10 @@ flightRouter.get("/seats/:flight_id", async (req, res) => {
 });
 
 flightRouter.delete(
-  "/delete/:flight_id",
+  "/delete/:flight_id", authMiddleware,
   async (req: Request, res: Response) => {
-    if (!(req.isAuthenticated() && req.user.is_admin)) {
-      res.status(401).json({ message: "Unauthorized request" });
+    if (!(req.user?.is_admin)) {
+      res.status(403).json({ message: "Unauthorized request" });
       return;
     }
     const { flight_id } = req.params;

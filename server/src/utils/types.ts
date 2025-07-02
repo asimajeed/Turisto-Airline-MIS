@@ -15,12 +15,7 @@ export class Pricing {
   subtotal: number;
   final_total: number;
 
-  constructor({
-    base_price,
-    discount_percentage = 0,
-    taxes = 0,
-    discount_code = null,
-  }: PriceDetails) {
+  constructor({ base_price, discount_percentage = 0, taxes = 0, discount_code = null }: PriceDetails) {
     this.base_price = base_price;
     this.discount_percentage = discount_percentage;
     this.taxes = taxes;
@@ -45,4 +40,19 @@ export class Pricing {
     this.taxes = newTaxes;
     this.final_total = this.subtotal + this.taxes;
   }
+}
+
+export interface User {
+  user_id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone_number: string;
+  date_of_birth: Date;
+  loyalty_points: number;
+  loyalty_points_redeemed: number;
+  created_at: Date;
+  updated_at: Date;
+  is_admin: boolean;
+  is_guest: boolean;
 }
